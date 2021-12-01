@@ -125,8 +125,8 @@ def main( update = False ):
     result = None
     
     if not update:
-        result = dm.pickle_load( "last_straight_learn_data.pickle" )
-        simu_data = dm.pickle_load( "last_straight_simu_data.pickle" )
+        result = dm.pickle_load( "rank_learn_data.pickle" )
+        simu_data = dm.pickle_load( "rank_simu_data.pickle" )
 
     if result == None:
         result = {}
@@ -437,8 +437,8 @@ def main( update = False ):
 
     print( len( result["answer"] ) , len( result["teacher"] ) )
     dm.dn.write( "last_staight_momo.txt" )
-    dm.pickle_upload( "last_straight_learn_data.pickle", result )
-    dm.pickle_upload( "last_straight_simu_data.pickle", simu_data )
+    dm.pickle_upload( "rank_learn_data.pickle", result )
+    dm.pickle_upload( "rank_simu_data.pickle", simu_data )
     dm.dl.data_clear()
     
     return result, simu_data

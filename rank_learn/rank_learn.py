@@ -94,7 +94,7 @@ def data_check( data ):
 
     return result
 
-def main( data, simu_data, simulation = True ):
+def main( data, simu_data, simulation = True, learn_data = False ):
     print( "rank_learn" )
     learn_data = data_check( data )
     rank_model = lg_main( learn_data )
@@ -103,4 +103,7 @@ def main( data, simu_data, simulation = True ):
     if simulation:
         recovery_rate, win_rate = rank_simulation.main( rank_model, simu_data )
 
-    return rank_model, recovery_rate
+    if learn_data:
+        return rank_model, recovery_rate, learn_data
+    else:
+        return rank_model, recovery_rate
