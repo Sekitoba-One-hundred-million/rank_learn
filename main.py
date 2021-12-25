@@ -7,8 +7,7 @@ from rank_learn import rank_learn
 
 def main():
     #lib.log.set_name( "nn_simulation_3.log" )
-    lib.log.set_name( "rank_learn_9.log" )
-    
+    lib.log.set_name( "rank_learn.log" )
     parser = ArgumentParser()
     parser.add_argument( "-g", type=bool, default = False, help = "optional" )
     parser.add_argument( "-u", type=bool, default = False, help = "optional" )

@@ -12,17 +12,13 @@ import sekitoba_data_manage as dm
 S = 250
 def softmax( data ):
     sum_data = 0
-    value_max = -10000000
-    
-    for i in range( 0, len( data ) ):
-        if value_max < data[i]["score"]:
-            value_max = data[i]["score"]
+    value_max = max( data )
 
     for i in range( 0, len( data ) ):
-        sum_data += math.exp( data[i]["score"] - value_max )
+        sum_data += math.exp( data[i] - value_max )
 
     for i in range( 0, len( data ) ):
-        data[i]["score"] = math.exp( data[i]["score"] - value_max ) / sum_data
+        data[i] = math.exp( data[i] - value_max ) / sum_data
 
 def bet_horce_get( data ):
     max_score = 0
@@ -35,49 +31,32 @@ def bet_horce_get( data ):
     return result
         
 
-def main( models, datas, parames ):
-    params_log = ""
-    
-    for k in parames.keys():
-        params_log += "{}:{} ".format( k, str( parames[k] ) )    
-
-    lib.log.write( "" )
-    lib.log.write( params_log )
-    recovery_rate = 0
+def main( models, datas ):
     test_result = { "count": 0, "money": 0, "win": 0 }
     money = 50000
-    score_list = {}
     
-    for param_name in datas.keys():
-        for race_id in datas[param_name].keys():
-            lib.dic_append( score_list, race_id, [] )
-            append_check = False
-            count = 0
+    for race_id in datas.keys():
+        horce_list = []
+        score_list = []        
 
-            if len( score_list[race_id] ) == 0:
-                append_check = True
-            
-            for horce_id in datas[param_name][race_id].keys():
-                instance = {}
-                score = models[param_name].predict( np.array( [ datas[param_name][race_id][horce_id]["data"] ] ) )[0]
-                instance["score"] = score * parames[param_name] * -1
-                instance["rank"] = datas[param_name][race_id][horce_id]["answer"]["rank"]
-                instance["odds"] = datas[param_name][race_id][horce_id]["answer"]["odds"]
+        for horce_id in datas[race_id].keys():                
+            instance = {}
+            instance["score"] = 0
 
-                if append_check:
-                    score_list[race_id].append( instance )
-                else:
-                    score_list[race_id][count]["score"] += instance["score"]
-                    count += 1
+            for i in range( 0, len( models ) ):                
+                score = models[i].predict( np.array( [ datas[race_id][horce_id]["data"] ] ) )[0]
+                instance["score"] += score * -1
+                
+            instance["rank"] = datas[race_id][horce_id]["answer"]["rank"]
+            instance["odds"] = datas[race_id][horce_id]["answer"]["odds"]
+            score_list.append( instance["score"] )
+            horce_list.append( instance )
 
-    base_name = list( datas.keys() )[0]
-
-    for race_id in datas[base_name]:
-        current_score = copy.deepcopy( score_list[race_id] )
-        #softmax( current_score )
-        current_score = sorted( current_score, key=lambda x:x["score"], reverse = True )
-        bet_horce = current_score[0]        
-        test_result["count"] += 1        
+        sort_result = sorted( horce_list, key=lambda x:x["score"], reverse = True )
+        score_list = softmax( score_list )
+        bet_horce = sort_result[0]    
+        test_result["count"] += 1
+        
         if bet_horce["rank"] == 1:
             #money += bet_money * bet_horce["odds"]
             test_result["win"] += 1
@@ -99,5 +78,9 @@ def main( models, datas, parames ):
     lib.log.write( "回収率{}%".format( recovery_rate ) )
     lib.log.write( "勝率{}%".format( win_rate ) )
     lib.log.write( "賭けた回数{}回".format( test_result["count"] ) )
+
+    print( "回収率{}%".format( recovery_rate ) )
+    print( "勝率{}%".format( win_rate ) )
+    print( "賭けた回数{}回".format( test_result["count"] ) )
 
     return recovery_rate, win_rate

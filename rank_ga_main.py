@@ -39,17 +39,17 @@ def score_create( data ):
 
     score = data - 80
 
-    if 90 < score:
+    if 90 < data:
         score += 5
 
-    if 100 < score:
+    if 100 < data:
         score += 10
 
     return score
 
 def main():
-    lib.log.set_name( "ga_rank_learn_3.log" ) 
-    data, simu_data = data_create.main()
+    lib.log.set_name( "ga_rank_learn" )
+    data, simu_data = data_create.main( update = True )
     
     p = 10
     e = len( data["teacher"][0] )
@@ -57,7 +57,7 @@ def main():
     lib.log.write( "ga_rank_learn" )
     max_recovery_rate = 0
 
-    for i in range( 0, 100 ):        
+    for i in range( 0, 100 ): 
         score_result = []
         parent = ga.get_parent()
         
@@ -68,7 +68,7 @@ def main():
             _, recovery_rate = rank_learn.main( instance_data, instance_simu_data )
             max_recovery_rate = max( max_recovery_rate, recovery_rate )
             score_result.append( score_create( recovery_rate ) )
-
+        
         ga.scores_set( score_result )
         ga.next_genetic()
         best_population, best_score = ga.get_best()

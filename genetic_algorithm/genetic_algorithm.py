@@ -9,7 +9,7 @@ class GA:
         self.scores = []
         self.best_population = None
         self.best_score = -1
-        self.mutation_rate = 0.01
+        self.mutation_rate = 0.05
 
         for i in range( 0, self.population ):
             t = [0] * self.element
