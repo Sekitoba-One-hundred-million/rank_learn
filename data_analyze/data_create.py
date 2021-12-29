@@ -8,25 +8,18 @@ from data_analyze.time_index_get import time_index_get
 from data_analyze.jockey_data_get import JockeyData
 from data_analyze import parent_data_get
 
-dm.dl.file_set( "race_cource_info.pickle" )
-dm.dl.file_set( "race_cource_wrap.pickle" )
-dm.dl.file_set( "first_pace_analyze_data.pickle" )
-dm.dl.file_set( "race_info_data.pickle" )
 dm.dl.file_set( "race_data.pickle" )
-dm.dl.file_set( "first_pace_analyze_data.pickle" )
-dm.dl.file_set( "passing_data.pickle" )
 dm.dl.file_set( "horce_data_storage.pickle" )
+dm.dl.file_set( "race_cource_wrap.pickle" )
+dm.dl.file_set( "race_info_data.pickle" )
+dm.dl.file_set( "race_cource_info.pickle" )
 dm.dl.file_set( "corner_horce_body.pickle" )
 dm.dl.file_set( "baba_index_data.pickle" )
 dm.dl.file_set( "parent_id_data.pickle" )
-dm.dl.file_set( "time_index_data.pickle" )
-dm.dl.file_set( "blood_closs_data.pickle" )
 dm.dl.file_set( "win_rate_data.pickle" )
-dm.dl.file_set( "win_rate_data.pickle" )
-dm.dl.file_set( "race_limb_claster_model.pickle" )
 dm.dl.file_set( "last_horce_body.pickle" )
-dm.dl.file_set( "first_horce_body.pickle" )
-dm.dl.file_set( "first_up3_halon.pickle" )
+
+#dm.dl.file_set( "first_up3_halon.pickle" )
 
 def time_index_average( time_index, day_list ):
     result = 0
@@ -150,18 +143,12 @@ def main( update = False ):
     horce_data = dm.dl.data_get( "horce_data_storage.pickle" )
     race_cource_wrap = dm.dl.data_get( "race_cource_wrap.pickle" )
     race_info = dm.dl.data_get( "race_info_data.pickle" )
-    first_pace_analyze_data = dm.dl.data_get( "first_pace_analyze_data.pickle" )
-    passing_data = dm.dl.data_get( "passing_data.pickle" )
     race_cource_info = dm.dl.data_get( "race_cource_info.pickle" )
     corner_horce_body = dm.dl.data_get( "corner_horce_body.pickle" )
     baba_index_data = dm.dl.data_get( "baba_index_data.pickle" )
     parent_id_data = dm.dl.data_get( "parent_id_data.pickle" )
-    blood_closs_data = dm.pickle_load( "blood_closs_data.pickle" )
     win_rate_data = dm.pickle_load( "win_rate_data.pickle" )
-    #omega_data = dm.dl.data_get( "omega_index_data.pickle" )
-    race_limb_claster_model = dm.dl.data_get( "race_limb_claster_model.pickle" )
     last_horce_body_data = dm.dl.data_get( "last_horce_body.pickle" )
-    first_horce_body_data = dm.dl.data_get( "first_horce_body.pickle" )    
     train_index = train_index_get()
     time_index = time_index_get()
     jockey_data = JockeyData()
@@ -288,15 +275,6 @@ def main( update = False ):
             except:
                 limb_math = 0
 
-            bcd = blood_closs_data[horce_id]
-            str_closs = "None"
-            max_rate = 0
-            
-            for i in range( 0, len( bcd ) ):
-                if max_rate < bcd[i]["rate"]:
-                    max_rate = bcd[i]["rate"]
-                    str_closs = bcd[i]["name"]
-
             horce_num = int( cd.horce_number() )
             flame_num = int( cd.flame_number() )
 
@@ -311,15 +289,13 @@ def main( update = False ):
 
             try:
                 last_horce_body = corner_horce_body[race_id]["4"][key_horce_num]
-                #first_horce_body = float( cd.passing_rank().split( "-" )[0] )
             except:
                 last_horce_body = -1
-                #first_horce_body = -1
 
             father_id = parent_id_data[horce_id]["father"]
             mother_id = parent_id_data[horce_id]["mother"]
-            father_data = parent_data_get.main( horce_data, passing_data, father_id, baba_index_data )
-            mother_data = parent_data_get.main( horce_data, passing_data, mother_id, baba_index_data )
+            father_data = parent_data_get.main( horce_data, father_id, baba_index_data )
+            mother_data = parent_data_get.main( horce_data, mother_id, baba_index_data )
             #dm.dn.append( t_instance, race_limb[0], "その他の馬の数" )
             dm.dn.append( t_instance, race_limb[1], "逃げaの馬の数" )
             dm.dn.append( t_instance, race_limb[2], "逃げbの馬の数" )
@@ -407,7 +383,7 @@ def main( update = False ):
             win_rate_append( t_instance, win_rate_data, ri_list, key_data )
             
             """
-            if not year == "2020":
+            if not year == lib.test_year:
                 #dm.dn.append( t_instance, first_horce_body, "最初の馬身" )
                 dm.dn.append( t_instance, last_horce_body, "前の馬身" )
             else:
@@ -415,7 +391,7 @@ def main( update = False ):
                 dm.dn.append( t_instance, last_horce_body_data[race_id][key_horce_num], "前の馬身" )
             """
             
-            if year == "2020":
+            if year == lib.test_year:
                 lib.dic_append( simu_data, race_id, {} )
                 simu_data[race_id][key_horce_num] = {}
                 simu_data[race_id][key_horce_num]["answer"] = { "rank": cd.rank(), "odds": cd.odds() }

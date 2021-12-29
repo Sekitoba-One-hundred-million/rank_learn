@@ -7,7 +7,7 @@ def max_check( s ):
     except:
         return -100
 
-def main( horce_data, passing_data, parent_id, baba_index ):
+def main( horce_data, parent_id, baba_index ):
     result = {}
     result["rank"] = 0
     result["two_rate"] = 0
@@ -34,7 +34,7 @@ def main( horce_data, passing_data, parent_id, baba_index ):
     result["pace_speed_index"] = max_check( pace_speed )
 
     try:
-        result["limb"] = lib.limb_search( passing_data[parent_id], parent_pd )
+        result["limb"] = lib.limb_search( parent_pd )
     except:
         return result
 

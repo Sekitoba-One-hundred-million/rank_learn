@@ -17,8 +17,6 @@ import sekitoba_data_manage as dm
 from rank_learn import rank_simulation
 from rank_learn import rank_multi_simulation
 
-check_year = 2020
-
 def lg_main( data ):
     max_pos = np.max( np.array( data["answer"] ) )
     lgb_train = lgb.Dataset( np.array( data["teacher"] ), np.array( data["answer"] ), group = np.array( data["query"] ) )
@@ -96,7 +94,7 @@ def data_check( data, min_rank ):
         q = data["query"][i]["q"]
         year = data["query"][i]["year"]
         
-        if year == "2020":
+        if year == lib.test_year:
             result["test_query"].append( q )
         else:
             result["query"].append( q )
@@ -107,7 +105,7 @@ def data_check( data, min_rank ):
         for r in range( 0, len( current_data ) ):
             answer_rank = current_answer[r]
 
-            if year == "2020":
+            if year == lib.test_year:
                 result["test_teacher"].append( current_data[r] )
                 result["test_answer"].append( float( answer_rank ) )
             else:
@@ -133,7 +131,7 @@ def diff_data_check( data, min_rank ):
         q = data["query"][i]["q"]
         year = data["query"][i]["year"]
         
-        if year == "2020":
+        if year == lib.test_year:
             result["test_query"].append( q )
         else:
             result["query"].append( q )
@@ -145,7 +143,7 @@ def diff_data_check( data, min_rank ):
             answer_rank = max( ( current_answer[r] + 2 ) * 10, 0 )
             answer_rank = int( answer_rank )
 
-            if year == "2020":
+            if year == lib.test_year:
                 result["test_teacher"].append( current_data[r] )
                 result["test_answer"].append( float( answer_rank ) )
             else:
