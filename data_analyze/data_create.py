@@ -10,7 +10,7 @@ from data_analyze import parent_data_get
 
 dm.dl.file_set( "race_data.pickle" )
 dm.dl.file_set( "horce_data_storage.pickle" )
-dm.dl.file_set( "race_cource_wrap.pickle" )
+#dm.dl.file_set( "race_cource_wrap.pickle" )
 dm.dl.file_set( "race_info_data.pickle" )
 dm.dl.file_set( "race_cource_info.pickle" )
 dm.dl.file_set( "corner_horce_body.pickle" )
@@ -141,7 +141,7 @@ def main( update = False ):
 
     race_data = dm.dl.data_get( "race_data.pickle" )
     horce_data = dm.dl.data_get( "horce_data_storage.pickle" )
-    race_cource_wrap = dm.dl.data_get( "race_cource_wrap.pickle" )
+    #race_cource_wrap = dm.dl.data_get( "race_cource_wrap.pickle" )
     race_info = dm.dl.data_get( "race_info_data.pickle" )
     race_cource_info = dm.dl.data_get( "race_cource_info.pickle" )
     corner_horce_body = dm.dl.data_get( "corner_horce_body.pickle" )
@@ -160,9 +160,7 @@ def main( update = False ):
         day = race_id[9]
         num = race_id[7]
 
-        try:
-            current_wrap = race_cource_wrap[race_id]
-        except:
+        if not year == "2021":
             continue
 
         key_place = str( race_info[race_id]["place"] )
@@ -174,9 +172,13 @@ def main( update = False ):
         
         if race_info[race_id]["out_side"]:
             info_key_dist += "外"
+
+        try:
+            rci_dist = race_cource_info[key_place][key_kind][info_key_dist]["dist"]
+            rci_info = race_cource_info[key_place][key_kind][info_key_dist]["info"]
+        except:
+            continue
         
-        rci_dist = race_cource_info[key_place][key_kind][info_key_dist]["dist"]
-        rci_info = race_cource_info[key_place][key_kind][info_key_dist]["info"]
         race_limb = [0] * 9
         popular_limb = -1
         train_index_list = train_index.main( race_data[k], horce_data, race_id )
@@ -281,11 +283,9 @@ def main( update = False ):
             str_limb = str( int( limb_math ) ) + "-limb"
             str_horce_num = str( horce_num ) + "-horce_num"
             str_flame_num = str( flame_num ) + "-flame_num"
-            str_closs += "-closs"
             key_data.append( str_limb )
             key_data.append( str_horce_num )
             key_data.append( str_flame_num )
-            #key_data.append( str_closs )
 
             try:
                 last_horce_body = corner_horce_body[race_id]["4"][key_horce_num]
@@ -318,7 +318,7 @@ def main( update = False ):
             dm.dn.append( t_instance, float( key_dist ) - rci_dist[-1], "今まで走った距離" )
             dm.dn.append( t_instance, rci_dist[-1], "直線の距離" )
             dm.dn.append( t_instance, limb_math, "過去データからの予想脚質" )
-            
+
             dm.dn.append( t_instance, speed_index_race_data["my"][horce_id] , "最大のスピード指数" )
             dm.dn.append( t_instance, speed_index_race_data["my"][horce_id] - speed_index_race_data["max"] , "レース内の最大のスピード指数との差" )
             dm.dn.append( t_instance, speed_index_race_data["my"][horce_id] - speed_index_race_data["min"] , "レース内の最小のスピード指数との差" )
@@ -331,7 +331,7 @@ def main( update = False ):
             dm.dn.append( t_instance, pace_speed_index_race_data["my"][horce_id] - pace_speed_index_race_data["max"] , "レース内の最大のペース指数との差" )
             dm.dn.append( t_instance, pace_speed_index_race_data["my"][horce_id] - pace_speed_index_race_data["min"] , "レース内の最小のペース指数との差" )
             dm.dn.append( t_instance, pace_speed_index_race_data["my"][horce_id] - pace_speed_index_race_data["average"] , "レース内の平均のペース指数との差" )
-            
+
             #dm.dn.append( t_instance, pd.three_average(), "過去3レースの平均順位" )
             #dm.dn.append( t_instance, pd.dist_rank_average(), "過去同じ距離の種類での平均順位" )
             #dm.dn.append( t_instance, pd.racekind_rank_average(), "過去同じレース状況での平均順位" )

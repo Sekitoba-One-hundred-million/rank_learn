@@ -24,7 +24,13 @@ def main( horce_data, parent_id, baba_index ):
         return result
 
     parent_pd = lib.past_data( parent_data, [] )
-    speed, up_speed, pace_speed = parent_pd.speed_index( baba_index[parent_id] )  
+    try:
+        speed, up_speed, pace_speed = parent_pd.speed_index( baba_index[parent_id] )
+    except:
+        speed = []
+        up_speed = []
+        pace_speed = []
+        
     result["rank"] = parent_pd.rank()
     result["two_rate"] = parent_pd.two_rate()
     result["three_rate"] = parent_pd.three_rate()

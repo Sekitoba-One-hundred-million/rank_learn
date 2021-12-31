@@ -74,18 +74,14 @@ def main( model, data ):
         sort_result = sorted( horce_list, key=lambda x:x["score"], reverse = True )
         max_rate = 0
 
-        for i in range( 0, len( sort_result ) ):
-            if sort_result[i]["score"] <= 0:
-                continue
-            
-            bet_horce = sort_result[i]
-            test_result["count"] += 1
+        bet_horce = sort_result[0]
+        test_result["count"] += 1
         
-            if bet_horce["rank"] == 1:
-                recovery_rate += bet_horce["odds"]
-                test_result["win"] += 1
-                test_result["money"] += bet_horce["odds"]
-                lib.log.write( "odds:" + str( bet_horce["odds"] ) + " score:" + str( max( score_list ) ) )
+        if bet_horce["rank"] == 1:
+            recovery_rate += bet_horce["odds"]
+            test_result["win"] += 1
+            test_result["money"] += bet_horce["odds"]
+            lib.log.write( "odds:" + str( bet_horce["odds"] ) + " score:" + str( max( score_list ) ) )
 
     recovery_rate = test_result["money"] / test_result["count"]
     recovery_rate *= 100
