@@ -49,7 +49,7 @@ def score_create( data ):
 
 def main():
     lib.log.set_name( "ga_rank_learn" )
-    data, simu_data = data_create.main( update = True )
+    data, simu_data = data_create.main( update = False )
     
     p = 10
     e = len( data["teacher"][0] )
@@ -84,6 +84,7 @@ def main():
     print( max_recovery_rate )
     lib.log.write( str( best_population ) )
     lib.log.write( str( best_score ) )
+    lib.log.write( str( max_recovery_rate ) + "%" )
 
 if __name__ == "__main__":
     main()

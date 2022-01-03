@@ -18,103 +18,52 @@ dm.dl.file_set( "baba_index_data.pickle" )
 dm.dl.file_set( "parent_id_data.pickle" )
 dm.dl.file_set( "win_rate_data.pickle" )
 dm.dl.file_set( "last_horce_body.pickle" )
+dm.dl.file_set( "rank_learn_encoding.pickle" )
+#dm.dl.file_set( "first_up3_halon.pickle" ) 
 
-#dm.dl.file_set( "first_up3_halon.pickle" )
-
-def time_index_average( time_index, day_list ):
-    result = 0
+def speed_standardization( data ):
+    result = []
+    ave = 0
+    conv = 0
     count = 0
 
-    for i in range( 0, len( day_list ) ):
-        if not time_index[day_list[i]] == 0:
-            count += 1
-            result += time_index[day_list[i]]
+    for d in data:
+        if d < 0:
+            continue
+        
+        ave += d
+        count += 1
 
     if count == 0:
-        return 0
+        return [0] * len( data )
 
-    return result / count
+    ave /= count    
 
-def use_corner_check( s ):
-    if s == 4:
-        return [ "1", "3" ]
-    elif s == 3:
-        return [ "2", "3" ]
+    for d in data:
+        if d < 0:
+            continue
+
+        conv += math.pow( d - ave, 2 )
+
+    conv /= count
+    conv = math.sqrt( conv )
+
+    if conv == 0:
+        return [0] * len( data )
     
-    return [ "3" ]
-
-def max_check( s ):
-    try:
-        return max( s )
-    except:
-        return -100
-    
-def learn_corner_check( rci_info ):
-    result = []
-    c = 0
-    use_corner = use_corner_check( min( rci_info.count( "c" ), 4 ) )
-    
-    for i in range( 0, len( rci_info ) - 1 ):   
-        check = rci_info.count( "c", i, len( rci_info ) )
-
-        if rci_info[i] == "s" and rci_info[i+1] == "c":
-            instance = {}
-            instance["count"] = i
-            instance["corner"] = None
-
-            if check <= 4:
-                instance["corner"] = use_corner[c]
-                c += 1
-            
-            result.append( instance )
+    for d in data:
+        if d < 0:
+            result.append( 0 )
+        else:
+            result.append( ( d - ave ) / conv )
 
     return result
 
-def win_rate_append( t_instance, win_rate, ri_list, key_data ):
-    rate_list = [ "one", "two", "three" ]
-    
-    for kd in key_data:
-        key_name = kd.split( "-" )[1]
-        
-        for i in range( 0, len( ri_list ) ):
-            d1 = ri_list[i]
-            d1_name = d1.split( ":" )[1]
-            write_name = d1_name + "-" + key_name
-            for rl in rate_list:
-                try:
-                    dm.dn.append( t_instance, win_rate[d1][kd][rl], write_name + "-" + rl + "_rate" )
-                except:
-                    dm.dn.append( t_instance, 0, write_name + "-" + rl + "_rate" )
-            
-            for r in range( i + 1, len( ri_list ) ):
-                d2 = ri_list[r]
-                d2_name = d2.split( ":" )[1]
-                write_name = d1_name + ":" + d2_name + "-" + key_name
-                for rl in rate_list:
-                    try:
-                        dm.dn.append( t_instance, win_rate[d1][d2][kd][rl], write_name + "-" + rl + "_rate" )
-                    except:
-                        dm.dn.append( t_instance, 0, write_name + "-" + rl + "_rate" )
-                                        
-                for t in range( r + 1, len( ri_list ) ):
-                    d3 = ri_list[t]
-                    d3_name = d3.split( ":" )[1]
-                    write_name = d1_name + ":" + d2_name + ":" + d3_name + "-" + key_name
-                    for rl in rate_list:
-                        try:
-                            dm.dn.append( t_instance, win_rate[d1][d2][d3][kd][rl], write_name + "-" + rl + "_rate" )
-                        except:
-                            dm.dn.append( t_instance, 0, write_name + "-" + rl + "_rate" )
-                    
-                    for s in range( t + 1, len( ri_list ) ):
-                        d4 = ri_list[s]
-                        d4_name = d1.split( ":" )[1]
-                        write_name = d1_name + ":" + d2_name + ":" + d3_name + ":" + d4_name + "-" + key_name
-                        for rl in rate_list:
-                            try:
-                                dm.dn.append( t_instance, win_rate[d1][d2][d3][d4][kd][rl], write_name + "-" + rl + "_rate" )
-                            except:
-                                dm.dn.append( t_instance, 0, write_name + "-" + rl + "_rate" )    
+def max_check( data ):
+    try:
+        return max( data )
+    except:
+        return -1    
 
 def main( update = False ):
     result = None
@@ -149,6 +98,7 @@ def main( update = False ):
     parent_id_data = dm.dl.data_get( "parent_id_data.pickle" )
     win_rate_data = dm.pickle_load( "win_rate_data.pickle" )
     last_horce_body_data = dm.dl.data_get( "last_horce_body.pickle" )
+    rank_learn_encoding = dm.dl.data_get( "rank_learn_encoding.pickle" )
     train_index = train_index_get()
     time_index = time_index_get()
     jockey_data = JockeyData()
@@ -159,9 +109,6 @@ def main( update = False ):
         race_place_num = race_id[4:6]
         day = race_id[9]
         num = race_id[7]
-
-        if not year == "2021":
-            continue
 
         key_place = str( race_info[race_id]["place"] )
         key_dist = str( race_info[race_id]["dist"] )
@@ -181,12 +128,13 @@ def main( update = False ):
         
         race_limb = [0] * 9
         popular_limb = -1
+        data_list = {}
+        data_list["speed"] = []
+        data_list["up_speed"] = []
+        data_list["pace_speed"] = []
+        data_list["time_index"] = []
+        data_list["average_speed"] = []
         train_index_list = train_index.main( race_data[k], horce_data, race_id )
-        time_index_race_data = { "max": 0, "min": 10000, "average": 0, "count": 0, "my": {} }
-        speed_index_race_data = { "max": -1000, "min": 10000, "average": 0, "count": 0, "my": {} }
-        up_speed_index_race_data = { "max": -1000, "min": 10000, "average": 0, "count": 0, "my": {} }
-        pace_speed_index_race_data = { "max": -1000, "min": 10000, "average": 0, "count": 0, "my": {} }
-        odds_data = { "max": -1, "min": 100000 }
         count = -1
 
         for kk in race_data[k].keys():
@@ -201,56 +149,24 @@ def main( update = False ):
 
             current_time_index = time_index.main( kk, pd.past_day_list() )
             speed, up_speed, pace_speed = pd.speed_index( baba_index_data[horce_id] )
-            time_index_race_data["my"][kk] = current_time_index
-
-            if not cd.odds() == 0:
-                odds_data["max"] = max( odds_data["max"], cd.odds() )
-                odds_data["min"] = min( odds_data["min"], cd.odds() )
-
-            if not current_time_index["max"] == 0:
-                time_index_race_data["max"] = max( time_index_race_data["max"], current_time_index["max"] )
-                time_index_race_data["min"] = max( time_index_race_data["min"], current_time_index["max"] )
-                time_index_race_data["average"] += time_index_race_data["max"]
-                time_index_race_data["count"] += 1
-
-            if not len( speed ) == 0:
-                speed_index_race_data["my"][horce_id] = max( speed )
-                up_speed_index_race_data["my"][horce_id] = max( up_speed )
-                pace_speed_index_race_data["my"][horce_id] = max( pace_speed )
-                speed_index_race_data["max"] = max( max( speed ), speed_index_race_data["max"] )
-                speed_index_race_data["min"] = min( max( speed ), speed_index_race_data["max"] )
-                speed_index_race_data["average"] += max( speed )
-                speed_index_race_data["count"] += 1
-                up_speed_index_race_data["max"] = max( max( up_speed ), up_speed_index_race_data["max"] )
-                up_speed_index_race_data["min"] = min( max( up_speed ), up_speed_index_race_data["max"] )
-                up_speed_index_race_data["average"] += max( up_speed )
-                up_speed_index_race_data["count"] += 1
-                pace_speed_index_race_data["max"] = max( max( pace_speed ), pace_speed_index_race_data["max"] )
-                pace_speed_index_race_data["min"] = min( max( pace_speed ), pace_speed_index_race_data["max"] )
-                pace_speed_index_race_data["average"] += max( pace_speed )
-                pace_speed_index_race_data["count"] += 1
-            else:
-                speed_index_race_data["my"][horce_id] = -100
-                up_speed_index_race_data["my"][horce_id] = -100
-                pace_speed_index_race_data["my"][horce_id] = -100                
+            data_list["speed"].append( max_check( speed ) )
+            data_list["up_speed"].append( max_check( up_speed ) )
+            data_list["pace_speed"].append( max_check( pace_speed ) )            
+            data_list["time_index"].append( current_time_index["max"] )
+            data_list["average_speed"].append( pd.average_speed() )
             
             try:
                 limb_math = lib.limb_search( pd )
             except:
                 limb_math = 0
-
-            if cd.popular() == 1:
-                popular_limb = limb_math
                 
             race_limb[limb_math] += 1
 
-        if not time_index_race_data["count"] == 0:
-            time_index_race_data["average"] /= time_index_race_data["count"]
-
-        if not speed_index_race_data["count"] == 0:
-            speed_index_race_data["average"] /= speed_index_race_data["count"]
-            up_speed_index_race_data["average"] /= up_speed_index_race_data["count"]
-            pace_speed_index_race_data["average"] /= pace_speed_index_race_data["count"]
+        data_list["stand_speed"] = speed_standardization( data_list["speed"] )
+        data_list["stand_up_speed"] = speed_standardization( data_list["up_speed"] )
+        data_list["stand_pace_speed"] = speed_standardization( data_list["pace_speed"] )
+        data_list["stand_time_index"] = speed_standardization( data_list["time_index"] )
+        data_list["stand_average_speed"] = speed_standardization( data_list["average_speed"] )
         
         for kk in race_data[k].keys():
             horce_id = kk
@@ -264,28 +180,25 @@ def main( update = False ):
 
             #pad = parent_data.main( horce_name, cd )
             current_jockey = jockey_data.data_get( horce_id, cd.birthday(), cd.race_num() )
-            key_horce_num = str( int( cd.horce_number() ) )
             before_horce_body = 0
             count += 1
+
+            stand_speed = data_list["stand_speed"][count-1]
+            stand_up_speed = data_list["stand_up_speed"][count-1]
+            stand_pace_speed = data_list["stand_pace_speed"][count-1]
+            stand_time_index = data_list["stand_time_index"][count-1]            
+            stand_average_speed = data_list["stand_average_speed"][count-1]
             
             t_instance = []
-            change_data = []
-            key_data = []
             
             try:
                 limb_math = lib.limb_search( pd )
             except:
                 limb_math = 0
 
-            horce_num = int( cd.horce_number() )
-            flame_num = int( cd.flame_number() )
-
-            str_limb = str( int( limb_math ) ) + "-limb"
-            str_horce_num = str( horce_num ) + "-horce_num"
-            str_flame_num = str( flame_num ) + "-flame_num"
-            key_data.append( str_limb )
-            key_data.append( str_horce_num )
-            key_data.append( str_flame_num )
+            key_horce_num = str( int( cd.horce_number() ) )
+            key_limb = str( int( limb_math ) )
+            key_burden = str( int( cd.burden_weight() ))
 
             try:
                 last_horce_body = corner_horce_body[race_id]["4"][key_horce_num]
@@ -298,40 +211,43 @@ def main( update = False ):
             mother_data = parent_data_get.main( horce_data, mother_id, baba_index_data )
             #dm.dn.append( t_instance, race_limb[0], "その他の馬の数" )
             dm.dn.append( t_instance, race_limb[1], "逃げaの馬の数" )
-            dm.dn.append( t_instance, race_limb[2], "逃げbの馬の数" )
-            dm.dn.append( t_instance, race_limb[3], "先行aの馬の数" )
+            #dm.dn.append( t_instance, race_limb[2], "逃げbの馬の数" )
+            #dm.dn.append( t_instance, race_limb[3], "先行aの馬の数" )
             dm.dn.append( t_instance, race_limb[4], "先行bの馬の数" )
             dm.dn.append( t_instance, race_limb[5], "差しaの馬の数" )
-            dm.dn.append( t_instance, race_limb[6], "差しbの馬の数" )
-            dm.dn.append( t_instance, race_limb[7], "追いの馬の数" )
-            dm.dn.append( t_instance, race_limb[8], "後方の馬の数" )
-            dm.dn.append( t_instance, popular_limb, "一番人気の馬の脚質" )
-            dm.dn.append( t_instance, float( key_place ), "場所" )
-            dm.dn.append( t_instance, float( key_dist ), "距離" )
-            dm.dn.append( t_instance, float( key_kind ), "芝かダート" )
-            dm.dn.append( t_instance, float( key_baba ), "馬場" )
-            dm.dn.append( t_instance, cd.id_weight(), "馬体重の増減" )
-            dm.dn.append( t_instance, cd.burden_weight(), "斤量" )
-            dm.dn.append( t_instance, cd.horce_number(), "馬番" )
-            dm.dn.append( t_instance, cd.flame_number(), "枠番" )
-            dm.dn.append( t_instance, cd.all_horce_num(), "馬の頭数" )
-            dm.dn.append( t_instance, float( key_dist ) - rci_dist[-1], "今まで走った距離" )
-            dm.dn.append( t_instance, rci_dist[-1], "直線の距離" )
-            dm.dn.append( t_instance, limb_math, "過去データからの予想脚質" )
+            #dm.dn.append( t_instance, race_limb[6], "差しbの馬の数" )
+            #dm.dn.append( t_instance, race_limb[7], "追いの馬の数" )
+            #dm.dn.append( t_instance, race_limb[8], "後方の馬の数" )
+            dm.dn.append( t_instance, rank_learn_encoding["place_limb"][key_place][key_limb], "場所" )
+            dm.dn.append( t_instance, rank_learn_encoding["dist_limb"][key_dist][key_limb] , "距離" )
+            #dm.dn.append( t_instance, rank_learn_encoding["kind_limb"][key_kind][key_limb], "芝かダート" )
+            #dm.dn.append( t_instance, rank_learn_encoding["baba_limb"][key_baba][key_limb], "馬場" )
+            #dm.dn.append( t_instance, cd.id_weight(), "馬体重の増減" )
+            dm.dn.append( t_instance, rank_learn_encoding["burden"][key_burden], "斤量" )
+            dm.dn.append( t_instance, rank_learn_encoding["horce_number"][key_horce_num], "馬番" )
+            #dm.dn.append( t_instance, float( key_dist ) - rci_dist[-1], "今まで走った距離" )
+            #dm.dn.append( t_instance, rci_dist[-1], "直線の距離" )
+            #dm.dn.append( t_instance, rank_learn_encoding["limb"][key_limb], "過去データからの予想脚質" )
 
-            dm.dn.append( t_instance, speed_index_race_data["my"][horce_id] , "最大のスピード指数" )
-            dm.dn.append( t_instance, speed_index_race_data["my"][horce_id] - speed_index_race_data["max"] , "レース内の最大のスピード指数との差" )
-            dm.dn.append( t_instance, speed_index_race_data["my"][horce_id] - speed_index_race_data["min"] , "レース内の最小のスピード指数との差" )
-            dm.dn.append( t_instance, speed_index_race_data["my"][horce_id] - speed_index_race_data["average"] , "レース内の平均のスピード指数との差" )
-            dm.dn.append( t_instance, up_speed_index_race_data["my"][horce_id] , "最大の上り指数" )
-            dm.dn.append( t_instance, up_speed_index_race_data["my"][horce_id] - up_speed_index_race_data["max"] , "レース内の最大の上り指数との差" )
-            dm.dn.append( t_instance, up_speed_index_race_data["my"][horce_id] - up_speed_index_race_data["min"] , "レース内の最小の上り指数との差" )
-            dm.dn.append( t_instance, up_speed_index_race_data["my"][horce_id] - up_speed_index_race_data["average"] , "レース内の平均の上り指数との差" )
-            dm.dn.append( t_instance, pace_speed_index_race_data["my"][horce_id] , "最大のペース指数" )
-            dm.dn.append( t_instance, pace_speed_index_race_data["my"][horce_id] - pace_speed_index_race_data["max"] , "レース内の最大のペース指数との差" )
-            dm.dn.append( t_instance, pace_speed_index_race_data["my"][horce_id] - pace_speed_index_race_data["min"] , "レース内の最小のペース指数との差" )
-            dm.dn.append( t_instance, pace_speed_index_race_data["my"][horce_id] - pace_speed_index_race_data["average"] , "レース内の平均のペース指数との差" )
-
+            #dm.dn.append( t_instance, data_list["speed"][count-1], "スピード指数" )
+            #dm.dn.append( t_instance, data_list["speed"][count-1] - max( data_list["speed"] ), "max_diffスピード指数" )
+            dm.dn.append( t_instance, stand_speed, "standスピード指数" )
+            #dm.dn.append( t_instance, stand_speed - max( data_list["stand_speed"] ), "stand_max_diffスピード指数" )
+            
+            #m.dn.append( t_instance, data_list["up_speed"][count-1], "上り指数" )
+            #m.dn.append( t_instance, data_list["up_speed"][count-1] - max( data_list["up_speed"] ), "max_diff上り指数" )
+            dm.dn.append( t_instance, stand_up_speed, "stand上り指数" )
+            dm.dn.append( t_instance, stand_up_speed - max( data_list["stand_up_speed"] ), "stand_max_diff上り指数" )
+            
+            #dm.dn.append( t_instance, data_list["pace_speed"][count-1], "ペース指数" )
+            dm.dn.append( t_instance, data_list["pace_speed"][count-1] - max( data_list["pace_speed"] ), "max_diffペース指数" )
+            #dm.dn.append( t_instance, stand_pace_speed , "standペース指数" )
+            dm.dn.append( t_instance, stand_pace_speed - max( data_list["stand_pace_speed"] ), "stand_max_diffペース指数" )
+            
+            #dm.dn.append( t_instance, data_list["time_index"][count-1], "タイム指数" )
+            #dm.dn.append( t_instance, data_list["time_index"][count-1] - max( data_list["time_index"] ), "max_diffタイム指数" )
+            #dm.dn.append( t_instance, stand_time_index, "standタイム指数" )
+            dm.dn.append( t_instance, stand_time_index - max( data_list["stand_time_index"] ), "stand_max_diffタイム指数" )
             #dm.dn.append( t_instance, pd.three_average(), "過去3レースの平均順位" )
             #dm.dn.append( t_instance, pd.dist_rank_average(), "過去同じ距離の種類での平均順位" )
             #dm.dn.append( t_instance, pd.racekind_rank_average(), "過去同じレース状況での平均順位" )
@@ -341,46 +257,42 @@ def main( update = False ):
             #dm.dn.append( t_instance, pd.two_rate(), "連対率" )
             #dm.dn.append( t_instance, pd.get_money(), "獲得賞金" )
             dm.dn.append( t_instance, pd.best_weight(), "ベスト体重と現在の体重の差" )
-            dm.dn.append( t_instance, pd.race_interval(), "中週" )
-            dm.dn.append( t_instance, pd.average_speed(), "平均速度" )
+            #dm.dn.append( t_instance, pd.race_interval(), "中週" )
+            #dm.dn.append( t_instance, stand_average_speed, "平均速度" )
             dm.dn.append( t_instance, pd.pace_up_check(), "ペースと上りの関係" )
-            dm.dn.append( t_instance, train_index_list[key_horce_num]["a"], "調教ペースの傾き" )
+            #dm.dn.append( t_instance, train_index_list[key_horce_num]["a"], "調教ペースの傾き" )
             dm.dn.append( t_instance, train_index_list[key_horce_num]["b"], "調教ペースの切片" )
             #dm.dn.append( t_instance, train_index_list[count]["time"], "調教ペースの指数タイム" )
-            dm.dn.append( t_instance, time_index_race_data["my"][horce_id]["max"], "タイム指数の最大" )
-            dm.dn.append( t_instance, time_index_race_data["my"][horce_id]["max"] - time_index_race_data["max"], "タイム指数の最大との差" )
-            dm.dn.append( t_instance, time_index_race_data["my"][horce_id]["max"] - time_index_race_data["min"], "タイム指数の最小との差" )
-            dm.dn.append( t_instance, time_index_race_data["my"][horce_id]["max"] - time_index_race_data["average"], "タイム指数の平均との差" )
             #dm.dn.append( t_instance, father_data["rank"], "父親の平均順位" )
             #dm.dn.append( t_instance, father_data["two_rate"], "父親の連対率" )
             #dm.dn.append( t_instance, father_data["three_rate"], "父親の副賞率" )
             dm.dn.append( t_instance, father_data["average_speed"], "父親の平均速度" )
-            dm.dn.append( t_instance, father_data["speed_index"], "父親の最大のスピード指数" )
-            dm.dn.append( t_instance, father_data["up_speed_index"], "父親の最大の上りスピード指数" )
+            #dm.dn.append( t_instance, father_data["speed_index"], "父親の最大のスピード指数" )
+            #dm.dn.append( t_instance, father_data["up_speed_index"], "父親の最大の上りスピード指数" )
             dm.dn.append( t_instance, father_data["pace_speed_index"], "父親の最大のペース指数" )
             #dm.dn.append( t_instance, father_data["limb"], "父親の脚質" )
             #dm.dn.append( t_instance, mother_data["rank"], "母親の平均順位" )
             #dm.dn.append( t_instance, mother_data["two_rate"], "母親の連対率" )
             #dm.dn.append( t_instance, mother_data["three_rate"], "母親の副賞率" )
-            dm.dn.append( t_instance, mother_data["average_speed"], "母親の平均速度" )
-            dm.dn.append( t_instance, mother_data["speed_index"], "母親の最大のスピード指数" )
-            dm.dn.append( t_instance, mother_data["up_speed_index"], "母親の最大の上りスピード指数" )
+            #dm.dn.append( t_instance, mother_data["average_speed"], "母親の平均速度" )
+            #dm.dn.append( t_instance, mother_data["speed_index"], "母親の最大のスピード指数" )
+            #dm.dn.append( t_instance, mother_data["up_speed_index"], "母親の最大の上りスピード指数" )
             dm.dn.append( t_instance, mother_data["pace_speed_index"], "母親の最大のペース指数" )
             #dm.dn.append( t_instance, mother_data["limb"], "母親の脚質" )
             #dm.dn.append( t_instance, current_jockey["all"]["rank"], "騎手の過去の平均順位" )
             #dm.dn.append( t_instance, current_jockey["all"]["one"], "騎手の過去のone" )
             #dm.dn.append( t_instance, current_jockey["all"]["two"], "騎手の過去のtwo" )
             #dm.dn.append( t_instance, current_jockey["all"]["three"], "騎手の過去のthree" )
-            dm.dn.append( t_instance, current_jockey["all"]["time"], "騎手の過去のタイム" )
-            dm.dn.append( t_instance, current_jockey["all"]["up"], "騎手の過去の上り" )
+            #dm.dn.append( t_instance, current_jockey["all"]["time"], "騎手の過去のタイム" )
+            #dm.dn.append( t_instance, current_jockey["all"]["up"], "騎手の過去の上り" )
             #dm.dn.append( t_instance, current_jockey["100"]["rank"], "騎手の過去の100の平均順位" )
             #dm.dn.append( t_instance, current_jockey["100"]["one"], "騎手の過去の100のone" )
             #dm.dn.append( t_instance, current_jockey["100"]["two"], "騎手の過去の100のtwo" )
             #dm.dn.append( t_instance, current_jockey["100"]["three"], "騎手の過去の100のthree" )
-            dm.dn.append( t_instance, current_jockey["100"]["time"], "騎手の過去の100のタイム" )
+            #dm.dn.append( t_instance, current_jockey["100"]["time"], "騎手の過去の100のタイム" )
             dm.dn.append( t_instance, current_jockey["100"]["up"], "騎手の過去の100の上り" )
             
-            win_rate_append( t_instance, win_rate_data, ri_list, key_data )
+            #win_rate_append( t_instance, win_rate_data, ri_list, key_data )
             
             """
             if not year == lib.test_year:

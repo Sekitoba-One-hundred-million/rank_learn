@@ -79,7 +79,7 @@ def lgb_test( data ):
     
     return bst.params
 
-def data_check( data, min_rank ):
+def data_check( data ):
     result = {}
     result["teacher"] = []
     result["test_teacher"] = []
@@ -154,7 +154,7 @@ def diff_data_check( data, min_rank ):
 
     return result
 
-def main( data, simu_data, simulation = True, learn_data = False ):
+def main( data, simu_data, simulation = True ):
     print( "rank_learn" )
     model_list = []
     """
@@ -167,7 +167,7 @@ def main( data, simu_data, simulation = True, learn_data = False ):
 
     rank_multi_simulation.main( model_list, simu_data )
     """
-    learn_data = data_check( data, 6 )
+    learn_data = data_check( data )
     #learn_data = diff_data_check( data, 6 )
     #params = lgb_test( learn_data )
     rank_model = lg_main( learn_data )
