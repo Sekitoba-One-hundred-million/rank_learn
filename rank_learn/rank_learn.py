@@ -8,9 +8,6 @@ import lightgbm as lgb
 import optuna.integration.lightgbm as test_lgb
 from tqdm import tqdm
 import matplotlib.pyplot as plt
-from chainer import serializers
-import xgboost as xgb
-import pandas as pd
 
 import sekitoba_library as lib
 import sekitoba_data_manage as dm
@@ -18,6 +15,7 @@ from rank_learn import rank_simulation
 from rank_learn import rank_multi_simulation
 
 def lg_main( data ):
+    print( len( data["test_teacher"] ), len( data["teacher"] ) )
     max_pos = np.max( np.array( data["answer"] ) )
     lgb_train = lgb.Dataset( np.array( data["teacher"] ), np.array( data["answer"] ), group = np.array( data["query"] ) )
     lgb_vaild = lgb.Dataset( np.array( data["test_teacher"] ), np.array( data["test_answer"] ), group = np.array( data["test_query"] ) )
@@ -63,7 +61,7 @@ def lgb_test( data ):
         'ndcg_eval_at': [1,2,3],  # for lambdarank
         'label_gain': list(range(0, np.max( np.array( data["answer"], dtype = np.int32 ) ) + 1)),
         'max_position': int( max_pos ),  # for lambdarank
-        'early_stopping_rounds': 30,        
+        'early_stopping_rounds': 30,
     }
 
     bst = test_lgb.train( params = lgbm_params,
@@ -100,11 +98,20 @@ def data_check( data ):
             result["query"].append( q )
 
         current_data = list( data["teacher"][count:count+q] )
-        current_answer = list( data["answer_rank"][count:count+q] )
+        current_answer = list( data["answer"][count:count+q] )
 
         for r in range( 0, len( current_data ) ):
             answer_rank = current_answer[r]
 
+            if answer_rank == 1:
+                answer_rank = 10
+            elif answer_rank == 2:
+                answer_rank = 5
+            elif answer_rank == 3:
+                answer_rank = 3
+            else:
+                answer_rank = 0
+                
             if year == lib.test_year:
                 result["test_teacher"].append( current_data[r] )
                 result["test_answer"].append( float( answer_rank ) )
@@ -139,7 +146,7 @@ def diff_data_check( data, min_rank ):
         current_data = list( data["teacher"][count:count+q] )
         current_answer = list( data["answer_diff"][count:count+q] )
 
-        for r in range( 0, len( current_data ) ):            
+        for r in range( 0, len( current_data ) ):
             answer_rank = max( ( current_answer[r] + 2 ) * 10, 0 )
             answer_rank = int( answer_rank )
 

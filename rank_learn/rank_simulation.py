@@ -41,13 +41,17 @@ def softmax( data ):
 
 def main( model, data ):    
     recovery_rate = 0
-    t = 0
+    t = 1
     test = {}
     test_result = { "count": 0, "three_count": 0, "money": 0, "three_money": 0, "win": 0, "three": 0 }
     money = 50000
+    money_list = []
     ave_score = 0
     win_score = 0
     lose_score = 0
+    t1 = 0
+    t2 = 0
+    t3 = 0    
 
     odds_data = dm.pickle_load( "odds_data.pickle" )
     
@@ -59,7 +63,7 @@ def main( model, data ):
         for horce_id in data[race_id].keys():
             p_data = model.predict( np.array( [ data[race_id][horce_id]["data"] ] ) )
             ex_value = {}
-            score = p_data[0] * -1
+            score = p_data[0]
             ex_value["score"] = score
             ex_value["rank"] = data[race_id][horce_id]["answer"]["rank"]
             ex_value["odds"] = data[race_id][horce_id]["answer"]["odds"]
@@ -74,43 +78,44 @@ def main( model, data ):
 
         softmax_score_list = sorted( softmax_score_list, reverse = True )
         sort_result = sorted( horce_list, key=lambda x:x["score"], reverse = True )
-        max_rate = 0
-        bet_horce = sort_result[0]
 
-        if bet_horce["odds"] > 50:
-            continue
+        for i in range( 0, t ):
+            bet_horce = sort_result[i]
+            #bet_money = min( money, 100000 )
+            #bet_money = ( bet_money / 5 ) * bet_rate
+            #bet_money = int( bet_money / 100 ) * 100
+            #money -= bet_money
 
-        test_result["count"] += 1
+            test_result["count"] += 1
         
-        if bet_horce["rank"] == 1:
-            recovery_rate += bet_horce["odds"]
-            test_result["win"] += 1
-            test_result["money"] += bet_horce["odds"]            
-            lib.log.write( "odds:" + str( bet_horce["odds"] ) + " score:" + str( max( score_list ) ) )
+            if bet_horce["rank"] == 1:
+                recovery_rate += bet_horce["odds"]
+                #money += bet_money * bet_horce["odds"]
+                test_result["win"] += 1
+                test_result["money"] += bet_horce["odds"]
+                lib.log.write( "odds:" + str( bet_horce["odds"] ) + " score:" + str( max( score_list ) ) )
 
-        for i in range( 0, 2 ):
-            test_result["three_count"] += 1
-            
-            if sort_result[i]["rank"] < 4:
-                test_result["three"] += 1
-                
-                try:
-                    test_result["three_money"] += current_odds["複勝"][int( sort_result[i]["rank"] - 1 )]
-                except:
-                    continue
+            #print( money, bet_money, bet_horce["rank"] )
+            #money_list.append( money )
 
+    #x_data = list( range( 0, len( money_list ) ) )
+    #plt.plot( x_data, money_list )
+    #plt.savefig( "money.png" )
+    #plt.close()
+    
     recovery_rate = test_result["money"] / test_result["count"]
     recovery_rate *= 100
     win_rate = test_result["win"] / test_result["count"]
-    win_rate *= 100
-    three_rate = test_result["three"] / test_result["three_count"]
-    three_rate *= 100
-    three_recovery_rate = test_result["three_money"] / test_result["three_count"]
-    
+    win_rate *= 100 * t
+    #print( money )
+    #three_rate = test_result["three"] / test_result["three_count"]
+    #three_rate *= 100
+    #three_recovery_rate = test_result["three_money"] / test_result["three_count"]
+    print( "" )
     print( "回収率{}%".format( recovery_rate ) )
     print( "勝率{}%".format( win_rate ) )
-    print( "副勝率{}%".format( three_rate ) )
-    print( "複勝回収率{}%".format( three_recovery_rate ) )
+    #print( "副勝率{}%".format( three_rate ) )
+    #print( "複勝回収率{}%".format( three_recovery_rate ) )
     print( "賭けた回数{}回".format( test_result["count"] ) )
     lib.log.write( "回収率{}%".format( recovery_rate ) )
     lib.log.write( "勝率{}%".format( win_rate ) )

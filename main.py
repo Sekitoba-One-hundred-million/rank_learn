@@ -1,4 +1,5 @@
 from argparse import ArgumentParser
+from mpi4py import MPI
 
 import sekitoba_data_manage as dm
 import sekitoba_library as lib
@@ -23,10 +24,13 @@ def main():
     lib.log.write( "s_check:" + str( s_check ) )
     lib.log.write( "r_check:" + str( r_check ) )
     
-    data, simu_data = data_create.main( update = u_check )
+    data = data_create.main( update = u_check )
     
-    lib.log.write( "rank learn" )
-    rank_model = rank_learn.main( data, simu_data )
+    if not data  == None:
+        lib.log.write( "rank learn" )
+        rank_model = rank_learn.main( data["data"], data["simu"] )
+
+    MPI.Finalize()        
     
 if __name__ == "__main__":
     main()
