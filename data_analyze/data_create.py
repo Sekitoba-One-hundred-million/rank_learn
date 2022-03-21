@@ -30,8 +30,9 @@ def main( update = False ):
     if not update:
         if rank == 0:
             result = dm.pickle_load( "rank_learn_data.pickle" )
-            simu_data = dm.pickle_load( "rank_learn_data.pickle" )
-
+            simu_data = dm.pickle_load( "rank_simu_data.pickle" )
+            update_check = False
+            
             if result == None:
                 update_check =  True
 
@@ -54,7 +55,6 @@ def main( update = False ):
         
         for i in range( 1, size ):
             file_name = comm.recv( source = i, tag = 2 )
-            print( file_name )
             instance = dm.pickle_load( file_name )
             dm.pickle_delete( file_name )
             result["simu"].update( instance["simu"] )
@@ -64,7 +64,7 @@ def main( update = False ):
 
         dm.dn.write( "rank_learn_memo.txt" )
         dm.pickle_upload( "rank_learn_data.pickle", result["data"] )
-        dm.pickle_upload( "rank_simu_data.pickle", result["simu"] )        
+        dm.pickle_upload( "rank_simu_data.pickle", result["simu"] )
     else:
         od = OnceData()
         key_list = key_list_search( rank, size, list( od.race_data.keys() ) )

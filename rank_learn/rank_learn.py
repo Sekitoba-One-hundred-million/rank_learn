@@ -180,6 +180,7 @@ def main( data, simu_data, simulation = True ):
     rank_model = lg_main( learn_data )
     
     if simulation:
-        recovery_rate, win_rate = rank_simulation.main( rank_model, simu_data )
+        for i in range( 1, 5 ):
+            recovery_rate, win_rate = rank_simulation.main( rank_model, simu_data, i )
 
     return rank_model, recovery_rate

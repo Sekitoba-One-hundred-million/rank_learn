@@ -41,50 +41,6 @@ class OnceData:
         self.simu_data = {}
         self.result = { "answer": [], "teacher": [], "query": [], "year": [] }
 
-    def speed_standardization( self, data ):
-        result = []
-        ave = 0
-        conv = 0
-        count = 0
-
-        for d in data:
-            if d < 0:
-                continue
-        
-            ave += d
-            count += 1
-
-        if count == 0:
-            return [0] * len( data )
-
-        ave /= count
-
-        for d in data:
-            if d < 0:
-                continue
-
-            conv += math.pow( d - ave, 2 )
-
-        conv /= count
-        conv = math.sqrt( conv )
-
-        if conv == 0:
-            return [0] * len( data )
-    
-        for d in data:
-            if d < 0:
-                result.append( 0 )
-            else:
-                result.append( ( d - ave ) / conv )
-
-        return result
-
-    def max_check( self, data ):
-        try:
-            return max( data )
-        except:
-            return -1
-
     def create( self, k ):
         race_id = lib.id_get( k )
         year = race_id[0:4]
@@ -129,9 +85,9 @@ class OnceData:
 
             current_time_index = self.time_index.main( kk, pd.past_day_list() )
             speed, up_speed, pace_speed = pd.speed_index( self.baba_index_data[horce_id] )
-            data_list["speed"].append( self.max_check( speed ) )
-            data_list["up_speed"].append( self.max_check( up_speed ) )
-            data_list["pace_speed"].append( self.max_check( pace_speed ) )            
+            data_list["speed"].append( lib.max_check( speed ) )
+            data_list["up_speed"].append( lib.max_check( up_speed ) )
+            data_list["pace_speed"].append( lib.max_check( pace_speed ) )            
             data_list["time_index"].append( current_time_index["max"] )
             data_list["average_speed"].append( pd.average_speed() )
             
@@ -142,11 +98,11 @@ class OnceData:
                 
             race_limb[limb_math] += 1
 
-        data_list["stand_speed"] = self.speed_standardization( data_list["speed"] )
-        data_list["stand_up_speed"] = self.speed_standardization( data_list["up_speed"] )
-        data_list["stand_pace_speed"] = self.speed_standardization( data_list["pace_speed"] )
-        data_list["stand_time_index"] = self.speed_standardization( data_list["time_index"] )
-        data_list["stand_average_speed"] = self.speed_standardization( data_list["average_speed"] )
+        data_list["stand_speed"] = lib.speed_standardization( data_list["speed"] )
+        data_list["stand_up_speed"] = lib.speed_standardization( data_list["up_speed"] )
+        data_list["stand_pace_speed"] = lib.speed_standardization( data_list["pace_speed"] )
+        data_list["stand_time_index"] = lib.speed_standardization( data_list["time_index"] )
+        data_list["stand_average_speed"] = lib.speed_standardization( data_list["average_speed"] )
         count = -1
         co = 0
         
@@ -180,7 +136,7 @@ class OnceData:
             key_horce_num = str( int( cd.horce_number() ) )
             key_limb = str( int( limb_math ) )
             key_burden = str( int( cd.burden_weight() ))
-
+            
             if not year == lib.test_year:
                 try:
                     last_horce_body = self.corner_horce_body[race_id]["4"][key_horce_num]
@@ -193,7 +149,6 @@ class OnceData:
                 except:
                     co += 1
                     continue
-
             father_id = self.parent_id_data[horce_id]["father"]
             mother_id = self.parent_id_data[horce_id]["mother"]
             father_data = dc.parent_data_get.main( self.horce_data, father_id, self.baba_index_data )

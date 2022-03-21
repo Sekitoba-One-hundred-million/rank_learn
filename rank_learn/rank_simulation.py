@@ -39,9 +39,8 @@ def softmax( data ):
 
     return result
 
-def main( model, data ):    
+def main( model, data, t ):   
     recovery_rate = 0
-    t = 1
     test = {}
     test_result = { "count": 0, "three_count": 0, "money": 0, "three_money": 0, "win": 0, "three": 0 }
     money = 50000
@@ -112,6 +111,7 @@ def main( model, data ):
     #three_rate *= 100
     #three_recovery_rate = test_result["three_money"] / test_result["three_count"]
     print( "" )
+    print( "選択数:{}".format( t ) )
     print( "回収率{}%".format( recovery_rate ) )
     print( "勝率{}%".format( win_rate ) )
     #print( "副勝率{}%".format( three_rate ) )
