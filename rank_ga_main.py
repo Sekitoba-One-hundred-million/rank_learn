@@ -5,11 +5,12 @@ import genetic_algorithm
 import sekitoba_data_manage as dm
 import sekitoba_library as lib
 from data_analyze import data_create
-from rank_learn import rank_learn
+from learn import learn
+
+lib.name.set_name( "rank" )
 
 def data_remove( data, simu_data, remove_data ):
     data_result = []
-    print( len( data["teacher"][0] ) )
     
     for i in range( 0, len( data["teacher"] ) ):
         t_instance = []        
@@ -31,13 +32,17 @@ def data_remove( data, simu_data, remove_data ):
 
             simu_data[k][kk]["data"] = t_instance
 
-def score_create( data ):
-    score = 0
+def score_create( data, win_rate ):
+    score = 0    
     
     if data < 80:
-        return score
+        return score    
 
+    score += win_rate - 20
     score = data - 80
+
+    if win_rate > 25:
+        score += 5
 
     if 90 < data:
         score += 5
@@ -45,17 +50,23 @@ def score_create( data ):
     if 100 < data:
         score += 10
 
-    return score
+    return score# * win_rate
 
 def main():
+    #lib.log.set_write( False )
     lib.log.set_name( "ga_rank_learn" )
-    data, simu_data = data_create.main( update = False )
+    download_data = data_create.main( update = False )
+
+    data = copy.deepcopy( download_data["data"] )
+    simu_data = copy.deepcopy( download_data["simu"] )
+    download_data.clear()
     
     p = 10
     e = len( data["teacher"][0] )
     ga = genetic_algorithm.GA( e, p )
     lib.log.write( "ga_rank_learn" )
     max_recovery_rate = 0
+    max_win_rate = 0
 
     for i in range( 0, 100 ): 
         score_result = []
@@ -65,9 +76,11 @@ def main():
             instance_data = copy.deepcopy( data )
             instance_simu_data = copy.deepcopy( simu_data )
             data_remove( instance_data, instance_simu_data, parent[r] )
-            _, recovery_rate = rank_learn.main( instance_data, instance_simu_data )
+            simu_result = learn.main( instance_data, instance_simu_data )
+            recovery_rate = simu_result["recovery"]
+            win_rate = simu_result["win"]
             max_recovery_rate = max( max_recovery_rate, recovery_rate )
-            score_result.append( score_create( recovery_rate ) )
+            score_result.append( score_create( recovery_rate, win_rate ) )
         
         ga.scores_set( score_result )
         ga.next_genetic()

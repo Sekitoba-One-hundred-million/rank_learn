@@ -55,6 +55,11 @@ def main( model, data, t ):
     odds_data = dm.pickle_load( "odds_data.pickle" )
     
     for race_id in tqdm( data.keys() ):
+        year = race_id[0:4]
+
+        if not year in lib.test_years:
+            continue
+        
         horce_list = []
         score_list = []
         current_odds = odds_data[race_id]
@@ -66,6 +71,7 @@ def main( model, data, t ):
             ex_value["score"] = score
             ex_value["rank"] = data[race_id][horce_id]["answer"]["rank"]
             ex_value["odds"] = data[race_id][horce_id]["answer"]["odds"]
+            ex_value["popular"] = data[race_id][horce_id]["answer"]["popular"]  
             score_list.append( score )
             horce_list.append( ex_value )
 
@@ -85,6 +91,12 @@ def main( model, data, t ):
             #bet_money = int( bet_money / 100 ) * 100
             #money -= bet_money
 
+            #if not sort_result[i]["popular"] == 1:
+            #    continue
+
+            #if 50 < bet_horce["odds"]:
+            #    continue
+            
             test_result["count"] += 1
         
             if bet_horce["rank"] == 1:
@@ -92,7 +104,7 @@ def main( model, data, t ):
                 #money += bet_money * bet_horce["odds"]
                 test_result["win"] += 1
                 test_result["money"] += bet_horce["odds"]
-                lib.log.write( "odds:" + str( bet_horce["odds"] ) + " score:" + str( max( score_list ) ) )
+                #lib.log.write( "odds:" + str( bet_horce["odds"] ) + " score:" + str( max( score_list ) ) )
 
             #print( money, bet_money, bet_horce["rank"] )
             #money_list.append( money )

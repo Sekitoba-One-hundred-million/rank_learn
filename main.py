@@ -1,14 +1,33 @@
 from argparse import ArgumentParser
+import numpy as np
 from mpi4py import MPI
 
 import sekitoba_data_manage as dm
 import sekitoba_library as lib
 from data_analyze import data_create
-from rank_learn import rank_learn
+from learn import learn
+
+lib.name.set_name( "rank" )
+
+def tree_model_data_create():
+    result = {}
+    model = dm.pickle_load( lib.name.model_name() )
+    simu_data = dm.pickle_load( lib.name.simu_name() )
+    
+    for k in simu_data.keys():
+        data = []
+        result[k] = {}
+        
+        for kk in simu_data[k].keys():
+            pah = model.predict( np.array( [ simu_data[k][kk]["data"] ] ) )[0]            
+            result[k][kk] = {}
+            result[k][kk]["score"] = pah
+            result[k][kk]["answer"] = simu_data[k][kk]["answer"]
+
+    dm.pickle_upload( lib.name.score_name(), result )
 
 def main():
-    #lib.log.set_name( "nn_simulation_3.log" )
-    lib.log.set_name( "rank_learn.log" )
+    lib.log.set_write( False )
     parser = ArgumentParser()
     parser.add_argument( "-g", type=bool, default = False, help = "optional" )
     parser.add_argument( "-u", type=bool, default = False, help = "optional" )
@@ -26,10 +45,10 @@ def main():
     
     data = data_create.main( update = u_check )
     
-    if not data  == None:
-        lib.log.write( "rank learn" )
-        rank_model = rank_learn.main( data["data"], data["simu"] )
-
+    if not data  == None:        
+        learn.main( data["data"], data["simu"] )
+        tree_model_data_create()
+        
     MPI.Finalize()        
     
 if __name__ == "__main__":

@@ -29,8 +29,8 @@ def main( update = False ):
     
     if not update:
         if rank == 0:
-            result = dm.pickle_load( "rank_learn_data.pickle" )
-            simu_data = dm.pickle_load( "rank_simu_data.pickle" )
+            result = dm.pickle_load( lib.name.data_name() )
+            simu_data = dm.pickle_load( lib.name.simu_name() )
             update_check = False
             
             if result == None:
@@ -50,6 +50,11 @@ def main( update = False ):
 
     if rank == 0:
         result = {}
+        dm.dl.local_keep()
+        
+        for i in range( 1, size ):
+            comm.send( True, dest = i, tag = 1 )
+
         result["simu"] = {}
         result["data"] = { "answer": [], "teacher": [], "query": [], "year": [] }
         
@@ -62,11 +67,12 @@ def main( update = False ):
             for k in instance["data"].keys():
                 result["data"][k].extend( instance["data"][k] )
 
-        dm.dn.write( "rank_learn_memo.txt" )
-        dm.pickle_upload( "rank_learn_data.pickle", result["data"] )
-        dm.pickle_upload( "rank_simu_data.pickle", result["simu"] )
+        dm.pickle_upload( lib.name.data_name(), result["data"] )
+        dm.pickle_upload( lib.name.simu_name(), result["simu"] )
     else:
+        ok = comm.recv( source = 0, tag = 1 )        
         od = OnceData()
+        print( "start rank:{}".format( rank ) )
         key_list = key_list_search( rank, size, list( od.race_data.keys() ) )
 
         if rank == 1:
@@ -76,6 +82,9 @@ def main( update = False ):
             for k in key_list:
                 od.create( k )
 
+        if rank == 1:
+            dm.dn.write( lib.name.memo_name() )
+            
         file_name = str( rank ) + "-instance.pickle"
         dm.pickle_upload( file_name, { "data": od.result, "simu": od.simu_data } )
         comm.send( file_name, dest = 0, tag = 2 )

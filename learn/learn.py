@@ -11,8 +11,8 @@ import matplotlib.pyplot as plt
 
 import sekitoba_library as lib
 import sekitoba_data_manage as dm
-from rank_learn import rank_simulation
-from rank_learn import rank_multi_simulation
+from learn import simulation
+from simulation import test
 
 def lg_main( data ):
     print( len( data["test_teacher"] ), len( data["teacher"] ) )
@@ -43,7 +43,7 @@ def lg_main( data ):
                      num_boost_round = 5000 )
     
     #print( df_importance.head( len( x_list ) ) )
-    dm.pickle_upload( "rank_model.pickle", bst )
+    dm.pickle_upload( lib.name.model_name(), bst )
     #lib.log.write_lightbgm( bst )
     
     return bst
@@ -92,7 +92,7 @@ def data_check( data ):
         q = data["query"][i]["q"]
         year = data["query"][i]["year"]
         
-        if year == lib.test_year:
+        if year in lib.test_years:
             result["test_query"].append( q )
         else:
             result["query"].append( q )
@@ -112,7 +112,7 @@ def data_check( data ):
             else:
                 answer_rank = 0
                 
-            if year == lib.test_year:
+            if year in lib.test_years:
                 result["test_teacher"].append( current_data[r] )
                 result["test_answer"].append( float( answer_rank ) )
             else:
@@ -123,64 +123,17 @@ def data_check( data ):
 
     return result
 
-def diff_data_check( data, min_rank ):
+def main( data, simu_data ):
     result = {}
-    result["teacher"] = []
-    result["test_teacher"] = []
-    result["answer"] = []
-    result["test_answer"] = []
-    result["query"] = []
-    result["test_query"] = []
+    learn_data = data_check( data )
+    model = lg_main( learn_data )
+    recovery_rate, win_rate = simulation.main( model, simu_data, 1 )
+    recovery_rate, win_rate = simulation.main( model, simu_data, 2 )
+    recovery_rate, win_rate = simulation.main( model, simu_data, 3 )
 
-    count = 0
-
-    for i in range( 0, len( data["query"] ) ):
-        q = data["query"][i]["q"]
-        year = data["query"][i]["year"]
-        
-        if year == lib.test_year:
-            result["test_query"].append( q )
-        else:
-            result["query"].append( q )
-
-        current_data = list( data["teacher"][count:count+q] )
-        current_answer = list( data["answer_diff"][count:count+q] )
-
-        for r in range( 0, len( current_data ) ):
-            answer_rank = max( ( current_answer[r] + 2 ) * 10, 0 )
-            answer_rank = int( answer_rank )
-
-            if year == lib.test_year:
-                result["test_teacher"].append( current_data[r] )
-                result["test_answer"].append( float( answer_rank ) )
-            else:
-                result["teacher"].append( current_data[r] )
-                result["answer"].append( float( answer_rank ) )
-
-        count += q
+    result["model"] = model
+    result["recovery"] = recovery_rate
+    result["win"] = win_rate
+    #result = test.main( model, simu_data )
 
     return result
-
-def main( data, simu_data, simulation = True ):
-    print( "rank_learn" )
-    model_list = []
-    """
-    for i in range( 2, 19 ):
-        print( i )
-        learn_data = data_check( data, i )
-        rank_model = lg_main( learn_data )
-        recovery_rate = None
-        model_list.append( rank_model )
-
-    rank_multi_simulation.main( model_list, simu_data )
-    """
-    learn_data = data_check( data )
-    #learn_data = diff_data_check( data, 6 )
-    #params = lgb_test( learn_data )
-    rank_model = lg_main( learn_data )
-    
-    if simulation:
-        for i in range( 1, 5 ):
-            recovery_rate, win_rate = rank_simulation.main( rank_model, simu_data, i )
-
-    return rank_model, recovery_rate
