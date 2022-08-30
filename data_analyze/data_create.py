@@ -70,7 +70,7 @@ def main( update = False ):
         dm.pickle_upload( lib.name.data_name(), result["data"] )
         dm.pickle_upload( lib.name.simu_name(), result["simu"] )
     else:
-        ok = comm.recv( source = 0, tag = 1 )        
+        ok = comm.recv( source = 0, tag = 1 )
         od = OnceData()
         print( "start rank:{}".format( rank ) )
         key_list = key_list_search( rank, size, list( od.race_data.keys() ) )
@@ -82,9 +82,6 @@ def main( update = False ):
             for k in key_list:
                 od.create( k )
 
-        if rank == 1:
-            dm.dn.write( lib.name.memo_name() )
-            
         file_name = str( rank ) + "-instance.pickle"
         dm.pickle_upload( file_name, { "data": od.result, "simu": od.simu_data } )
         comm.send( file_name, dest = 0, tag = 2 )

@@ -1,0 +1,16 @@
+class Name:
+    def __init__( self ):
+        self.id_weight = "id_weight"
+        self.burden_weight = "burden_weight"
+        self.horce_number = "horce_number"
+        self.limb = "limb"
+        self.stright_dist = "stright_dist"
+        self.speed_index = "speed_index"
+        self.time_index = "time_index"
+        self.three_ave_rank = "three_ave_rank"
+        self.one_rate = "one_rate"
+        self.two_rate = "two_rate"
+        self.three_rate = "three_rate"
+        self.money = "money"
+        self.race_interval = "race_interval"
+        self.train_score = "train_score"

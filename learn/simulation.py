@@ -86,33 +86,12 @@ def main( model, data, t ):
 
         for i in range( 0, t ):
             bet_horce = sort_result[i]
-            #bet_money = min( money, 100000 )
-            #bet_money = ( bet_money / 5 ) * bet_rate
-            #bet_money = int( bet_money / 100 ) * 100
-            #money -= bet_money
-
-            #if not sort_result[i]["popular"] == 1:
-            #    continue
-
-            #if 50 < bet_horce["odds"]:
-            #    continue
-            
             test_result["count"] += 1
         
             if bet_horce["rank"] == 1:
                 recovery_rate += bet_horce["odds"]
-                #money += bet_money * bet_horce["odds"]
                 test_result["win"] += 1
                 test_result["money"] += bet_horce["odds"]
-                #lib.log.write( "odds:" + str( bet_horce["odds"] ) + " score:" + str( max( score_list ) ) )
-
-            #print( money, bet_money, bet_horce["rank"] )
-            #money_list.append( money )
-
-    #x_data = list( range( 0, len( money_list ) ) )
-    #plt.plot( x_data, money_list )
-    #plt.savefig( "money.png" )
-    #plt.close()
     
     recovery_rate = test_result["money"] / test_result["count"]
     recovery_rate *= 100

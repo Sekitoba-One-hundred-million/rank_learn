@@ -5,7 +5,6 @@ import pickle
 import numpy as np
 import sys
 import lightgbm as lgb
-import optuna.integration.lightgbm as test_lgb
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 
@@ -16,6 +15,7 @@ from simulation import test
 
 def lg_main( data ):
     print( len( data["test_teacher"] ), len( data["teacher"] ) )
+    print( data["teacher"][0] )
     max_pos = np.max( np.array( data["answer"] ) )
     lgb_train = lgb.Dataset( np.array( data["teacher"] ), np.array( data["answer"] ), group = np.array( data["query"] ) )
     lgb_vaild = lgb.Dataset( np.array( data["test_teacher"] ), np.array( data["test_answer"] ), group = np.array( data["test_query"] ) )
@@ -47,35 +47,6 @@ def lg_main( data ):
     #lib.log.write_lightbgm( bst )
     
     return bst
-
-
-def lgb_test( data ):
-    max_pos = np.max( np.array( data["answer"] ) )
-    lgb_train = lgb.Dataset( np.array( data["teacher"] ), np.array( data["answer"] ), group = np.array( data["query"] ) )
-    lgb_vaild = lgb.Dataset( np.array( data["test_teacher"] ), np.array( data["test_answer"] ), group = np.array( data["test_query"] ) )
-
-    lgbm_params =  {
-        'boosting_type': 'gbdt',
-        'objective': 'lambdarank',
-        'metric': 'ndcg',   # for lambdarank
-        'ndcg_eval_at': [1,2,3],  # for lambdarank
-        'label_gain': list(range(0, np.max( np.array( data["answer"], dtype = np.int32 ) ) + 1)),
-        'max_position': int( max_pos ),  # for lambdarank
-        'early_stopping_rounds': 30,
-    }
-
-    bst = test_lgb.train( params = lgbm_params,
-                          train_set = lgb_train,
-                          valid_sets = [lgb_train, lgb_vaild ],
-                          verbose_eval = 10,
-                          num_boost_round = 5000 )
-
-    print( bst.params )
-    lib.log.write( "best_iteration:{}".format( str( bst.best_iteration ) ) )
-    lib.log.write( "best_score:{}".format( str( bst.best_score ) ) )
-    lib.log.write( "best_params:{}".format( str( bst.params ) ) )
-    
-    return bst.params
 
 def data_check( data ):
     result = {}
@@ -127,9 +98,8 @@ def main( data, simu_data ):
     result = {}
     learn_data = data_check( data )
     model = lg_main( learn_data )
+
     recovery_rate, win_rate = simulation.main( model, simu_data, 1 )
-    recovery_rate, win_rate = simulation.main( model, simu_data, 2 )
-    recovery_rate, win_rate = simulation.main( model, simu_data, 3 )
 
     result["model"] = model
     result["recovery"] = recovery_rate
