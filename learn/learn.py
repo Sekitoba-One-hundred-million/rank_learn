@@ -62,6 +62,9 @@ def data_check( data ):
     for i in range( 0, len( data["query"] ) ):
         q = data["query"][i]["q"]
         year = data["query"][i]["year"]
+
+        if q < 3:
+            continue
         
         if year in lib.test_years:
             result["test_query"].append( q )

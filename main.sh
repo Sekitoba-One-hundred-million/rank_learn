@@ -1,5 +1,6 @@
 dir='common'
-file_list=`cat learn_data.txt`
+file_list=`ls analyze`
+list_file="$dir/list.txt"
 write_file_name="$dir/name.py"
 
 echo "1: name update"
@@ -26,6 +27,7 @@ for file_name in $file_list; do
     #minus_name=${name}_minus
     # echo $file_name
     echo "$base$name = \"$name\"" >> $write_file_name
+    echo $name >> $list_file
     #echo "$base$minus_name = \"$minus_name\"" >> $write_file_name
     done
 

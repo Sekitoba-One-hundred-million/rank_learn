@@ -8,8 +8,6 @@ import matplotlib.pyplot as plt
 import sekitoba_library as lib
 import sekitoba_data_manage as dm
 
-S = 250
-
 def standardization( data ):
     result = []
     ave = sum( data ) / len( data )
@@ -48,9 +46,7 @@ def main( model, data, t ):
     ave_score = 0
     win_score = 0
     lose_score = 0
-    t1 = 0
-    t2 = 0
-    t3 = 0    
+    t = 1
 
     odds_data = dm.pickle_load( "odds_data.pickle" )
     
@@ -74,6 +70,9 @@ def main( model, data, t ):
             ex_value["popular"] = data[race_id][horce_id]["answer"]["popular"]  
             score_list.append( score )
             horce_list.append( ex_value )
+
+        if len( score_list ) < 3:
+            continue
 
         softmax_score_list = softmax( score_list )
         score_list = standardization( score_list )
