@@ -54,6 +54,7 @@ class OnceData:
         self.train_index = TrainIndexGet()
 
         self.data_name_list = []
+        self.write_data_list = {}
         self.simu_data = {}
         self.result = { "answer": [], "teacher": [], "query": [], "year": [] }
         self.data_name_read()
@@ -65,12 +66,21 @@ class OnceData:
         for str_data in str_data_list:
             self.data_name_list.append( str_data.replace( "\n", "" ) )
 
+    def score_write( self ):
+        f = open( "common/rank_score_data.txt", "w" )
+
+        for data_name in self.write_data_list.keys():
+            f.write( data_name + "\n" )
+
+        f.close()
+
     def data_list_create( self, data_dict ):
         result = []
         
         for data_name in self.data_name_list:
             try:
                 result.append( data_dict[data_name] )
+                self.write_data_list[data_name] = data_name
             except:
                 continue
 

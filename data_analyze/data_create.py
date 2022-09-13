@@ -87,5 +87,8 @@ def main( update = False ):
         comm.send( file_name, dest = 0, tag = 2 )
         result = None
 
+        if rank == 1:
+            od.score_write()
+
     dm.dl.data_clear()
     return result    

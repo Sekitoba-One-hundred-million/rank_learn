@@ -13,9 +13,7 @@ import sekitoba_data_manage as dm
 from learn import simulation
 from simulation import test
 
-def lg_main( data ):
-    print( len( data["test_teacher"] ), len( data["teacher"] ) )
-    print( data["teacher"][0] )
+def lg_main( data, prod = False ):
     max_pos = np.max( np.array( data["answer"] ) )
     lgb_train = lgb.Dataset( np.array( data["teacher"] ), np.array( data["answer"] ), group = np.array( data["query"] ) )
     lgb_vaild = lgb.Dataset( np.array( data["test_teacher"] ), np.array( data["test_answer"] ), group = np.array( data["test_query"] ) )
@@ -42,13 +40,14 @@ def lg_main( data ):
                      verbose_eval = 10,
                      num_boost_round = 5000 )
     
-    #print( df_importance.head( len( x_list ) ) )
-    dm.pickle_upload( lib.name.model_name(), bst )
-    #lib.log.write_lightbgm( bst )
-    
+    if prod:
+        dm.pickle_upload( lib.name.model_name() + ".prod", bst )
+    else:
+        dm.pickle_upload( lib.name.model_name(), bst )
+        
     return bst
 
-def data_check( data ):
+def data_check( data, prod = False ):
     result = {}
     result["teacher"] = []
     result["test_teacher"] = []
@@ -68,6 +67,9 @@ def data_check( data ):
         
         if year in lib.test_years:
             result["test_query"].append( q )
+
+            if prod:
+                result["query"].append( q )
         else:
             result["query"].append( q )
 
@@ -89,6 +91,10 @@ def data_check( data ):
             if year in lib.test_years:
                 result["test_teacher"].append( current_data[r] )
                 result["test_answer"].append( float( answer_rank ) )
+
+                if prod:
+                    result["teacher"].append( current_data[r] )
+                    result["answer"].append( float( answer_rank ) )
             else:
                 result["teacher"].append( current_data[r] )
                 result["answer"].append( float( answer_rank ) )
@@ -98,8 +104,14 @@ def data_check( data ):
     return result
 
 def main( data, simu_data ):
+    prod_check = False
+    p = input( "prod on(y/n): ")
+
+    if p == "y":
+        prod_check = True
+    
     result = {}
-    learn_data = data_check( data )
+    learn_data = data_check( data, prod = prod_check )
     model = lg_main( learn_data )
 
     recovery_rate, win_rate = simulation.main( model, simu_data, 1 )
@@ -107,6 +119,5 @@ def main( data, simu_data ):
     result["model"] = model
     result["recovery"] = recovery_rate
     result["win"] = win_rate
-    #result = test.main( model, simu_data )
 
     return result
