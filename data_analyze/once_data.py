@@ -1,4 +1,5 @@
 import math
+import copy
 import sklearn
 from tqdm import tqdm
 from mpi4py import MPI
@@ -54,7 +55,7 @@ class OnceData:
         self.train_index = TrainIndexGet()
 
         self.data_name_list = []
-        self.write_data_list = {}
+        self.write_data_list = []
         self.simu_data = {}
         self.result = { "answer": [], "teacher": [], "query": [], "year": [] }
         self.data_name_read()
@@ -69,20 +70,24 @@ class OnceData:
     def score_write( self ):
         f = open( "common/rank_score_data.txt", "w" )
 
-        for data_name in self.write_data_list.keys():
+        for data_name in self.write_data_list:
             f.write( data_name + "\n" )
 
         f.close()
 
     def data_list_create( self, data_dict ):
         result = []
+        write_instance = []
         
         for data_name in self.data_name_list:
             try:
                 result.append( data_dict[data_name] )
-                self.write_data_list[data_name] = data_name
+                write_instance.append( data_name )
             except:
                 continue
+
+        if len( self.write_data_list ) == 0:
+            self.write_data_list = copy.deepcopy( write_instance )
 
         return result
 
@@ -253,7 +258,6 @@ class OnceData:
             if not money_score == 0:
                 money_score += 100
                 
-            money_score =  money_score
             burden_weight_score = cd.burden_weight()
             #before_up3_rank = self.before_data.up3_rank( before_cd )
             before_continue_not_three_rank = pd.before_continue_not_three_rank()
