@@ -112,7 +112,7 @@ def main( data, simu_data ):
     
     result = {}
     learn_data = data_check( data, prod = prod_check )
-    model = lg_main( learn_data )
+    model = lg_main( learn_data, prod = prod_check )
 
     recovery_rate, win_rate = simulation.main( model, simu_data, 1 )
 
