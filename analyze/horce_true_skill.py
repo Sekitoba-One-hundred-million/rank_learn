@@ -8,9 +8,9 @@ import sekitoba_data_manage as dm
 dm.dl.file_set( "race_data.pickle" )
 dm.dl.file_set( "race_info_data.pickle" )
 dm.dl.file_set( "horce_data_storage.pickle" )
-dm.dl.file_set( "true_skill_data.pickle" )
+dm.dl.file_set( "horce_jockey_true_skill_data.pickle" )
 
-name = "true_skill"
+name = "horce_true_skill"
 RANK = "rank"
 COUNT = "count"
     
@@ -20,7 +20,7 @@ def main():
     race_data = dm.dl.data_get( "race_data.pickle" )
     race_info = dm.dl.data_get( "race_info_data.pickle" )
     horce_data = dm.dl.data_get( "horce_data_storage.pickle" )
-    true_skill_data = dm.dl.data_get( "true_skill_data.pickle" )
+    horce_jockey_true_skill_data = dm.dl.data_get( "horce_jockey_true_skill_data.pickle" )
     
     for k in tqdm( race_data.keys() ):
         race_id = lib.id_get( k )
@@ -54,7 +54,7 @@ def main():
                 continue
 
             try:
-                score = true_skill_data[race_id][horce_id]
+                score = horce_jockey_true_skill_data["horce"][race_id][horce_id]
             except:
                 score = -1
 

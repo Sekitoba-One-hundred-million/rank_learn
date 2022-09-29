@@ -11,7 +11,9 @@ burden_weight
 dist_kind_count
 father_rank
 horce_sex
+horce_true_skill
 jockey_rank
+jockey_true_skill
 jockey_year_rank
 limb
 match_rank
@@ -23,6 +25,5 @@ race_interval
 race_level_check
 speed_index
 train_score
-true_skill
 up3_standard_value
 weight

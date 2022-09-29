@@ -31,7 +31,8 @@ dm.dl.file_set( "omega_index_data.pickle" )
 dm.dl.file_set( "race_day.pickle" )
 dm.dl.file_set( "parent_id_data.pickle" )
 dm.dl.file_set( "horce_sex_data.pickle" )
-dm.dl.file_set( "true_skill_data.pickle" )
+dm.dl.file_set( "race_jockey_id_data.pickle" )
+dm.dl.file_set( "horce_jockey_true_skill_data.pickle" )
 
 class OnceData:
     def __init__( self ):
@@ -44,7 +45,8 @@ class OnceData:
         self.race_day = dm.dl.data_get( "race_day.pickle" )
         self.parent_id_data = dm.dl.data_get( "parent_id_data.pickle" )
         self.horce_sex_data = dm.dl.data_get( "horce_sex_data.pickle" )
-        self.true_skill_data = dm.dl.data_get( "true_skill_data.pickle" )
+        self.race_jockey_id_data = dm.dl.data_get( "race_jockey_id_data.pickle" )
+        self.horce_jockey_true_skill_data = dm.dl.data_get( "horce_jockey_true_skill_data.pickle" )
         
         self.race_high_level = RaceHighLevel()
         self.race_type = RaceType()
@@ -207,9 +209,15 @@ class OnceData:
                 omega_index_score = 0
 
             try:
-                true_skill = true_skill_data[race_id][horce_id]
+                horce_true_skill = self.horce_jockey_true_skill_data["horce"][race_id][horce_id]
             except:
-                true_skill = -1
+                horce_true_skill = -1
+
+            try:
+                jockey_id = self.race_jockey_id_data[race_id][horce_id]
+                jockey_true_skill = self.horce_jockey_true_skill_data["jockey"][race_id][jockey_id]
+            except:
+                jockey_true_skill = -1
 
             if not before_cd == None:
                 before_speed_score = before_cd.speed()
@@ -308,7 +316,8 @@ class OnceData:
             t_instance[data_name.train_score] = train_score
             t_instance[data_name.up3_standard_value] = up3_standard_value
             t_instance[data_name.weight] = weight_score
-            t_instance[data_name.true_skill] = true_skill
+            t_instance[data_name.horce_true_skill] = horce_true_skill
+            t_instance[data_name.jockey_true_skill] = jockey_true_skill
             
             t_list = self.data_list_create( t_instance )
 
