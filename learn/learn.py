@@ -1,17 +1,9 @@
-import os
-import math
-import random
-import pickle
 import numpy as np
-import sys
 import lightgbm as lgb
-from tqdm import tqdm
-import matplotlib.pyplot as plt
 
 import sekitoba_library as lib
 import sekitoba_data_manage as dm
 from learn import simulation
-from simulation import test
 
 def lg_main( data, prod = False ):
     max_pos = np.max( np.array( data["answer"] ) )
@@ -64,6 +56,13 @@ def data_check( data, prod = False ):
 
         if q < 3:
             continue
+
+        current_data = list( data["teacher"][i] )
+        current_answer = list( data["answer"][i] )
+        current_level = list( data["level"][i] )
+
+        if 1 not in current_answer and year in lib.test_years:
+            continue
         
         if year in lib.test_years:
             result["test_query"].append( q )
@@ -72,10 +71,7 @@ def data_check( data, prod = False ):
                 result["query"].append( q )
         else:
             result["query"].append( q )
-
-        current_data = list( data["teacher"][count:count+q] )
-        current_answer = list( data["answer"][count:count+q] )
-
+        
         for r in range( 0, len( current_data ) ):
             answer_rank = current_answer[r]
 
@@ -85,9 +81,14 @@ def data_check( data, prod = False ):
                 answer_rank = 5
             elif answer_rank == 3:
                 answer_rank = 3
+            elif answer_rank < 6:
+                answer_rank = 1
             else:
                 answer_rank = 0
-                
+
+            if not answer_rank == 0:
+                answer_rank += current_level[0]
+
             if year in lib.test_years:
                 result["test_teacher"].append( current_data[r] )
                 result["test_answer"].append( float( answer_rank ) )
@@ -99,13 +100,11 @@ def data_check( data, prod = False ):
                 result["teacher"].append( current_data[r] )
                 result["answer"].append( float( answer_rank ) )
 
-        count += q
-
     return result
 
 def main( data, simu_data ):
     prod_check = False
-    p = input( "prod on(y/n): ")
+    p = "n"#input( "prod on(y/n): ")
 
     if p == "y":
         prod_check = True

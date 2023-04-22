@@ -5,3 +5,5 @@
 /simulation/__pycache__/
 /rank_learn/__pycache__/
 /common/__pycache__/
+data_analyze/common/
+learn/common/

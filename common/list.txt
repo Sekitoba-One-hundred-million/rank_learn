@@ -1,5 +1,6 @@
 age
-age_dist
+all_horce_num
+baba
 before_continue_not_three_rank
 before_diff
 before_first_passing_rank
@@ -9,15 +10,17 @@ before_pace
 before_popular
 before_rank
 before_speed
-before_up3_rank
 burden_weight
+diff_load_weight
+dist_kind
 dist_kind_count
 father_rank
-horce_age
 horce_sex
 horce_true_skill
+horce_true_skill_index
 jockey_rank
 jockey_true_skill
+jockey_true_skill_index
 jockey_year_rank
 limb
 match_rank
@@ -25,6 +28,7 @@ money
 mother_rank
 my_limb_count
 omega
+place_num
 race_interval
 race_level_check
 rank_score_odds
@@ -32,4 +36,5 @@ speed_index
 train_score
 trainer_rank
 up3_standard_value
+weather
 weight

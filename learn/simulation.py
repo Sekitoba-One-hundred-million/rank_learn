@@ -81,9 +81,9 @@ def main( model, data, t ):
             horce_list[i]["score"] = score_list[i]
 
         softmax_score_list = sorted( softmax_score_list, reverse = True )
-        sort_result = sorted( horce_list, key=lambda x:x["score"], reverse = True )
+        sort_result = sorted( horce_list, key=lambda x:x["score"], reverse = True )        
 
-        for i in range( 0, t ):
+        for i in range( 0, min( len( sort_result ), t ) ):
             bet_horce = sort_result[i]
             test_result["count"] += 1
         
