@@ -28,7 +28,7 @@ money
 mother_rank
 my_limb_count
 omega
-place_num
+place
 race_interval
 race_level_check
 rank_score_odds

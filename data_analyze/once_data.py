@@ -324,7 +324,7 @@ class OnceData:
             t_instance[data_name.mother_rank] = mother_score
             t_instance[data_name.my_limb_count] = my_limb_count_score
             t_instance[data_name.omega] = omega_index_score
-            t_instance[data_name.place_num] = place_num
+            t_instance[data_name.place] = place_num
             t_instance[data_name.race_interval] = race_interval_score
             t_instance[data_name.race_level_check] = high_level_score
             t_instance[data_name.speed_index] = speed_index_score

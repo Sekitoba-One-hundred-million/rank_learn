@@ -30,7 +30,7 @@ class Name:
         self.mother_rank = "mother_rank"
         self.my_limb_count = "my_limb_count"
         self.omega = "omega"
-        self.place_num = "place_num"
+        self.place = "place"
         self.race_interval = "race_interval"
         self.race_level_check = "race_level_check"
         self.rank_score_odds = "rank_score_odds"
