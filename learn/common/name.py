@@ -24,6 +24,8 @@ class Name:
         self.jockey_true_skill = "jockey_true_skill"
         self.jockey_true_skill_index = "jockey_true_skill_index"
         self.jockey_year_rank = "jockey_year_rank"
+        self.trainer_true_skill = "trainer_true_skill"
+        self.trainer_true_skill_index = "trainer_true_skill_index"
         self.limb = "limb"
         self.match_rank = "match_rank"
         self.money = "money"

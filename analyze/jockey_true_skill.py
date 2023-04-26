@@ -9,7 +9,7 @@ dm.dl.file_set( "race_data.pickle" )
 dm.dl.file_set( "race_info_data.pickle" )
 dm.dl.file_set( "horce_data_storage.pickle" )
 dm.dl.file_set( "race_jockey_id_data.pickle" )
-dm.dl.file_set( "horce_jockey_true_skill_data.pickle" )
+dm.dl.file_set( "true_skill_data.pickle" )
 
 name = "jockey_true_skill"
 RANK = "rank"
@@ -22,7 +22,7 @@ def main():
     race_info = dm.dl.data_get( "race_info_data.pickle" )
     horce_data = dm.dl.data_get( "horce_data_storage.pickle" )
     race_jockey_id_data = dm.dl.data_get( "race_jockey_id_data.pickle" )
-    horce_jockey_true_skill_data = dm.dl.data_get( "horce_jockey_true_skill_data.pickle" )
+    horce_jockey_true_skill_data = dm.dl.data_get( "true_skill_data.pickle" )
     
     for k in tqdm( race_data.keys() ):
         race_id = lib.id_get( k )

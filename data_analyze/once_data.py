@@ -32,7 +32,8 @@ dm.dl.file_set( "race_day.pickle" )
 dm.dl.file_set( "parent_id_data.pickle" )
 dm.dl.file_set( "horce_sex_data.pickle" )
 dm.dl.file_set( "race_jockey_id_data.pickle" )
-dm.dl.file_set( "horce_jockey_true_skill_data.pickle" )
+dm.dl.file_set( "race_trainer_id_data.pickle" )
+dm.dl.file_set( "true_skill_data.pickle" )
 
 class OnceData:
     def __init__( self ):
@@ -46,7 +47,8 @@ class OnceData:
         self.parent_id_data = dm.dl.data_get( "parent_id_data.pickle" )
         self.horce_sex_data = dm.dl.data_get( "horce_sex_data.pickle" )
         self.race_jockey_id_data = dm.dl.data_get( "race_jockey_id_data.pickle" )
-        self.horce_jockey_true_skill_data = dm.dl.data_get( "horce_jockey_true_skill_data.pickle" )
+        self.race_trainer_id_data = dm.dl.data_get( "race_trainer_id_data.pickle" )
+        self.true_skill_data = dm.dl.data_get( "true_skill_data.pickle" )
         
         self.race_high_level = RaceHighLevel()
         self.race_type = RaceType()
@@ -166,6 +168,7 @@ class OnceData:
         current_race_data[data_name.speed_index] = []
         current_race_data[data_name.horce_true_skill_index] = []
         current_race_data[data_name.jockey_true_skill_index] = []
+        current_race_data[data_name.trainer_true_skill_index] = []
         current_race_data[data_name.my_limb_count] = {}
         
         for kk in self.race_data[k].keys():
@@ -185,25 +188,33 @@ class OnceData:
             race_limb[kk] = limb_math
 
             try:
-                horce_true_skill = self.horce_jockey_true_skill_data["horce"][race_id][horce_id]
+                horce_true_skill = self.true_skill_data["horce"][race_id][horce_id]
             except:
                 horce_true_skill = 25
 
             try:
                 jockey_id = self.race_jockey_id_data[race_id][horce_id]
-                jockey_true_skill = self.horce_jockey_true_skill_data["jockey"][race_id][jockey_id]
+                jockey_true_skill = self.true_skill_data["jockey"][race_id][jockey_id]
             except:
                 jockey_true_skill = 25
+
+            try:
+                trainer_id = self.race_trainer_id_data[race_id][horce_id]
+                trainer_true_skill = self.true_skill_data["trainer"][race_id][trainer_id]
+            except:
+                trainer_true_skill = 25
 
             current_time_index = self.time_index.main( kk, pd.past_day_list() )
             speed, up_speed, pace_speed = pd.speed_index( self.baba_index_data[horce_id] )
             current_race_data[data_name.speed_index].append( lib.max_check( speed ) + current_time_index["max"] )
             current_race_data[data_name.horce_true_skill_index].append( horce_true_skill )
             current_race_data[data_name.jockey_true_skill_index].append( jockey_true_skill )
+            current_race_data[data_name.trainer_true_skill_index].append( trainer_true_skill )
 
         sort_speed_index = sorted( current_race_data[data_name.speed_index], reverse = True )
         sort_horce_true_skill_index = sorted( current_race_data[data_name.horce_true_skill_index], reverse = True )
         sort_jockey_true_skill_index = sorted( current_race_data[data_name.jockey_true_skill_index], reverse = True )
+        sort_trainer_true_skill_index = sorted( current_race_data[data_name.trainer_true_skill_index], reverse = True )
 
         for kk in self.race_data[k].keys():
             horce_id = kk
@@ -263,8 +274,10 @@ class OnceData:
             #limb_horce_number = int( limb_math * 100 + int( cd.horce_number() / 2 ) )
             horce_true_skill = current_race_data[data_name.horce_true_skill_index][count]
             jockey_true_skill = current_race_data[data_name.jockey_true_skill_index][count]
+            trainer_true_skill = current_race_data[data_name.trainer_true_skill_index][count]
             horce_true_skill_index = sort_horce_true_skill_index.index( horce_true_skill )
             jockey_true_skill_index = sort_jockey_true_skill_index.index( jockey_true_skill )
+            trainer_true_skill_index = sort_trainer_true_skill_index.index( trainer_true_skill )
             diff_load_weight = cd.burden_weight() - before_cd.burden_weight()
 
             macth_rank_score = pd.match_rank()
@@ -318,6 +331,8 @@ class OnceData:
             t_instance[data_name.jockey_true_skill] = jockey_true_skill
             t_instance[data_name.jockey_true_skill_index] = jockey_true_skill_index
             t_instance[data_name.jockey_year_rank] = jockey_year_rank_score
+            t_instance[data_name.trainer_true_skill] = trainer_true_skill
+            t_instance[data_name.trainer_true_skill_index] = trainer_true_skill_index
             t_instance[data_name.limb] = limb_math
             t_instance[data_name.match_rank] = macth_rank_score
             t_instance[data_name.money] = money_score
