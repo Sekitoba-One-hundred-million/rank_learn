@@ -66,7 +66,6 @@ def main( models, data ):
     t = 1
 
     odds_data = dm.pickle_load( "odds_data.pickle" )
-    high_popular_rank_data = dm.pickle_load( "high_popular_rank_data.pickle" )
     #users_score_data = dm.pickle_load( "users_score_data.pickle")
     
     for race_id in tqdm( data.keys() ):
