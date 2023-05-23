@@ -31,6 +31,9 @@ def main( update = False ):
         if rank == 0:
             result = dm.pickle_load( lib.name.data_name() )
             simu_data = dm.pickle_load( lib.name.simu_name() )
+            #result = dm.pickle_load( "rank_learn_data.pickle.backup-1684513149" )
+            #simu_data = dm.pickle_load( "rank_simu_data.pickle.backup-1684513162" )
+
             update_check = False
             
             if result == None:
@@ -56,7 +59,7 @@ def main( update = False ):
             comm.send( True, dest = i, tag = 1 )
 
         result["simu"] = {}
-        result["data"] = { "answer": [], "teacher": [], "query": [], "year": [], "level": [] }
+        result["data"] = { "answer": [], "teacher": [], "query": [], "year": [], "level": [], "diff": [], "popular": [] }
         
         for i in range( 1, size ):
             file_name = comm.recv( source = i, tag = 2 )

@@ -4,7 +4,7 @@ import lightgbm as lgb
 
 import sekitoba_library as lib
 import sekitoba_data_manage as dm
-from learn import simulation
+#from learn import simulation
 
 def lg_main( data, rate_kind, prod = False ):
     lgb_train = lgb.Dataset( np.array( data[rate_kind+"_teacher"] ), np.array( data[rate_kind+"_answer"] ) )
@@ -53,16 +53,11 @@ def data_check( data, prod = False ):
 
     count = 0
 
-    for i in range( 0, len( data["query"] ) ):
-        q = data["query"][i]["q"]
+    for i in range( 0, len( data["teacher"] ) ):
         year = data["query"][i]["year"]
-
-        if q < 3:
-            continue
-        
-        current_data = list( data["teacher"][count:count+q] )
-        current_answer = list( data["answer"][count:count+q] )
-        current_level = list( data["level"][count:count+q] )
+        current_data = list( data["teacher"][i] )
+        current_answer = list( data["answer"][i] )
+        current_level = list( data["level"][i] )
 
         for r in range( 0, len( current_data ) ):
             answer_rank = current_answer[r]
@@ -85,10 +80,6 @@ def data_check( data, prod = False ):
                 result["one_test_answer"].append( one_answer )
                 result["two_test_answer"].append( two_answer )
                 result["three_test_answer"].append( three_answer )
-
-                if prod:
-                    result["teacher"].append( current_data[r] )
-                    result["answer"].append( answer_rank )
             else:
                 result["one_teacher"].append( current_data[r] )
                 result["one_answer"].append( one_answer )
@@ -97,14 +88,16 @@ def data_check( data, prod = False ):
                 result["three_teacher"].append( current_data[r] )
                 result["three_answer"].append( three_answer )
                     
-        count += q
-
     return result
 
-def main( data, simu_data ):
+def main( data ):
+    result = {}
     learn_data = data_check( data )
     rate_list = [ "one", "two", "three" ]
 
-    for rt in rate_list:
-        model = lg_main( learn_data, rt )
-        recovery_rate, win_rate = simulation.main( model, simu_data, 1 )
+    #for rt in rate_list:
+    rt = "three"
+    model = lg_main( learn_data, rt )
+    result[rt] = model
+
+    return result
