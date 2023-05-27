@@ -9,7 +9,7 @@ import sekitoba_data_manage as dm
 
 from sekitoba_data_create.time_index_get import TimeIndexGet
 #from sekitoba_data_create.up_score import UpScore
-#from sekitoba_data_create.train_index_get import TrainIndexGet
+from sekitoba_data_create.train_index_get import TrainIndexGet
 #from sekitoba_data_create.pace_time_score import PaceTimeScore
 from sekitoba_data_create.jockey_data_get import JockeyData
 from sekitoba_data_create.trainer_data_get import TrainerData
@@ -43,6 +43,7 @@ dm.dl.file_set( "predict_first_passing_rank.pickle" )
 dm.dl.file_set( "predict_last_passing_rank.pickle" )
 dm.dl.file_set( "first_corner_rank.pickle" )
 dm.dl.file_set( "up3_true_skill_data.pickle" )
+dm.dl.file_set( "predict_train_score.pickle" )
 
 class OnceData:
     def __init__( self ):
@@ -65,6 +66,7 @@ class OnceData:
         self.wrap_data = dm.dl.data_get( "wrap_data.pickle" )
         self.predict_first_passing_rank = dm.dl.data_get( "predict_first_passing_rank.pickle" )
         self.predict_last_passing_rank = dm.dl.data_get( "predict_last_passing_rank.pickle" )
+        self.predict_train_score = dm.dl.data_get( "predict_train_score.pickle" )
         self.first_corner_rank = dm.dl.data_get( "first_corner_rank.pickle" )
         
         self.race_high_level = RaceHighLevel()
@@ -73,7 +75,7 @@ class OnceData:
         self.trainer_data = TrainerData()
         self.jockey_data = JockeyData()
         self.before_data = BeforeData()
-        #self.train_index = TrainIndexGet()
+        self.train_index = TrainIndexGet()
         self.before_race_score = BeforeRaceScore()
 
         self.data_name_list = []
@@ -381,6 +383,10 @@ class OnceData:
             #popular_rank = abs( before_cd.rank() - before_cd.popular() )
             #limb_horce_number = int( limb_math * 100 + int( cd.horce_number() / 2 ) )
             before_race_score = self.before_race_score.score_get( before_cd, limb_math, horce_id )
+            train_score = -10000
+
+            #if race_id in self.predict_train_score and horce_id in self.predict_train_score[race_id]:
+            #    train_score = self.predict_train_score[race_id][horce_id]
             
             base_key = {}
             kind_key_data = {}
@@ -488,7 +494,7 @@ class OnceData:
             #t_instance[data_name.level_score] = level_score
             #t_instance[data_name.level_score_index] = level_score_index
             t_instance[data_name.last_passing_rank] = last_passing_rank
-            t_instance[data_name.limb] = limb_math
+            #t_instance[data_name.limb] = limb_math
             #t_instance[data_name.match_rank] = match_rank
             #t_instance[data_name.match_rank_index] = match_rank_index
             t_instance[data_name.money] = money_score

@@ -28,7 +28,6 @@ jockey_year_rank
 trainer_true_skill
 trainer_true_skill_index
 last_passing_rank
-limb
 money
 mother_rank
 my_limb_count

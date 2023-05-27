@@ -62,7 +62,6 @@ def main():
             horce_num = cd.horce_number()
             rank = cd.rank()
             score = train_index.score_get( race_id, horce_num )
-            #print( score )
             key = str( int( score ) )
             
             lib.dic_append( result, year, {} )
@@ -75,7 +74,7 @@ def main():
         if len( data_list ) == 0:
             continue
         
-        data_list = sorted( data_list, key = lambda x: x["score"] )
+        data_list = sorted( data_list, key = lambda x: x["score"], reverse = True )
         rate_count += 1
 
         if data_list[0]["rank"] <= 3:

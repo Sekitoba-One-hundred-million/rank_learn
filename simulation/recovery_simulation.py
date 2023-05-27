@@ -54,7 +54,7 @@ def score_add( score_data ):
 def main( models, data ):
     recovery_rate = 0
     test = {}
-    test_result = { "count": 0, "bet_count": 0, "one_money": 0, "three_money": 0, "one_win": 0, "three_win": 0, "three_money": 0 }
+    test_result = { "count": 0, "bet_count": 0, "one_money": 0, "one_win": 0 }
     money = 50000
     money_list = []
     ave_score = 0
@@ -66,13 +66,16 @@ def main( models, data ):
     t = 1
 
     odds_data = dm.pickle_load( "odds_data.pickle" )
+    rank_index_popular_recovery = dm.pickle_load( "rank_index_popular_recovery.pickle" )
     #users_score_data = dm.pickle_load( "users_score_data.pickle")
     
     for race_id in tqdm( data.keys() ):
         year = race_id[0:4]
         number = race_id[-2:]
         #if not year in lib.test_years or int( race_place_num ) == 8:
-        if not year in lib.test_years:
+        #if not year in lib.test_years:
+        #    continue
+        if not year == "2023":
             continue
         
         horce_list = []
@@ -101,108 +104,44 @@ def main( models, data ):
 
         if len( horce_list ) < 3:
             continue
-
-        #if not ( 8 <= len( horce_list ) and len( horce_list ) <= 10 ):
-        #    continue
-        #if len( current_odds["複勝"] ) == 3:
-        #    continue
         
         score_list = score_add( score_data )
         
         for i in range( 0, len( score_list ) ):
             horce_list[i]["score"] = score_list[i]
 
-        #softmax_score_list = sorted( softmax_score_list, reverse = True )
         sort_result = sorted( horce_list, key=lambda x:x["score"], reverse = True )
-
+        
         for i in range( 0, len( sort_result ) ):
-            rank = sort_result[i]["rank"]
-            score = sort_result[i]["score"]
-            key_score = int( min( score * 100, 40 ) )
-            mdcd_score += math.pow( rank - ( i + 1 ), 2 )
-            mdcd_count += 1
+            bc = 1#bet_count[i]
             key_popular = str( int( sort_result[i]["popular"] ) )
             key_index = str( int( i + 1 ) )
-            lib.dic_append( recovery_check, key_index, {} )
-            lib.dic_append( recovery_check[key_index], key_popular, { "recovery": 0, "count": 0, "win": 0 } )
-            recovery_check[key_index][key_popular]["count"] += 1
 
-            if rank == 1:
-                recovery_check[key_index][key_popular]["recovery"] += sort_result[i]["odds"]
-                recovery_check[key_index][key_popular]["win"] += 1
-        
-        for i in range( 0, min( len( sort_result ), t ) ):
-            bc = 1#bet_count[i]
+            if rank_index_popular_recovery[key_index][key_popular]["recovery"] < 95:
+                continue
+
+            if rank_index_popular_recovery[key_index][key_popular]["count"] < 100:
+                continue
+
             bet_horce = sort_result[i]
             odds = bet_horce["odds"]
             horce_id = bet_horce["horce_id"]
             rank = bet_horce["rank"]
             score = bet_horce["score"]
             popular = bet_horce["popular"]
-
-            #if popular > 3:
-            #    continue
-
-            #if score < 0.4:
-            #    continue
             
-            #high_popular_score = high_popular_rank_data[race_id][horce_id]
-
-            #if high_popular_score > 2.8:
-            #    continue
-
             test_result["bet_count"] += bc
             test_result["count"] += 1
             
             if rank == 1:
                 test_result["one_win"] += 1
                 test_result["one_money"] += odds * bc
-
-            if rank <= min( 3, len( current_odds["複勝"] ) ):
-                rank_index = int( bet_horce["rank"] - 1 )
-                three_odds = current_odds["複勝"][rank_index] / 100
-                test_result["three_win"] += 1
-                test_result["three_money"] += three_odds * bc
+                print( odds )
     
     one_recovery_rate = ( test_result["one_money"] / test_result["bet_count"] ) * 100 
-    three_recovery_rate = ( test_result["three_money"] / test_result["bet_count"] ) * 100
     one_win_rate = ( test_result["one_win"] / test_result["count"] ) * 100 * t
-    three_win_rate = ( test_result["three_win"] / test_result["count"] ) * 100 * t
-    #print( money )
-    #three_rate = test_result["three"] / test_result["three_count"]
-    #three_rate *= 100
-    #three_recovery_rate = test_result["three_money"] / test_result["three_count"]
     print( "" )
     print( "選択数:{}".format( t ) )
     print( "単勝 回収率{}%".format( one_recovery_rate ) )
-    print( "複勝 回収率{}%".format( three_recovery_rate ) )
     print( "単勝 勝率{}%".format( one_win_rate ) )
-    print( "複勝 勝率{}%".format( three_win_rate ) )
-
-    #print( "副勝率{}%".format( three_rate ) )
-    #print( "複勝回収率{}%".format( three_recovery_rate ) )
     print( "賭けた回数{}回".format( test_result["count"] ) )
-    print( "mdcd:{}".format( round( mdcd_score / mdcd_count, 4 ) ) )
-
-    recovery_result = {}
-    
-    for index in range( 1, 19 ):
-        key_index = str( index )
-        recovery_result[key_index] = {}
-        
-        for popular in range( 1, 19 ):
-            key_popular = str( popular )
-            recovery_result[key_index][key_popular] = { "recovery": 0, "count": 0 }
-            
-            if not key_popular in recovery_check[key_index]:
-                continue
-
-            recovery = recovery_check[key_index][key_popular]["recovery"]
-            count = recovery_check[key_index][key_popular]["count"]
-            win = recovery_check[key_index][key_popular]["win"]
-            recovery = ( recovery / count ) * 100
-            win = ( win / count ) * 100
-            recovery_result[key_index][key_popular]["recovery"] = recovery
-            recovery_result[key_index][key_popular]["count"] = count
-            
-    #dm.pickle_upload( "rank_index_popular_recovery.pickle", recovery_result )

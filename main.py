@@ -32,6 +32,7 @@ def main():
     from learn import learn
     from learn import rate_learn
     from simulation import buy_simulation
+    from simulation import recovery_simulation
 
     lib.name.set_name( "rank" )
 
@@ -60,16 +61,12 @@ def main():
             for r in range( 0, len( learn_data["teacher"][i] ) ):
                 learn_data["teacher"][i][r] = data_remove( learn_data["teacher"][i][r], remove_list )
 
-        models = dm.pickle_load( "test_model.pickle" )
-
-        if models == None or l_check or u_check:
-            models = {}
-            #models.update( rate_learn.main( data["data"] ) )
-            models.update( learn.main( data["data"] ) )
+        models = {}
+        #models.update( rate_learn.main( data["data"] ) )
+        models.update( learn.main( data["data"] ) )
             
         buy_simulation.main( models, simu_data )
-        #tree_model_data_create()
-        dm.pickle_upload( "test_model.pickle", models )
+        #recovery_simulation.main( models, simu_data )
         
     MPI.Finalize()        
     
