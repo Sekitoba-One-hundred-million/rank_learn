@@ -303,7 +303,7 @@ class OnceData:
         sort_race_data[data_name.match_rank_index] = sorted( current_race_data[data_name.match_rank], reverse = True )
         sort_race_data[data_name.up_rate_index] = sorted( current_race_data[data_name.up_rate], reverse = True )
         sort_race_data[data_name.omega_index] = sorted( current_race_data[data_name.omega], reverse = True )
-        #sort_race_data[data_name.level_score_index] = sorted( current_race_data[data_name.level_score], reverse = True )
+        sort_race_data[data_name.level_score_index] = sorted( current_race_data[data_name.level_score], reverse = True )
         #pace = lib.pace_data( self.wrap_data[race_id] )
 
         for kk in self.race_data[k].keys():
@@ -385,8 +385,8 @@ class OnceData:
             before_race_score = self.before_race_score.score_get( before_cd, limb_math, horce_id )
             train_score = -10000
 
-            #if race_id in self.predict_train_score and horce_id in self.predict_train_score[race_id]:
-            #    train_score = self.predict_train_score[race_id][horce_id]
+            if race_id in self.predict_train_score and horce_id in self.predict_train_score[race_id]:
+                train_score = self.predict_train_score[race_id][horce_id]
             
             base_key = {}
             kind_key_data = {}
@@ -431,7 +431,7 @@ class OnceData:
             match_rank_index = sort_race_data[data_name.match_rank_index].index( match_rank )
             omega_index = sort_race_data[data_name.omega_index].index( omega )
             up_rate_index = sort_race_data[data_name.up_rate_index].index( up_rate )
-            #level_score_index = sort_race_data[data_name.level_score_index].index( level_score )
+            level_score_index = sort_race_data[data_name.level_score_index].index( level_score )
 
             ave_burden_weight_diff = ave_burden_weight - cd.burden_weight()
             #ave_age_diff = ave_age - age
@@ -461,7 +461,6 @@ class OnceData:
             count += 1
             t_instance = {}
             #t_instance[data_name.pace] = pace
-            t_instance[data_name.age] = age
             t_instance[data_name.all_horce_num] = cd.all_horce_num()
             t_instance[data_name.ave_burden_weight_diff] = ave_burden_weight_diff
             t_instance[data_name.baba] = cd.baba_status()
@@ -491,12 +490,12 @@ class OnceData:
             t_instance[data_name.jockey_year_rank] = jockey_year_rank_score
             t_instance[data_name.trainer_true_skill] = trainer_true_skill
             t_instance[data_name.trainer_true_skill_index] = trainer_true_skill_index
-            #t_instance[data_name.level_score] = level_score
-            #t_instance[data_name.level_score_index] = level_score_index
+            t_instance[data_name.level_score] = level_score
+            t_instance[data_name.level_score_index] = level_score_index
             t_instance[data_name.last_passing_rank] = last_passing_rank
-            #t_instance[data_name.limb] = limb_math
-            #t_instance[data_name.match_rank] = match_rank
-            #t_instance[data_name.match_rank_index] = match_rank_index
+            t_instance[data_name.limb] = limb_math
+            t_instance[data_name.match_rank] = match_rank
+            t_instance[data_name.match_rank_index] = match_rank_index
             t_instance[data_name.money] = money_score
             t_instance[data_name.mother_rank] = mother_match_rank
             t_instance[data_name.my_limb_count] = my_limb_count_score
@@ -507,7 +506,7 @@ class OnceData:
             t_instance[data_name.race_level_check] = high_level_score
             t_instance[data_name.speed_index] = speed_index
             t_instance[data_name.speed_index_index] = speed_index_index
-            #t_instance[data_name.train_score] = train_score
+            t_instance[data_name.train_score] = train_score
             t_instance[data_name.up3_horce_true_skill] = up3_horce_true_skill
             t_instance[data_name.up3_horce_true_skill_index] = up3_horce_true_skill_index
             t_instance[data_name.up_rate] = up_rate

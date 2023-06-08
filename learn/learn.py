@@ -18,8 +18,8 @@ def lg_main( data, prod = False ):
         'label_gain': list(range(0, np.max( np.array( data["answer"], dtype = np.int32 ) ) + 1)),
         'max_position': int( max_pos ),  # for lambdarank
         'early_stopping_rounds': 30,
-        'learning_rate': 0.05,
-        'num_iteration': 300,
+        'learning_rate': 0.03,
+        'num_iteration': 2000,
         'min_data_in_bin': 1,
         'max_depth': 200,
         'num_leaves': 175,

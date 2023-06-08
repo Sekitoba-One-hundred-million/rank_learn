@@ -16,7 +16,7 @@ if [ -z $tag ]; then
     echo "1: name update"
     echo "2: data update and learn"
     echo "3: learn"
-    echo "4: simulation"
+    echo "4: optuna learn"
 
     read -p "Enter 1,2,3,4 > " tag
 fi
@@ -49,7 +49,7 @@ if [ $tag = "3" ]; then
 fi
 
 if [ $tag = "4" ]; then
-    python main.py
+    python main.py -p True
 fi
 
 rm -rf storage

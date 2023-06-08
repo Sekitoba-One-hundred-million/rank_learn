@@ -1,4 +1,3 @@
-age
 all_horce_num
 ave_burden_weight_diff
 baba
@@ -28,6 +27,11 @@ jockey_year_rank
 trainer_true_skill
 trainer_true_skill_index
 last_passing_rank
+limb
+level_score
+level_score_index
+match_rank
+match_rank_index
 money
 mother_rank
 my_limb_count
@@ -38,6 +42,7 @@ race_interval
 race_level_check
 speed_index
 speed_index_index
+train_score
 up_rate
 up_rate_index
 up3_horce_true_skill

@@ -51,7 +51,7 @@ def score_add( score_data ):
     return result
     #return softmax( result )
 
-def main( models, data ):
+def main( models, data, show = True ):
     recovery_rate = 0
     test = {}
     test_result = { "count": 0, "bet_count": 0, "one_money": 0, "three_money": 0, "one_win": 0, "three_win": 0, "three_money": 0 }
@@ -172,37 +172,15 @@ def main( models, data ):
     #three_rate = test_result["three"] / test_result["three_count"]
     #three_rate *= 100
     #three_recovery_rate = test_result["three_money"] / test_result["three_count"]
-    print( "" )
-    print( "選択数:{}".format( t ) )
-    print( "単勝 回収率{}%".format( one_recovery_rate ) )
-    print( "複勝 回収率{}%".format( three_recovery_rate ) )
-    print( "単勝 勝率{}%".format( one_win_rate ) )
-    print( "複勝 勝率{}%".format( three_win_rate ) )
 
-    #print( "副勝率{}%".format( three_rate ) )
-    #print( "複勝回収率{}%".format( three_recovery_rate ) )
-    print( "賭けた回数{}回".format( test_result["count"] ) )
-    print( "mdcd:{}".format( round( mdcd_score / mdcd_count, 4 ) ) )
+    if show:
+        print( "" )
+        print( "選択数:{}".format( t ) )
+        print( "単勝 回収率{}%".format( one_recovery_rate ) )
+        print( "複勝 回収率{}%".format( three_recovery_rate ) )
+        print( "単勝 勝率{}%".format( one_win_rate ) )
+        print( "複勝 勝率{}%".format( three_win_rate ) )
+        print( "賭けた回数{}回".format( test_result["count"] ) )
+        print( "mdcd:{}".format( round( mdcd_score / mdcd_count, 4 ) ) )
 
-    recovery_result = {}
-    
-    for index in range( 1, 19 ):
-        key_index = str( index )
-        recovery_result[key_index] = {}
-        
-        for popular in range( 1, 19 ):
-            key_popular = str( popular )
-            recovery_result[key_index][key_popular] = { "recovery": 0, "count": 0 }
-            
-            if not key_popular in recovery_check[key_index]:
-                continue
-
-            recovery = recovery_check[key_index][key_popular]["recovery"]
-            count = recovery_check[key_index][key_popular]["count"]
-            win = recovery_check[key_index][key_popular]["win"]
-            recovery = ( recovery / count ) * 100
-            win = ( win / count ) * 100
-            recovery_result[key_index][key_popular]["recovery"] = recovery
-            recovery_result[key_index][key_popular]["count"] = count
-            
-    #dm.pickle_upload( "rank_index_popular_recovery.pickle", recovery_result )
+    return one_win_rate, three_win_rate, round( mdcd_score / mdcd_count, 4 )

@@ -30,7 +30,8 @@ def main():
     import sekitoba_library as lib
     from data_analyze import data_create
     from learn import learn
-    from learn import rate_learn
+    from learn import optuna_learn
+    #from learn import rate_learn
     from simulation import buy_simulation
     from simulation import recovery_simulation
 
@@ -41,10 +42,12 @@ def main():
     parser.add_argument( "-u", type=bool, default = False, help = "optional" )
     parser.add_argument( "-s", type=bool, default = False, help = "optional" )
     parser.add_argument( "-l", type=bool, default = False, help = "optional" )
+    parser.add_argument( "-p", type=bool, default = False, help = "optional" )
 
     u_check = parser.parse_args().u
     s_check = parser.parse_args().s
     l_check = parser.parse_args().l
+    p_check = parser.parse_args().p
     
     data = data_create.main( update = u_check )
 
@@ -61,12 +64,14 @@ def main():
             for r in range( 0, len( learn_data["teacher"][i] ) ):
                 learn_data["teacher"][i][r] = data_remove( learn_data["teacher"][i][r], remove_list )
 
-        models = {}
-        #models.update( rate_learn.main( data["data"] ) )
-        models.update( learn.main( data["data"] ) )
-            
-        buy_simulation.main( models, simu_data )
-        #recovery_simulation.main( models, simu_data )
+        if not p_check and not u_check:
+            models = {}
+            #models.update( rate_learn.main( data["data"] ) )
+            models.update( learn.main( data["data"] ) )            
+            buy_simulation.main( models, simu_data )
+            #recovery_simulation.main( models, simu_data )
+        else:
+            optuna_learn.main( learn_data, simu_data )
         
     MPI.Finalize()        
     
