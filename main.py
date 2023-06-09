@@ -64,7 +64,7 @@ def main():
             for r in range( 0, len( learn_data["teacher"][i] ) ):
                 learn_data["teacher"][i][r] = data_remove( learn_data["teacher"][i][r], remove_list )
 
-        if not p_check and not u_check:
+        if not p_check:
             models = {}
             #models.update( rate_learn.main( data["data"] ) )
             models.update( learn.main( data["data"] ) )            

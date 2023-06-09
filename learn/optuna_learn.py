@@ -1,3 +1,4 @@
+import json
 import optuna
 import numpy as np
 import lightgbm as lgb
@@ -159,4 +160,9 @@ def main( data, simu_data ):
     study = optuna.create_study()
     study.optimize(objective, n_trials=100)
     print( study.best_params )
+
+    f = open( "best_params.json", "w" )
+    json.dump( study.best_params, f )
+    f.close()
+    
     best_model_create( study.best_params )
