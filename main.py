@@ -64,18 +64,14 @@ def main():
             for r in range( 0, len( learn_data["teacher"][i] ) ):
                 learn_data["teacher"][i][r] = data_remove( learn_data["teacher"][i][r], remove_list )
 
-        if not p_check:
+        if l_check:
             models = {}
-            #models.update( rate_learn.main( data["data"] ) )
             models.update( learn.main( data["data"] ) )            
             buy_simulation.main( models, simu_data )
-            #recovery_simulation.main( models, simu_data )
-        else:
+        elif p_check:
             optuna_learn.main( learn_data, simu_data )
         
     MPI.Finalize()        
     
 if __name__ == "__main__":
-    #from simulation import buy_simulation
-    #buy_simulation.main()
     main()
