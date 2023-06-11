@@ -32,12 +32,15 @@ horce_num
 horce_sex
 horce_true_skill
 horce_true_skill_index
+horce_true_skill_stand
 jockey_rank
 jockey_true_skill
 jockey_true_skill_index
+jockey_true_skill_stand
 jockey_year_rank
 trainer_true_skill
 trainer_true_skill_index
+trainer_true_skill_stand
 predict_last_passing_rank
 predict_last_passing_rank_index
 predict_last_passing_rank_stand
@@ -59,6 +62,8 @@ rank_score_odds
 speed_index
 speed_index_index
 train_score
+train_score_index
+train_score_stand
 trainer_rank
 up_rate
 up_rate_index
