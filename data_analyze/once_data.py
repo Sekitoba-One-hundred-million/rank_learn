@@ -340,30 +340,22 @@ class OnceData:
                 p1, p2 = before_cd.pace()
                 diff_load_weight = cd.burden_weight() - before_cd.burden_weight()
 
-            first_passing_rank = -1
-            last_passing_rank = -1
-
-            if not year in lib.test_years:
-                current_passing_rank = cd.passing_rank()
-                try:
-                    first_passing_rank = int( current_passing_rank.split( "-" )[0] )
-                except:
-                    pass
-
-                try:
-                    last_passing_rank = int( current_passing_rank.split( "-" )[-1] )
-                except:
-                    pass
-
-            #if not first_passing_rank == -1:
-            #    first_passing_rank /= ( cd.all_horce_num() / 3 )
-            #    first_passing_rank = int( first_passing_rank )
+            predict_first_passing_rank = -1
+            predict_first_passing_rank_index = -1
+            predict_first_passing_rank_stand = 0
+            predict_last_passing_rank = -1
+            predict_last_passing_rank_index = -1
+            predict_last_passing_rank_stand = 0
 
             if race_id in self.predict_first_passing_rank and horce_id in self.predict_first_passing_rank[race_id]:
-                first_passing_rank = self.predict_first_passing_rank[race_id][horce_id]
+                predict_first_passing_rank = self.predict_first_passing_rank[race_id][horce_id]["score"]
+                predict_first_passing_rank_index = self.predict_first_passing_rank[race_id][horce_id]["index"]
+                predict_first_passing_rank_stand = self.predict_first_passing_rank[race_id][horce_id]["stand"]
 
             if race_id in self.predict_last_passing_rank and horce_id in self.predict_last_passing_rank[race_id]:
-                last_passing_rank = self.predict_last_passing_rank[race_id][horce_id]
+                predict_last_passing_rank = self.predict_last_passing_rank[race_id][horce_id]["score"]
+                predict_last_passing_rank_index = self.predict_last_passing_rank[race_id][horce_id]["index"]
+                predict_last_passing_rank_stand = self.predict_last_passing_rank[race_id][horce_id]["stand"]
 
             before_year = int( year ) - 1
             key_before_year = str( int( before_year ) )
@@ -479,7 +471,9 @@ class OnceData:
             t_instance[data_name.dist_kind] = cd.dist_kind()
             t_instance[data_name.dist_kind_count] = dist_kind_count
             t_instance[data_name.father_rank] = father_match_rank
-            t_instance[data_name.first_passing_rank] = first_passing_rank
+            t_instance[data_name.predict_first_passing_rank] = predict_first_passing_rank
+            t_instance[data_name.predict_first_passing_rank_index] = predict_first_passing_rank_index
+            t_instance[data_name.predict_first_passing_rank_stand] = predict_first_passing_rank_stand
             t_instance[data_name.horce_num] = cd.horce_number()
             t_instance[data_name.horce_sex] = horce_sex
             t_instance[data_name.horce_true_skill] = horce_true_skill
@@ -492,7 +486,9 @@ class OnceData:
             t_instance[data_name.trainer_true_skill_index] = trainer_true_skill_index
             t_instance[data_name.level_score] = level_score
             t_instance[data_name.level_score_index] = level_score_index
-            t_instance[data_name.last_passing_rank] = last_passing_rank
+            t_instance[data_name.predict_last_passing_rank] = predict_last_passing_rank
+            t_instance[data_name.predict_last_passing_rank_index] = predict_last_passing_rank_index
+            t_instance[data_name.predict_last_passing_rank_stand] = predict_last_passing_rank_stand
             t_instance[data_name.limb] = limb_math
             t_instance[data_name.match_rank] = match_rank
             t_instance[data_name.match_rank_index] = match_rank_index
