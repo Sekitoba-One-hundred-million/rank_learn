@@ -26,6 +26,8 @@ class Name:
         self.dist_kind_count = "dist_kind_count"
         self.father_rank = "father_rank"
         self.foot_used = "foot_used"
+        self.predict_parents_score = "predict_parents_score"
+        self.predict_parents_score_stand = "predict_parents_score_stand"
         self.predict_first_passing_rank = "predict_first_passing_rank"
         self.predict_first_passing_rank_index = "predict_first_passing_rank_index"
         self.predict_first_passing_rank_stand = "predict_first_passing_rank_stand"
