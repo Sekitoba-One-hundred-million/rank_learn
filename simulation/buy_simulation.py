@@ -142,8 +142,8 @@ def main( models, data, show = True ):
 
             #if popular > 3:
             #    continue
-
-            #if score < 0.4:
+            
+            #if score * odds < 1.2:
             #    continue
             
             #high_popular_score = high_popular_rank_data[race_id][horce_id]
@@ -151,6 +151,7 @@ def main( models, data, show = True ):
             #if high_popular_score > 2.8:
             #    continue
 
+            #bc = 1 + min( max( int( ( score * odds - 1 ) * 10 ), 0 ), 2 )
             test_result["bet_count"] += bc
             test_result["count"] += 1
             

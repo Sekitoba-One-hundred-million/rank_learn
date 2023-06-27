@@ -11,6 +11,7 @@ before_speed
 burden_weight
 corner_diff_rank_ave
 corner_diff_rank_ave_index
+corner_diff_rank_ave_stand
 diff_load_weight
 dist_kind
 dist_kind_count
@@ -37,8 +38,10 @@ predict_last_passing_rank_stand
 limb
 level_score
 level_score_index
+level_score_stand
 match_rank
 match_rank_index
+match_rank_stand
 money
 mother_rank
 my_limb_count
@@ -49,13 +52,16 @@ race_interval
 race_level_check
 speed_index
 speed_index_index
+speed_index_stand
 train_score
 train_score_index
 train_score_stand
 up_rate
 up_rate_index
+up_rate_stand
 up3_horce_true_skill
 up3_horce_true_skill_index
+up3_horce_true_skill_stand
 waku_three_rate
 weather
 weight

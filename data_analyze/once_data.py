@@ -302,16 +302,21 @@ class OnceData:
         sort_race_data[data_name.trainer_true_skill_index] = sorted( current_race_data[data_name.trainer_true_skill], reverse = True )
         sort_race_data[data_name.up3_horce_true_skill_index] = sorted( current_race_data[data_name.up3_horce_true_skill], reverse = True )
         sort_race_data[data_name.corner_diff_rank_ave_index] = sorted( current_race_data[data_name.corner_diff_rank_ave], reverse = True )
-        sort_race_data[data_name.speed_index_index] = sorted( current_race_data[data_name.speed_index], reverse = True )
         sort_race_data[data_name.match_rank_index] = sorted( current_race_data[data_name.match_rank], reverse = True )
         sort_race_data[data_name.up_rate_index] = sorted( current_race_data[data_name.up_rate], reverse = True )
         sort_race_data[data_name.omega_index] = sorted( current_race_data[data_name.omega], reverse = True )
         sort_race_data[data_name.level_score_index] = sorted( current_race_data[data_name.level_score], reverse = True )
         sort_race_data[data_name.train_score_index] = sorted( current_race_data[data_name.train_score], reverse = True )
 
+        speed_index_stand = lib.standardization( current_race_data[data_name.speed_index] )
         horce_true_skill_stand = lib.standardization( current_race_data[data_name.horce_true_skill] )
         jockey_true_skill_stand = lib.standardization( current_race_data[data_name.jockey_true_skill] )
         trainer_true_skill_stand = lib.standardization( current_race_data[data_name.trainer_true_skill] )
+        up3_horce_true_skill_stand = lib.standardization( current_race_data[data_name.up3_horce_true_skill] )
+        corner_diff_rank_ave_stand = lib.standardization( current_race_data[data_name.corner_diff_rank_ave] )
+        match_rank_stand = lib.standardization( current_race_data[data_name.match_rank] )
+        up_rate_stand = lib.standardization( current_race_data[data_name.up_rate] )
+        level_score_stand = lib.standardization( current_race_data[data_name.level_score] )
         train_score_stand = lib.standardization( current_race_data[data_name.train_score] )
 
         for kk in self.race_data[k].keys():
@@ -454,7 +459,7 @@ class OnceData:
             jockey_year_rank_score = self.jockey_data.year_rank( race_id, horce_id, key_before_year )
             baba = cd.baba_status()
             t_instance = {}
-            
+
             #t_instance[data_name.pace] = pace
             t_instance[data_name.all_horce_num] = cd.all_horce_num()
             t_instance[data_name.ave_burden_weight_diff] = ave_burden_weight_diff
@@ -471,6 +476,7 @@ class OnceData:
             t_instance[data_name.burden_weight] = burden_weight_score
             t_instance[data_name.corner_diff_rank_ave] = corner_diff_rank_ave
             t_instance[data_name.corner_diff_rank_ave_index] = corner_diff_rank_ave_index
+            t_instance[data_name.corner_diff_rank_ave_stand] = corner_diff_rank_ave_stand[count]
             t_instance[data_name.dist_kind] = cd.dist_kind()
             t_instance[data_name.dist_kind_count] = dist_kind_count
             t_instance[data_name.father_rank] = father_match_rank
@@ -492,12 +498,14 @@ class OnceData:
             t_instance[data_name.trainer_true_skill_stand] = trainer_true_skill_stand[count]
             t_instance[data_name.level_score] = level_score
             t_instance[data_name.level_score_index] = level_score_index
+            t_instance[data_name.level_score_stand] = level_score_stand[count]
             t_instance[data_name.predict_last_passing_rank] = predict_last_passing_rank
             t_instance[data_name.predict_last_passing_rank_index] = predict_last_passing_rank_index
             t_instance[data_name.predict_last_passing_rank_stand] = predict_last_passing_rank_stand
             t_instance[data_name.limb] = limb_math
             t_instance[data_name.match_rank] = match_rank
             t_instance[data_name.match_rank_index] = match_rank_index
+            t_instance[data_name.match_rank_stand] = match_rank_stand[count]
             t_instance[data_name.money] = money_score
             t_instance[data_name.mother_rank] = mother_match_rank
             t_instance[data_name.my_limb_count] = my_limb_count_score
@@ -508,13 +516,16 @@ class OnceData:
             t_instance[data_name.race_level_check] = high_level_score
             t_instance[data_name.speed_index] = speed_index
             t_instance[data_name.speed_index_index] = speed_index_index
+            t_instance[data_name.speed_index_stand] = speed_index_stand[count]
             t_instance[data_name.train_score] = train_score
             t_instance[data_name.train_score_index] = train_score
             t_instance[data_name.train_score_stand] = train_score_stand[count]
             t_instance[data_name.up3_horce_true_skill] = up3_horce_true_skill
             t_instance[data_name.up3_horce_true_skill_index] = up3_horce_true_skill_index
+            t_instance[data_name.up3_horce_true_skill_stand] = up3_horce_true_skill_stand[count]
             t_instance[data_name.up_rate] = up_rate
             t_instance[data_name.up_rate_index] = up_rate_index
+            t_instance[data_name.up_rate_stand] = up_rate_stand[count]
             t_instance[data_name.weight] = weight_score
             t_instance[data_name.waku_three_rate] = waku_three_rate
             t_instance[data_name.weather] = cd.weather()
