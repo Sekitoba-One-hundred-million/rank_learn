@@ -143,7 +143,7 @@ def main( models, data, show = True ):
             #if popular > 3:
             #    continue
             
-            #if score * odds < 1.2:
+            #if score * odds < 1.25:
             #    continue
             
             #high_popular_score = high_popular_rank_data[race_id][horce_id]
@@ -151,7 +151,7 @@ def main( models, data, show = True ):
             #if high_popular_score > 2.8:
             #    continue
 
-            #bc = 1 + min( max( int( ( score * odds - 1 ) * 10 ), 0 ), 2 )
+            #bc = 1 + min( max( int( ( score * odds - 1 ) * 10 ), 0 ), 4 )
             test_result["bet_count"] += bc
             test_result["count"] += 1
             
@@ -181,7 +181,8 @@ def main( models, data, show = True ):
         print( "複勝 回収率{}%".format( three_recovery_rate ) )
         print( "単勝 勝率{}%".format( one_win_rate ) )
         print( "複勝 勝率{}%".format( three_win_rate ) )
-        print( "賭けた回数{}回".format( test_result["count"] ) )
+        print( "賭けたレース数{}回".format( test_result["count"] ) )
+        print( "賭けた金額{}".format( test_result["bet_count"] ) )
         print( "mdcd:{}".format( round( mdcd_score / mdcd_count, 4 ) ) )
 
     return one_win_rate, three_win_rate, round( mdcd_score / mdcd_count, 4 )

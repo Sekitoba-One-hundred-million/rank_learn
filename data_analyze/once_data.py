@@ -199,6 +199,7 @@ class OnceData:
         current_race_data[data_name.trainer_true_skill] = []
         current_race_data[data_name.up3_horce_true_skill] = []
         current_race_data[data_name.corner_diff_rank_ave] = []
+        current_race_data[data_name.corner_true_skill] = []
         current_race_data[data_name.match_rank] = []
         current_race_data[data_name.speed_index] = []
         current_race_data[data_name.up_rate] = []
@@ -242,6 +243,7 @@ class OnceData:
             horce_true_skill = 25
             jockey_true_skill = 25
             trainer_true_skill = 25
+            corner_true_skill = 25
             up3_horce_true_skill = 25
 
             if race_id in self.true_skill_data["horce"] and \
@@ -255,6 +257,10 @@ class OnceData:
             if race_id in self.true_skill_data["trainer"] and \
               trainer_id in self.true_skill_data["trainer"][race_id]:
                 trainer_true_skill = self.true_skill_data["trainer"][race_id][trainer_id]
+
+            if race_id in self.corner_true_skill_data["horce"] and \
+              horce_id in self.corner_true_skill_data["horce"][race_id]:
+                corner_true_skill = self.corner_true_skill_data["horce"][race_id][horce_id]
 
             if race_id in self.up3_true_skill_data["horce"] and \
               horce_id in self.up3_true_skill_data["horce"][race_id]:
@@ -279,6 +285,7 @@ class OnceData:
             current_race_data[data_name.horce_true_skill].append( horce_true_skill )
             current_race_data[data_name.jockey_true_skill].append( jockey_true_skill )
             current_race_data[data_name.trainer_true_skill].append( trainer_true_skill )
+            current_race_data[data_name.corner_true_skill].append( corner_true_skill )
             current_race_data[data_name.up3_horce_true_skill].append( up3_horce_true_skill )            
             current_race_data[data_name.corner_diff_rank_ave].append( corner_diff_rank_ave )
             current_race_data[data_name.speed_index].append( lib.max_check( speed ) + current_time_index["max"] )
@@ -300,6 +307,7 @@ class OnceData:
         sort_race_data[data_name.horce_true_skill_index] = sorted( current_race_data[data_name.horce_true_skill], reverse = True )
         sort_race_data[data_name.jockey_true_skill_index] = sorted( current_race_data[data_name.jockey_true_skill], reverse = True )
         sort_race_data[data_name.trainer_true_skill_index] = sorted( current_race_data[data_name.trainer_true_skill], reverse = True )
+        sort_race_data[data_name.corner_true_skill_index] = sorted( current_race_data[data_name.corner_true_skill], reverse = True )
         sort_race_data[data_name.up3_horce_true_skill_index] = sorted( current_race_data[data_name.up3_horce_true_skill], reverse = True )
         sort_race_data[data_name.corner_diff_rank_ave_index] = sorted( current_race_data[data_name.corner_diff_rank_ave], reverse = True )
         sort_race_data[data_name.match_rank_index] = sorted( current_race_data[data_name.match_rank], reverse = True )
@@ -312,6 +320,7 @@ class OnceData:
         horce_true_skill_stand = lib.standardization( current_race_data[data_name.horce_true_skill] )
         jockey_true_skill_stand = lib.standardization( current_race_data[data_name.jockey_true_skill] )
         trainer_true_skill_stand = lib.standardization( current_race_data[data_name.trainer_true_skill] )
+        corner_true_skill_stand = lib.standardization( current_race_data[data_name.corner_true_skill] )
         up3_horce_true_skill_stand = lib.standardization( current_race_data[data_name.up3_horce_true_skill] )
         corner_diff_rank_ave_stand = lib.standardization( current_race_data[data_name.corner_diff_rank_ave] )
         match_rank_stand = lib.standardization( current_race_data[data_name.match_rank] )
@@ -412,6 +421,7 @@ class OnceData:
             horce_true_skill = current_race_data[data_name.horce_true_skill][count]
             jockey_true_skill = current_race_data[data_name.jockey_true_skill][count]
             trainer_true_skill = current_race_data[data_name.trainer_true_skill][count]
+            corner_true_skill = current_race_data[data_name.corner_true_skill][count]
             up3_horce_true_skill = current_race_data[data_name.up3_horce_true_skill][count]
             corner_diff_rank_ave = current_race_data[data_name.corner_diff_rank_ave][count]
             speed_index = current_race_data[data_name.speed_index][count]
@@ -425,6 +435,7 @@ class OnceData:
             horce_true_skill_index = sort_race_data[data_name.horce_true_skill_index].index( horce_true_skill )
             jockey_true_skill_index = sort_race_data[data_name.jockey_true_skill_index].index( jockey_true_skill )
             trainer_true_skill_index = sort_race_data[data_name.trainer_true_skill_index].index( trainer_true_skill )
+            corner_true_skill_index = sort_race_data[data_name.corner_true_skill_index].index( corner_true_skill )
             up3_horce_true_skill_index = sort_race_data[data_name.up3_horce_true_skill_index].index( up3_horce_true_skill )
             corner_diff_rank_ave_index = sort_race_data[data_name.corner_diff_rank_ave_index].index( corner_diff_rank_ave )
             speed_index_index = sort_race_data[data_name.speed_index_index].index( speed_index )
@@ -477,6 +488,9 @@ class OnceData:
             t_instance[data_name.corner_diff_rank_ave] = corner_diff_rank_ave
             t_instance[data_name.corner_diff_rank_ave_index] = corner_diff_rank_ave_index
             t_instance[data_name.corner_diff_rank_ave_stand] = corner_diff_rank_ave_stand[count]
+            t_instance[data_name.corner_true_skill] = corner_true_skill
+            t_instance[data_name.corner_true_skill_index] = corner_true_skill_index
+            t_instance[data_name.corner_true_skill_stand] = corner_true_skill_stand[count]
             t_instance[data_name.dist_kind] = cd.dist_kind()
             t_instance[data_name.dist_kind_count] = dist_kind_count
             t_instance[data_name.father_rank] = father_match_rank
