@@ -480,8 +480,8 @@ class OnceData:
             t_instance[data_name.before_first_passing_rank] = before_first_passing_rank
             t_instance[data_name.before_id_weight] = before_id_weight_score
             t_instance[data_name.before_last_passing_rank] = before_last_passing_rank
-            #t_instance[data_name.before_popular] = before_popular
-            #t_instance[data_name.before_rank] = before_rank
+            t_instance[data_name.before_popular] = before_popular
+            t_instance[data_name.before_rank] = before_rank
             t_instance[data_name.before_race_score] = before_race_score
             t_instance[data_name.before_speed] = before_speed_score
             t_instance[data_name.burden_weight] = burden_weight_score
@@ -532,7 +532,7 @@ class OnceData:
             t_instance[data_name.speed_index_index] = speed_index_index
             t_instance[data_name.speed_index_stand] = speed_index_stand[count]
             t_instance[data_name.train_score] = train_score
-            t_instance[data_name.train_score_index] = train_score
+            t_instance[data_name.train_score_index] = train_score_index
             t_instance[data_name.train_score_stand] = train_score_stand[count]
             t_instance[data_name.up3_horce_true_skill] = up3_horce_true_skill
             t_instance[data_name.up3_horce_true_skill_index] = up3_horce_true_skill_index

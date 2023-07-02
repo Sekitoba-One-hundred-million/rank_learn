@@ -6,7 +6,9 @@ before_diff
 before_first_passing_rank
 before_id_weight
 before_last_passing_rank
+before_popular
 before_race_score
+before_rank
 before_speed
 burden_weight
 corner_diff_rank_ave
