@@ -135,10 +135,13 @@ def importance_check( model ):
         result.append( { "key": str_data, "score": importance_data[c] } )
         c += 1
 
+    f = open( "importance_value.txt", "w" )
     result = sorted( result, key = lambda x: x["score"], reverse= True )
 
     for i in range( 0, len( result ) ):
-        print( "{}: {}".format( result[i]["key"], result[i]["score"] ) )
+        f.write( "{}: {}\n".format( result[i]["key"], result[i]["score"] ) )
+
+    f.close()
 
 def main( data ):
     result = {}

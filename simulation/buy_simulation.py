@@ -74,17 +74,21 @@ def main( models, data, show = True ):
         #if not year in lib.test_years or int( race_place_num ) == 8:
         if not year in lib.test_years:
             continue
-        
+
         horce_list = []
         score_data = {}
         current_odds = odds_data[race_id]
 
         #if not race_id in users_score_data:
         #    continue
+        skip = False
         
         for horce_id in data[race_id].keys():
             scores = {}
             ex_value = {}
+
+            #if not data[race_id][horce_id]["answer"]["race_kind"] == 1:
+            #    skip = True
             
             for model_key in models.keys():
                 p_data = models[model_key].predict( np.array( [ data[race_id][horce_id]["data"] ] ) )
@@ -99,7 +103,7 @@ def main( models, data, show = True ):
             ex_value["horce_id"] = horce_id
             horce_list.append( ex_value )
 
-        if len( horce_list ) < 3:
+        if len( horce_list ) < 3 or skip:
             continue
 
         #if not ( 8 <= len( horce_list ) and len( horce_list ) <= 10 ):

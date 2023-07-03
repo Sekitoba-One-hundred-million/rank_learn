@@ -209,6 +209,7 @@ class OnceData:
         current_race_data[data_name.age] = []
         current_race_data[data_name.level_score] = []
         current_race_data[data_name.train_score] = []
+        current_race_data[data_name.foot_used] = []
         
         for horce_id in self.race_data[k].keys():
             current_data, past_data = lib.race_check( self.horce_data[horce_id],
@@ -296,6 +297,7 @@ class OnceData:
             current_race_data[data_name.age].append( age )
             current_race_data[data_name.level_score].append( pd.level_score() )
             current_race_data[data_name.train_score].append( train_score )
+            current_race_data[data_name.foot_used].append( self.race_type.foot_used_score_get( cd, pd ) )
 
         if len( current_race_data[data_name.burden_weight] ) == 0:
             return
@@ -315,6 +317,7 @@ class OnceData:
         sort_race_data[data_name.omega_index] = sorted( current_race_data[data_name.omega], reverse = True )
         sort_race_data[data_name.level_score_index] = sorted( current_race_data[data_name.level_score], reverse = True )
         sort_race_data[data_name.train_score_index] = sorted( current_race_data[data_name.train_score], reverse = True )
+        sort_race_data[data_name.foot_used_index] = sorted( current_race_data[data_name.foot_used], reverse = True )
 
         speed_index_stand = lib.standardization( current_race_data[data_name.speed_index] )
         horce_true_skill_stand = lib.standardization( current_race_data[data_name.horce_true_skill] )
@@ -327,6 +330,7 @@ class OnceData:
         up_rate_stand = lib.standardization( current_race_data[data_name.up_rate] )
         level_score_stand = lib.standardization( current_race_data[data_name.level_score] )
         train_score_stand = lib.standardization( current_race_data[data_name.train_score] )
+        foot_used_stand = lib.standardization( current_race_data[data_name.foot_used] )
 
         for kk in self.race_data[k].keys():
             horce_id = kk
@@ -431,6 +435,7 @@ class OnceData:
             age = current_race_data[data_name.age][count]
             level_score = min( current_race_data[data_name.level_score][count], 3 )
             train_score = current_race_data[data_name.train_score][count]
+            foot_used = current_race_data[data_name.foot_used][count]
             
             horce_true_skill_index = sort_race_data[data_name.horce_true_skill_index].index( horce_true_skill )
             jockey_true_skill_index = sort_race_data[data_name.jockey_true_skill_index].index( jockey_true_skill )
@@ -444,6 +449,7 @@ class OnceData:
             up_rate_index = sort_race_data[data_name.up_rate_index].index( up_rate )
             level_score_index = sort_race_data[data_name.level_score_index].index( level_score )
             train_score_index = sort_race_data[data_name.train_score_index].index( train_score )
+            foot_used_index = sort_race_data[data_name.foot_used_index].index( foot_used )
 
             ave_burden_weight_diff = ave_burden_weight - cd.burden_weight()
             #ave_age_diff = ave_age - age
@@ -469,8 +475,11 @@ class OnceData:
 
             jockey_year_rank_score = self.jockey_data.year_rank( race_id, horce_id, key_before_year )
             baba = cd.baba_status()
-            t_instance = {}
+            three_rate_score = -1
+            three_rate_score_index = -1
+            three_rate_score_stand = -1
 
+            t_instance = {}
             #t_instance[data_name.pace] = pace
             t_instance[data_name.all_horce_num] = cd.all_horce_num()
             t_instance[data_name.ave_burden_weight_diff] = ave_burden_weight_diff
@@ -494,6 +503,10 @@ class OnceData:
             t_instance[data_name.dist_kind] = cd.dist_kind()
             t_instance[data_name.dist_kind_count] = dist_kind_count
             t_instance[data_name.father_rank] = father_match_rank
+            t_instance[data_name.foot_used] = foot_used
+            t_instance[data_name.foot_used_index] = foot_used_index
+            t_instance[data_name.foot_used_stand] = foot_used_stand[count]
+            t_instance[data_name.foot_used_best] = self.race_type.best_foot_used( cd, pd )
             t_instance[data_name.predict_first_passing_rank] = predict_first_passing_rank
             t_instance[data_name.predict_first_passing_rank_index] = predict_first_passing_rank_index
             t_instance[data_name.predict_first_passing_rank_stand] = predict_first_passing_rank_stand
@@ -556,7 +569,8 @@ class OnceData:
                 self.simu_data[race_id][horce_id]["answer"] = { "rank": cd.rank(),
                                                                "odds": cd.odds(),
                                                                "popular": cd.popular(),
-                                                               "horce_num": cd.horce_number() }
+                                                               "horce_num": cd.horce_number(),
+                                                               "race_kind": cd.race_kind() }
 
             rank = cd.rank()
             answer_data.append( rank )

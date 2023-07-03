@@ -21,6 +21,10 @@ diff_load_weight
 dist_kind
 dist_kind_count
 father_rank
+foot_used
+foot_used_best
+foot_used_index
+foot_used_stand
 predict_first_passing_rank
 predict_first_passing_rank_index
 predict_first_passing_rank_stand
