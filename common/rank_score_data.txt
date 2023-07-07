@@ -74,3 +74,6 @@ up3_horce_true_skill_stand
 waku_three_rate
 weather
 weight
+predict_up3
+predict_up3_index
+predict_up3_stand

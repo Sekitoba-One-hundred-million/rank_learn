@@ -43,6 +43,7 @@ dm.dl.file_set( "predict_last_passing_rank.pickle" )
 dm.dl.file_set( "first_corner_rank.pickle" )
 dm.dl.file_set( "up3_true_skill_data.pickle" )
 dm.dl.file_set( "predict_train_score.pickle" )
+dm.dl.file_set( "predict_up3.pickle" )
 
 class OnceData:
     def __init__( self ):
@@ -66,6 +67,7 @@ class OnceData:
         self.predict_last_passing_rank = dm.dl.data_get( "predict_last_passing_rank.pickle" )
         self.predict_train_score = dm.dl.data_get( "predict_train_score.pickle" )
         self.first_corner_rank = dm.dl.data_get( "first_corner_rank.pickle" )
+        self.predict_up3 = dm.dl.data_get( "predict_up3.pickle" )
         
         self.race_high_level = RaceHighLevel()
         self.race_type = RaceType()
@@ -372,6 +374,9 @@ class OnceData:
             predict_last_passing_rank = -1
             predict_last_passing_rank_index = -1
             predict_last_passing_rank_stand = 0
+            predict_up3 = -1
+            predict_up3_index = -1
+            predict_up3_stand = 0
 
             if race_id in self.predict_first_passing_rank and horce_id in self.predict_first_passing_rank[race_id]:
                 predict_first_passing_rank = self.predict_first_passing_rank[race_id][horce_id]["score"]
@@ -382,6 +387,11 @@ class OnceData:
                 predict_last_passing_rank = self.predict_last_passing_rank[race_id][horce_id]["score"]
                 predict_last_passing_rank_index = self.predict_last_passing_rank[race_id][horce_id]["index"]
                 predict_last_passing_rank_stand = self.predict_last_passing_rank[race_id][horce_id]["stand"]
+
+            if race_id in self.predict_up3 and horce_id in self.predict_up3[race_id]:
+                predict_up3 = self.predict_up3[race_id][horce_id]["score"]
+                predict_up3_index = self.predict_up3[race_id][horce_id]["index"]
+                predict_up3_stand = self.predict_up3[race_id][horce_id]["stand"]
 
             before_year = int( year ) - 1
             key_before_year = str( int( before_year ) )
@@ -557,6 +567,9 @@ class OnceData:
             t_instance[data_name.waku_three_rate] = waku_three_rate
             t_instance[data_name.weather] = cd.weather()
             t_instance[data_name.diff_load_weight] = diff_load_weight
+            t_instance[data_name.predict_up3] = predict_up3
+            t_instance[data_name.predict_up3_index] = predict_up3_index
+            t_instance[data_name.predict_up3_stand] = predict_up3_stand
             #t_instance[data_name.popular] = cd.popular()
 
             count += 1

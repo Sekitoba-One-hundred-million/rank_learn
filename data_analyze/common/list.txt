@@ -92,3 +92,6 @@ weather
 weight
 popular
 pace
+predict_up3
+predict_up3_index
+predict_up3_stand

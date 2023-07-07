@@ -147,7 +147,7 @@ def main( models, data, show = True ):
             #if popular > 3:
             #    continue
             
-            #if score * odds < 1.25:
+            #if score * odds < 1:
             #    continue
             
             #high_popular_score = high_popular_rank_data[race_id][horce_id]

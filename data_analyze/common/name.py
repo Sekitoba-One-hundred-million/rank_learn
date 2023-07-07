@@ -94,3 +94,6 @@ class Name:
         self.weight = "weight"
         self.popular = "popular"
         self.pace = "pace"
+        self.predict_up3 = "predict_up3"
+        self.predict_up3_index = "predict_up3_index"
+        self.predict_up3_stand = "predict_up3_stand"

@@ -158,11 +158,11 @@ def main( data, simu_data ):
     use_data = data_check( data )
 
     study = optuna.create_study()
-    study.optimize(objective, n_trials=500)
+    study.optimize(objective, n_trials=1000)
     print( study.best_params )
 
     f = open( "best_params.json", "w" )
     json.dump( study.best_params, f )
     f.close()
     
-    best_model_create( study.best_params )
+    #best_model_create( study.best_params )
