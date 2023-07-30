@@ -144,7 +144,7 @@ def main( models, data, show = True ):
             score = bet_horce["score"]
             popular = bet_horce["popular"]
 
-            #if popular > 3:
+            #if popular == 1:
             #    continue
             
             #if score * odds < 1:

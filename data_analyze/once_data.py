@@ -45,6 +45,8 @@ dm.dl.file_set( "up3_true_skill_data.pickle" )
 dm.dl.file_set( "predict_train_score.pickle" )
 dm.dl.file_set( "predict_up3.pickle" )
 
+dm.dl.file_set( "update_race_id_list.pickle" )
+
 class OnceData:
     def __init__( self ):
         self.race_data = dm.dl.data_get( "race_data.pickle" )
@@ -68,6 +70,8 @@ class OnceData:
         self.predict_train_score = dm.dl.data_get( "predict_train_score.pickle" )
         self.first_corner_rank = dm.dl.data_get( "first_corner_rank.pickle" )
         self.predict_up3 = dm.dl.data_get( "predict_up3.pickle" )
+        
+        self.update_race_id_list = dm.dl.data_get( "update_race_id_list.pickle" )
         
         self.race_high_level = RaceHighLevel()
         self.race_type = RaceType()
