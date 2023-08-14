@@ -44,8 +44,7 @@ dm.dl.file_set( "first_corner_rank.pickle" )
 dm.dl.file_set( "up3_true_skill_data.pickle" )
 dm.dl.file_set( "predict_train_score.pickle" )
 dm.dl.file_set( "predict_up3.pickle" )
-
-dm.dl.file_set( "update_race_id_list.pickle" )
+dm.dl.file_set( "popular_kind_win_rate_data.pickle" )
 
 class OnceData:
     def __init__( self ):
@@ -70,8 +69,7 @@ class OnceData:
         self.predict_train_score = dm.dl.data_get( "predict_train_score.pickle" )
         self.first_corner_rank = dm.dl.data_get( "first_corner_rank.pickle" )
         self.predict_up3 = dm.dl.data_get( "predict_up3.pickle" )
-        
-        self.update_race_id_list = dm.dl.data_get( "update_race_id_list.pickle" )
+        self.popular_kind_win_rate_data = dm.dl.data_get( "popular_kind_win_rate_data.pickle" )
         
         self.race_high_level = RaceHighLevel()
         self.race_type = RaceType()
@@ -574,12 +572,20 @@ class OnceData:
             t_instance[data_name.predict_up3] = predict_up3
             t_instance[data_name.predict_up3_index] = predict_up3_index
             t_instance[data_name.predict_up3_stand] = predict_up3_stand
-            #t_instance[data_name.popular] = cd.popular()
 
             count += 1
             t_list = self.data_list_create( t_instance )
 
             if year in lib.test_years:
+                key_dist_kind = str( int( cd.dist_kind() ) )
+                key_popular = str( int( cd.popular() ) )
+                popular_win_rate = { "one": 0, "two": 0, "three": 0 }
+                
+                try:
+                    popular_win_rate = copy.deepcopy( self.popular_kind_win_rate_data[key_place][key_dist_kind][key_kind][key_popular] )
+                except:
+                    pass
+
                 lib.dic_append( self.simu_data, race_id, {} )
                 self.simu_data[race_id][horce_id] = {}
                 self.simu_data[race_id][horce_id]["data"] = t_list
@@ -587,7 +593,8 @@ class OnceData:
                                                                "odds": cd.odds(),
                                                                "popular": cd.popular(),
                                                                "horce_num": cd.horce_number(),
-                                                               "race_kind": cd.race_kind() }
+                                                               "race_kind": cd.race_kind(),
+                                                               "popular_win_rate": popular_win_rate }
 
             rank = cd.rank()
             answer_data.append( rank )
