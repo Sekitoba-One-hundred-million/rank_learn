@@ -28,7 +28,6 @@ dm.dl.file_set( "race_info_data.pickle" )
 dm.dl.file_set( "horce_data_storage.pickle" )
 dm.dl.file_set( "baba_index_data.pickle" )
 dm.dl.file_set( "parent_id_data.pickle" )
-dm.dl.file_set( "omega_index_data.pickle" )
 dm.dl.file_set( "race_day.pickle" )
 dm.dl.file_set( "horce_sex_data.pickle" )
 dm.dl.file_set( "race_jockey_id_data.pickle" )
@@ -53,7 +52,6 @@ class OnceData:
         self.horce_data = dm.dl.data_get( "horce_data_storage.pickle" )
         self.baba_index_data = dm.dl.data_get( "baba_index_data.pickle" )
         self.parent_id_data = dm.dl.data_get( "parent_id_data.pickle" )
-        self.omega_index_data = dm.dl.data_get( "omega_index_data.pickle" )
         self.race_day = dm.dl.data_get( "race_day.pickle" )
         self.horce_sex_data = dm.dl.data_get( "horce_sex_data.pickle" )
         self.race_jockey_id_data = dm.dl.data_get( "race_jockey_id_data.pickle" )
@@ -207,7 +205,6 @@ class OnceData:
         current_race_data[data_name.match_rank] = []
         current_race_data[data_name.speed_index] = []
         current_race_data[data_name.up_rate] = []
-        current_race_data[data_name.omega] = []
         current_race_data[data_name.my_limb_count] = { "-1": -1 }
         current_race_data[data_name.burden_weight] = []
         current_race_data[data_name.age] = []
@@ -271,11 +268,6 @@ class OnceData:
               horce_id in self.up3_true_skill_data["horce"][race_id]:
                 up3_horce_true_skill = self.up3_true_skill_data["horce"][race_id][horce_id]
 
-            try:
-                omega = self.omega_index_data[race_id][int(cd.horce_number()-1)]
-            except:
-                omega = 0
-
             train_score = -10000
 
             if race_id in self.predict_train_score and horce_id in self.predict_train_score[race_id]:
@@ -296,7 +288,6 @@ class OnceData:
             current_race_data[data_name.speed_index].append( lib.max_check( speed ) + current_time_index["max"] )
             current_race_data[data_name.match_rank].append( pd.match_rank() )
             current_race_data[data_name.up_rate].append( pd.up_rate( key_race_money_class ) )
-            current_race_data[data_name.omega].append( omega )
             current_race_data[data_name.burden_weight].append( cd.burden_weight() )
             current_race_data[data_name.age].append( age )
             current_race_data[data_name.level_score].append( pd.level_score() )
@@ -318,7 +309,6 @@ class OnceData:
         sort_race_data[data_name.corner_diff_rank_ave_index] = sorted( current_race_data[data_name.corner_diff_rank_ave], reverse = True )
         sort_race_data[data_name.match_rank_index] = sorted( current_race_data[data_name.match_rank], reverse = True )
         sort_race_data[data_name.up_rate_index] = sorted( current_race_data[data_name.up_rate], reverse = True )
-        sort_race_data[data_name.omega_index] = sorted( current_race_data[data_name.omega], reverse = True )
         sort_race_data[data_name.level_score_index] = sorted( current_race_data[data_name.level_score], reverse = True )
         sort_race_data[data_name.train_score_index] = sorted( current_race_data[data_name.train_score], reverse = True )
         sort_race_data[data_name.foot_used_index] = sorted( current_race_data[data_name.foot_used], reverse = True )
@@ -442,7 +432,6 @@ class OnceData:
             corner_diff_rank_ave = current_race_data[data_name.corner_diff_rank_ave][count]
             speed_index = current_race_data[data_name.speed_index][count]
             match_rank = current_race_data[data_name.match_rank][count]
-            omega = current_race_data[data_name.omega][count]
             up_rate = current_race_data[data_name.up_rate][count]
             age = current_race_data[data_name.age][count]
             level_score = min( current_race_data[data_name.level_score][count], 3 )
@@ -457,7 +446,6 @@ class OnceData:
             corner_diff_rank_ave_index = sort_race_data[data_name.corner_diff_rank_ave_index].index( corner_diff_rank_ave )
             speed_index_index = sort_race_data[data_name.speed_index_index].index( speed_index )
             match_rank_index = sort_race_data[data_name.match_rank_index].index( match_rank )
-            omega_index = sort_race_data[data_name.omega_index].index( omega )
             up_rate_index = sort_race_data[data_name.up_rate_index].index( up_rate )
             level_score_index = sort_race_data[data_name.level_score_index].index( level_score )
             train_score_index = sort_race_data[data_name.train_score_index].index( train_score )
@@ -548,8 +536,6 @@ class OnceData:
             t_instance[data_name.money] = money_score
             t_instance[data_name.mother_rank] = mother_match_rank
             t_instance[data_name.my_limb_count] = my_limb_count_score
-            t_instance[data_name.omega] = omega
-            t_instance[data_name.omega_index] = omega_index
             t_instance[data_name.place] = place_num
             t_instance[data_name.race_interval] = race_interval_score
             t_instance[data_name.race_level_check] = high_level_score
