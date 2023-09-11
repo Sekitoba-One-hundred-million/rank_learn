@@ -70,7 +70,7 @@ predict_up3
 predict_up3_index
 predict_up3_stand
 race_interval
-race_level_check
+high_level_score
 rank_score_odds
 speed_index
 speed_index_index

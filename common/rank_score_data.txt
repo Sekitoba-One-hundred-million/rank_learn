@@ -56,7 +56,7 @@ predict_up3
 predict_up3_index
 predict_up3_stand
 race_interval
-race_level_check
+high_level_score
 speed_index
 speed_index_index
 speed_index_stand

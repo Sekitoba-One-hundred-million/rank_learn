@@ -538,7 +538,7 @@ class OnceData:
             t_instance[data_name.my_limb_count] = my_limb_count_score
             t_instance[data_name.place] = place_num
             t_instance[data_name.race_interval] = race_interval_score
-            t_instance[data_name.race_level_check] = high_level_score
+            t_instance[data_name.high_level_score] = high_level_score
             t_instance[data_name.speed_index] = speed_index
             t_instance[data_name.speed_index_index] = speed_index_index
             t_instance[data_name.speed_index_stand] = speed_index_stand[count]

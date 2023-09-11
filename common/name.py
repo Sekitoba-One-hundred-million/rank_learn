@@ -72,7 +72,7 @@ class Name:
         self.predict_up3_index = "predict_up3_index"
         self.predict_up3_stand = "predict_up3_stand"
         self.race_interval = "race_interval"
-        self.race_level_check = "race_level_check"
+        self.high_level_score = "high_level_score"
         self.rank_score_odds = "rank_score_odds"
         self.speed_index = "speed_index"
         self.speed_index_index = "speed_index_index"
