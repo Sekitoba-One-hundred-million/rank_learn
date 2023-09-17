@@ -60,9 +60,9 @@ high_level_score
 speed_index
 speed_index_index
 speed_index_stand
-train_score
-train_score_index
-train_score_stand
+predict_train_score
+predict_train_score_index
+predict_train_score_stand
 trainer_true_skill
 trainer_true_skill_index
 trainer_true_skill_stand

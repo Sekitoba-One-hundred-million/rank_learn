@@ -209,7 +209,7 @@ class OnceData:
         current_race_data[data_name.burden_weight] = []
         current_race_data[data_name.age] = []
         current_race_data[data_name.level_score] = []
-        current_race_data[data_name.train_score] = []
+        current_race_data[data_name.predict_train_score] = []
         current_race_data[data_name.foot_used] = []
         
         for horce_id in self.race_data[k].keys():
@@ -291,7 +291,7 @@ class OnceData:
             current_race_data[data_name.burden_weight].append( cd.burden_weight() )
             current_race_data[data_name.age].append( age )
             current_race_data[data_name.level_score].append( pd.level_score() )
-            current_race_data[data_name.train_score].append( train_score )
+            current_race_data[data_name.predict_train_score].append( train_score )
             current_race_data[data_name.foot_used].append( self.race_type.foot_used_score_get( cd, pd ) )
 
         if len( current_race_data[data_name.burden_weight] ) < 2:
@@ -310,7 +310,7 @@ class OnceData:
         sort_race_data[data_name.match_rank_index] = sorted( current_race_data[data_name.match_rank], reverse = True )
         sort_race_data[data_name.up_rate_index] = sorted( current_race_data[data_name.up_rate], reverse = True )
         sort_race_data[data_name.level_score_index] = sorted( current_race_data[data_name.level_score], reverse = True )
-        sort_race_data[data_name.train_score_index] = sorted( current_race_data[data_name.train_score], reverse = True )
+        sort_race_data[data_name.predict_train_score_index] = sorted( current_race_data[data_name.predict_train_score], reverse = True )
         sort_race_data[data_name.foot_used_index] = sorted( current_race_data[data_name.foot_used], reverse = True )
 
         speed_index_stand = lib.standardization( current_race_data[data_name.speed_index] )
@@ -323,7 +323,7 @@ class OnceData:
         match_rank_stand = lib.standardization( current_race_data[data_name.match_rank] )
         up_rate_stand = lib.standardization( current_race_data[data_name.up_rate] )
         level_score_stand = lib.standardization( current_race_data[data_name.level_score] )
-        train_score_stand = lib.standardization( current_race_data[data_name.train_score] )
+        train_score_stand = lib.standardization( current_race_data[data_name.predict_train_score] )
         foot_used_stand = lib.standardization( current_race_data[data_name.foot_used] )
 
         for kk in self.race_data[k].keys():
@@ -435,7 +435,7 @@ class OnceData:
             up_rate = current_race_data[data_name.up_rate][count]
             age = current_race_data[data_name.age][count]
             level_score = min( current_race_data[data_name.level_score][count], 3 )
-            train_score = current_race_data[data_name.train_score][count]
+            train_score = current_race_data[data_name.predict_train_score][count]
             foot_used = current_race_data[data_name.foot_used][count]
             
             horce_true_skill_index = sort_race_data[data_name.horce_true_skill_index].index( horce_true_skill )
@@ -448,15 +448,12 @@ class OnceData:
             match_rank_index = sort_race_data[data_name.match_rank_index].index( match_rank )
             up_rate_index = sort_race_data[data_name.up_rate_index].index( up_rate )
             level_score_index = sort_race_data[data_name.level_score_index].index( level_score )
-            train_score_index = sort_race_data[data_name.train_score_index].index( train_score )
+            train_score_index = sort_race_data[data_name.predict_train_score_index].index( train_score )
             foot_used_index = sort_race_data[data_name.foot_used_index].index( foot_used )
 
             ave_burden_weight_diff = ave_burden_weight - cd.burden_weight()
             #ave_age_diff = ave_age - age
             money_score = pd.get_money()
-            
-            if not money_score == 0:
-                money_score += 100
                 
             burden_weight_score = cd.burden_weight()
             before_continue_not_three_rank = pd.before_continue_not_three_rank()
@@ -542,9 +539,9 @@ class OnceData:
             t_instance[data_name.speed_index] = speed_index
             t_instance[data_name.speed_index_index] = speed_index_index
             t_instance[data_name.speed_index_stand] = speed_index_stand[count]
-            t_instance[data_name.train_score] = train_score
-            t_instance[data_name.train_score_index] = train_score_index
-            t_instance[data_name.train_score_stand] = train_score_stand[count]
+            t_instance[data_name.predict_train_score] = train_score
+            t_instance[data_name.predict_train_score_index] = train_score_index
+            t_instance[data_name.predict_train_score_stand] = train_score_stand[count]
             t_instance[data_name.up3_horce_true_skill] = up3_horce_true_skill
             t_instance[data_name.up3_horce_true_skill_index] = up3_horce_true_skill_index
             t_instance[data_name.up3_horce_true_skill_stand] = up3_horce_true_skill_stand[count]
