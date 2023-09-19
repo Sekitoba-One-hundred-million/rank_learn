@@ -192,8 +192,7 @@ class OnceData:
         answer_data = []
         popular_data = []
         diff_data = []
-
-        count = 0
+        horce_id_list = []
         race_limb = {}
         current_race_data = {}
         current_race_data[data_name.horce_true_skill] = []
@@ -293,8 +292,9 @@ class OnceData:
             current_race_data[data_name.level_score].append( pd.level_score() )
             current_race_data[data_name.predict_train_score].append( train_score )
             current_race_data[data_name.foot_used].append( self.race_type.foot_used_score_get( cd, pd ) )
+            horce_id_list.append( horce_id )
 
-        if len( current_race_data[data_name.burden_weight] ) < 2:
+        if len( horce_id_list ) < 2:
             return
 
         sort_race_data: dict[ str, list ] = {}
@@ -326,8 +326,7 @@ class OnceData:
         train_score_stand = lib.standardization( current_race_data[data_name.predict_train_score] )
         foot_used_stand = lib.standardization( current_race_data[data_name.foot_used] )
 
-        for kk in self.race_data[k].keys():
-            horce_id = kk
+        for count, horce_id in enumerate( horce_id_list ):
             current_data, past_data = lib.race_check( self.horce_data[horce_id],
                                                      year, day, num, race_place_num )#今回と過去のデータに分ける
             cd = lib.current_data( current_data )
@@ -394,7 +393,7 @@ class OnceData:
             mother_match_rank = self.match_rank_score( cd, mother_id )
             #stright_slope_score = self.race_type.stright_slope( cd, pd )
             high_level_score = self.race_high_level.data_get( cd, pd, ymd )
-            limb_math = race_limb[kk]#lib.limb_search( pd )
+            limb_math = race_limb[horce_id]
             key_limb = str( int( limb_math ) )            
             race_interval_score = min( max( pd.race_interval(), 0 ), 20 )
             weight_score = cd.weight() / 10
@@ -556,7 +555,6 @@ class OnceData:
             t_instance[data_name.predict_up3_index] = predict_up3_index
             t_instance[data_name.predict_up3_stand] = predict_up3_stand
 
-            count += 1
             t_list = self.data_list_create( t_instance )
 
             if year in lib.test_years:
