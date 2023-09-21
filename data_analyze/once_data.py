@@ -339,12 +339,12 @@ class OnceData:
             place_num = int( race_place_num )
             horce_num = int( cd.horce_number() )
 
-            before_speed_score = -1
-            before_diff_score = 1000
-            before_id_weight_score = 1000
-            before_popular = -1
-            before_passing_list = [ -1, -1, -1, -1 ]
-            before_rank = -1
+            before_speed_score = -1000
+            before_diff_score = -1000
+            before_id_weight_score = -1000
+            before_popular = -1000
+            before_passing_list = [ -1000, -1000, -1000, -1000 ]
+            before_rank = -1000
             diff_load_weight = -1000
             before_pace_up_diff = -1000
 
