@@ -347,6 +347,7 @@ class OnceData:
             before_rank = -1000
             diff_load_weight = -1000
             before_pace_up_diff = -1000
+            before_race_score = -1000
 
             if not before_cd == None:
                 before_speed_score = before_cd.speed()
@@ -358,6 +359,7 @@ class OnceData:
                 up3 = before_cd.up_time()
                 p1, p2 = before_cd.pace()
                 diff_load_weight = cd.burden_weight() - before_cd.burden_weight()
+                before_race_score = self.before_race_score.score_get( before_cd, limb_math, horce_id )
 
             predict_first_passing_rank = -1
             predict_first_passing_rank_index = -1
@@ -401,7 +403,6 @@ class OnceData:
             jockey_rank_score = self.jockey_data.rank( race_id, horce_id )
             #popular_rank = abs( before_cd.rank() - before_cd.popular() )
             #limb_horce_number = int( limb_math * 100 + int( cd.horce_number() / 2 ) )
-            before_race_score = self.before_race_score.score_get( before_cd, limb_math, horce_id )
             
             base_key = {}
             kind_key_data = {}
