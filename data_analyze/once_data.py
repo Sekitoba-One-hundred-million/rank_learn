@@ -44,6 +44,7 @@ dm.dl.file_set( "up3_true_skill_data.pickle" )
 dm.dl.file_set( "predict_train_score.pickle" )
 dm.dl.file_set( "predict_up3.pickle" )
 dm.dl.file_set( "popular_kind_win_rate_data.pickle" )
+dm.dl.file_set( "flame_evaluation_data.pickle" )
 
 class OnceData:
     def __init__( self ):
@@ -68,6 +69,7 @@ class OnceData:
         self.first_corner_rank = dm.dl.data_get( "first_corner_rank.pickle" )
         self.predict_up3 = dm.dl.data_get( "predict_up3.pickle" )
         self.popular_kind_win_rate_data = dm.dl.data_get( "popular_kind_win_rate_data.pickle" )
+        self.flame_evaluation_data = dm.dl.data_get( "flame_evaluation_data.pickle" )
         
         self.race_high_level = RaceHighLevel()
         self.race_type = RaceType()
@@ -93,6 +95,8 @@ class OnceData:
 
         for str_data in str_data_list:
             self.data_name_list.append( str_data.replace( "\n", "" ) )
+
+        self.data_name_list = sorted( self.data_name_list )
 
     def score_write( self ):
         f = open( "common/rank_score_data.txt", "w" )
@@ -475,6 +479,16 @@ class OnceData:
             three_rate_score = -1
             three_rate_score_index = -1
             three_rate_score_stand = -1
+            flame_evaluation_one = -1
+            flame_evaluation_two = -1
+            flame_evaluation_three = -1
+
+            try:
+                flame_evaluation_one = self.flame_evaluation_data[int(race_place_num)][int(day)][int(cd.flame_number())]["one"]
+                flame_evaluation_two = self.flame_evaluation_data[int(race_place_num)][int(day)][int(cd.flame_number())]["two"]
+                flame_evaluation_three = self.flame_evaluation_data[int(race_place_num)][int(day)][int(cd.flame_number())]["three"]
+            except:
+                pass                
 
             t_instance = {}
             #t_instance[data_name.pace] = pace
@@ -500,6 +514,9 @@ class OnceData:
             t_instance[data_name.dist_kind] = cd.dist_kind()
             t_instance[data_name.dist_kind_count] = dist_kind_count
             t_instance[data_name.father_rank] = father_match_rank
+            t_instance[data_name.flame_evaluation_one] = flame_evaluation_one
+            t_instance[data_name.flame_evaluation_two] = flame_evaluation_two
+            t_instance[data_name.flame_evaluation_three] = flame_evaluation_three
             t_instance[data_name.foot_used] = foot_used
             t_instance[data_name.foot_used_index] = foot_used_index
             t_instance[data_name.foot_used_stand] = foot_used_stand[count]

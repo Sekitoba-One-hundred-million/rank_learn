@@ -25,6 +25,9 @@ diff_load_weight
 dist_kind
 dist_kind_count
 father_rank
+flame_evaluation_one
+flame_evaluation_two
+flame_evaluation_three
 foot_used
 foot_used_best
 foot_used_index
