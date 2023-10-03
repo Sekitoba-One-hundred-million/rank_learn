@@ -103,7 +103,7 @@ def main( models, data, show = True ):
             ex_value["horce_id"] = horce_id
             horce_list.append( ex_value )
 
-        if len( horce_list ) < 3 or skip:
+        if len( horce_list ) < 8 or skip:
             continue
 
         #if not ( 8 <= len( horce_list ) and len( horce_list ) <= 10 ):
@@ -115,7 +115,7 @@ def main( models, data, show = True ):
         
         for i in range( 0, len( score_list ) ):
             horce_list[i]["score"] = score_list[i]
-
+            
         #softmax_score_list = sorted( softmax_score_list, reverse = True )
         sort_result = sorted( horce_list, key=lambda x:x["score"], reverse = True )
 
@@ -125,16 +125,7 @@ def main( models, data, show = True ):
             key_score = int( min( score * 100, 40 ) )
             mdcd_score += math.pow( rank - ( i + 1 ), 2 )
             mdcd_count += 1
-            key_popular = str( int( sort_result[i]["popular"] ) )
-            key_index = str( int( i + 1 ) )
-            lib.dic_append( recovery_check, key_index, {} )
-            lib.dic_append( recovery_check[key_index], key_popular, { "recovery": 0, "count": 0, "win": 0 } )
-            recovery_check[key_index][key_popular]["count"] += 1
 
-            if rank == 1:
-                recovery_check[key_index][key_popular]["recovery"] += sort_result[i]["odds"]
-                recovery_check[key_index][key_popular]["win"] += 1
-        
         for i in range( 0, min( len( sort_result ), t ) ):
             bc = 1#bet_count[i]
             bet_horce = sort_result[i]
@@ -143,19 +134,7 @@ def main( models, data, show = True ):
             rank = bet_horce["rank"]
             score = bet_horce["score"]
             popular = bet_horce["popular"]
-
-            #if popular == 1:
-            #    continue
             
-            #if score * odds < 1:
-            #    continue
-            
-            #high_popular_score = high_popular_rank_data[race_id][horce_id]
-
-            #if high_popular_score > 2.8:
-            #    continue
-
-            #bc = 1 + min( max( int( ( score * odds - 1 ) * 10 ), 0 ), 4 )
             test_result["bet_count"] += bc
             test_result["count"] += 1
             
@@ -173,10 +152,6 @@ def main( models, data, show = True ):
     three_recovery_rate = ( test_result["three_money"] / test_result["bet_count"] ) * 100
     one_win_rate = ( test_result["one_win"] / test_result["count"] ) * 100 * t
     three_win_rate = ( test_result["three_win"] / test_result["count"] ) * 100 * t
-    #print( money )
-    #three_rate = test_result["three"] / test_result["three_count"]
-    #three_rate *= 100
-    #three_recovery_rate = test_result["three_money"] / test_result["three_count"]
 
     if show:
         print( "" )
@@ -188,5 +163,5 @@ def main( models, data, show = True ):
         print( "賭けたレース数{}回".format( test_result["count"] ) )
         print( "賭けた金額{}".format( test_result["bet_count"] ) )
         print( "mdcd:{}".format( round( mdcd_score / mdcd_count, 4 ) ) )
-
+    
     return one_win_rate, three_win_rate, round( mdcd_score / mdcd_count, 4 )

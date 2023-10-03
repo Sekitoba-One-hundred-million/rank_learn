@@ -22,7 +22,7 @@ def lg_main( data, prod = False ):
         params["min_data_in_leaf"] = 25
         params["lambda_l1"] = 0
         params["lambda_l2"] = 0
-    
+
     max_pos = np.max( np.array( data["answer"] ) )
     lgb_train = lgb.Dataset( np.array( data["teacher"] ), np.array( data["answer"] ), group = np.array( data["query"] ) )
     lgb_vaild = lgb.Dataset( np.array( data["test_teacher"] ), np.array( data["test_answer"] ), group = np.array( data["test_query"] ) )
