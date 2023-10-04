@@ -103,19 +103,31 @@ def main( models, data, show = True ):
             ex_value["horce_id"] = horce_id
             horce_list.append( ex_value )
 
-        if len( horce_list ) < 8 or skip:
+        if len( horce_list ) < 5 or skip:
             continue
 
         #if not ( 8 <= len( horce_list ) and len( horce_list ) <= 10 ):
         #    continue
         #if len( current_odds["複勝"] ) == 3:
         #    continue
-        
+
+        all_score = 0
+        min_score = 1000000
         score_list = score_add( score_data )
         
         for i in range( 0, len( score_list ) ):
             horce_list[i]["score"] = score_list[i]
-            
+            min_score = min( min_score, score_list[i] )
+            all_score += score_list[i]
+
+        all_score += min_score * len( score_list )
+        sum_score = 0
+        
+        for i in range( 0, len( score_list ) ):
+            horce_list[i]["score"] += min_score
+            horce_list[i]["score"] /= all_score
+            sum_score += horce_list[i]["score"]
+
         #softmax_score_list = sorted( softmax_score_list, reverse = True )
         sort_result = sorted( horce_list, key=lambda x:x["score"], reverse = True )
 
@@ -127,14 +139,18 @@ def main( models, data, show = True ):
             mdcd_count += 1
 
         for i in range( 0, min( len( sort_result ), t ) ):
-            bc = 1#bet_count[i]
             bet_horce = sort_result[i]
             odds = bet_horce["odds"]
             horce_id = bet_horce["horce_id"]
             rank = bet_horce["rank"]
             score = bet_horce["score"]
             popular = bet_horce["popular"]
-            
+
+            #if score * odds < 1.2:
+            #    continue
+
+            bc = 1
+            #bc = min( 1, int( ( score * odds - 1.2 ) * 10 ) )
             test_result["bet_count"] += bc
             test_result["count"] += 1
             
