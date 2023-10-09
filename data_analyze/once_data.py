@@ -218,6 +218,7 @@ class OnceData:
         current_race_data[data_name.before_race_score] = []
         current_race_data[data_name.before_rank] = []
         current_race_data[data_name.before_speed] = []
+        current_race_data[data_name.max_time_point] = []
         
         for horce_id in self.race_data[k].keys():
             current_data, past_data = lib.race_check( self.horce_data[horce_id],
@@ -316,6 +317,7 @@ class OnceData:
             current_race_data[data_name.before_rank].append( before_rank )
             current_race_data[data_name.before_speed].append( before_speed )
             current_race_data[data_name.before_race_score].append( before_race_score )
+            current_race_data[data_name.max_time_point].append( pd.max_time_point() )
             horce_id_list.append( horce_id )
 
         if len( horce_id_list ) < 2:
@@ -340,6 +342,7 @@ class OnceData:
         current_race_data[data_name.before_rank_index] = sorted( current_race_data[data_name.before_rank], reverse = True )
         current_race_data[data_name.before_diff_index] = sorted( current_race_data[data_name.before_diff], reverse = True )
         current_race_data[data_name.before_race_score_index] = sorted( current_race_data[data_name.before_race_score], reverse = True )
+        current_race_data[data_name.max_time_point_index] = sorted( current_race_data[data_name.max_time_point], reverse = True )
 
         current_race_data[data_name.speed_index_stand] = lib.standardization( current_race_data[data_name.speed_index] )
         current_race_data[data_name.horce_true_skill_stand] = lib.standardization( current_race_data[data_name.horce_true_skill] )
@@ -357,6 +360,7 @@ class OnceData:
         current_race_data[data_name.before_diff_stand] = lib.standardization( current_race_data[data_name.before_diff] )
         current_race_data[data_name.before_rank_stand] = lib.standardization( current_race_data[data_name.before_rank] )
         current_race_data[data_name.before_race_score_stand] = lib.standardization( current_race_data[data_name.before_race_score] )
+        current_race_data[data_name.max_time_point_stand] = lib.standardization( current_race_data[data_name.max_time_point] )
 
         for count, horce_id in enumerate( horce_id_list ):
             current_data, past_data = lib.race_check( self.horce_data[horce_id],
@@ -560,6 +564,10 @@ class OnceData:
             t_instance[data_name.match_rank_index] = \
               current_race_data[data_name.match_rank_index].index( current_race_data[data_name.match_rank][count] )
             t_instance[data_name.match_rank_stand] = current_race_data[data_name.match_rank_stand][count]
+            t_instance[data_name.max_time_point] = current_race_data[data_name.max_time_point][count]
+            t_instance[data_name.max_time_point_index] = \
+              current_race_data[data_name.max_time_point_index].index( current_race_data[data_name.max_time_point][count] )
+            t_instance[data_name.max_time_point_stand] = current_race_data[data_name.max_time_point_stand][count]
             t_instance[data_name.money] = money_score
             t_instance[data_name.mother_rank] = mother_match_rank
             t_instance[data_name.my_limb_count] = current_race_data[data_name.my_limb_count][key_limb]

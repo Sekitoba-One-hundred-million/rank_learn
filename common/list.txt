@@ -36,6 +36,14 @@ father_rank
 flame_evaluation_one
 flame_evaluation_two
 flame_evaluation_three
+before_first_result_rank_diff
+first_result_rank_diff
+first_result_rank_diff_index
+first_result_rank_diff_stand
+before_last_result_rank_diff
+last_result_rank_diff
+last_result_rank_diff_index
+last_result_rank_diff_stand
 foot_used
 foot_used_best
 foot_used_index
@@ -59,6 +67,9 @@ limb_score
 match_rank
 match_rank_index
 match_rank_stand
+max_time_point
+max_time_point_index
+max_time_point_stand
 money
 mother_rank
 my_limb_count

@@ -54,6 +54,9 @@ limb
 match_rank
 match_rank_index
 match_rank_stand
+max_time_point
+max_time_point_index
+max_time_point_stand
 money
 mother_rank
 my_limb_count
