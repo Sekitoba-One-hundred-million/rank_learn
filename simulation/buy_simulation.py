@@ -71,6 +71,7 @@ def main( models, data, show = True ):
     for race_id in tqdm( data.keys() ):
         year = race_id[0:4]
         number = race_id[-2:]
+
         #if not year in lib.test_years or int( race_place_num ) == 8:
         if not year in lib.test_years:
             continue
@@ -138,25 +139,37 @@ def main( models, data, show = True ):
             mdcd_score += math.pow( rank - ( i + 1 ), 2 )
             mdcd_count += 1
 
+        t = 1
         for i in range( 0, min( len( sort_result ), t ) ):
+        #for i in range( 0, len( sort_result ) ):
             bet_horce = sort_result[i]
             odds = bet_horce["odds"]
             horce_id = bet_horce["horce_id"]
             rank = bet_horce["rank"]
             score = bet_horce["score"]
             popular = bet_horce["popular"]
+            ex_value = score * odds
 
+            #if ex_value < 1 or 3 < ex_value:
+            #    continue
+
+            #lib.dic_append( recovery_check, ex_value, { "recovery": 0, "count": 0 } )
             #if score * odds < 1.2:
             #    continue
 
+            #if score < 0.2:
+            #    continue
+            
             bc = 1
             #bc = min( 1, int( ( score * odds - 1.2 ) * 10 ) )
             test_result["bet_count"] += bc
             test_result["count"] += 1
+            #recovery_check[ex_value]["count"] += 1
             
             if rank == 1:
                 test_result["one_win"] += 1
                 test_result["one_money"] += odds * bc
+                #recovery_check[ex_value]["recovery"] += odds
 
             if rank <= min( 3, len( current_odds["複勝"] ) ):
                 rank_index = int( bet_horce["rank"] - 1 )
@@ -179,5 +192,11 @@ def main( models, data, show = True ):
         print( "賭けたレース数{}回".format( test_result["count"] ) )
         print( "賭けた金額{}".format( test_result["bet_count"] ) )
         print( "mdcd:{}".format( round( mdcd_score / mdcd_count, 4 ) ) )
-    
+
+    #ex_value_list = sorted( list( recovery_check.keys() ) )
+
+    #for ex_value in ex_value_list:
+    #    recovery = recovery_check[ex_value]["recovery"] / recovery_check[ex_value]["count"]
+    #    print( ex_value, recovery_check[ex_value]["count"], recovery )
+        
     return one_win_rate, three_win_rate, round( mdcd_score / mdcd_count, 4 )

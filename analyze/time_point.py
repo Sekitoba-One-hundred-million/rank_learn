@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 dm.dl.file_set( "race_data.pickle" )
 dm.dl.file_set( "race_info_data.pickle" )
 dm.dl.file_set( "horce_data_storage.pickle" )
+dm.dl.file_set( "track_bias_data.pickle" )
 
 name = "age"
 RANK = "rank"
@@ -17,6 +18,8 @@ def main():
     race_data = dm.dl.data_get( "race_data.pickle" )
     race_info = dm.dl.data_get( "race_info_data.pickle" )
     horce_data = dm.dl.data_get( "horce_data_storage.pickle" )
+    track_bias_data = dm.dl.data_get( "track_bias_data.pickle" )
+    split_horce_num = 5
     
     for k in tqdm( race_data.keys() ):
         race_id = lib.id_get( k )
@@ -37,6 +40,9 @@ def main():
         if key_kind == "0" or key_kind == "3":
             continue
 
+        if not race_id in track_bias_data:
+            continue
+        
         data_list = []
 
         for kk in race_data[k].keys():
@@ -49,7 +55,11 @@ def main():
             if not cd.race_check():
                 continue
 
-            data_list.append( { "max_time_point": pd.max_time_point(), "rank": cd.rank() } )
+            position_key = min( int( cd.horce_number() / split_horce_num ), 2 )
+            max_time_point = pd.max_time_point()
+            max_time_point += track_bias_data[race_id][position_key]["one"] + track_bias_data[race_id][position_key]["two"] + track_bias_data[race_id][position_key]["three"]
+            max_time_point += track_bias_data[race_id][position_key]["popular_rank"]
+            data_list.append( { "max_time_point": max_time_point, "rank": cd.rank() } )
 
         if len( data_list ) == 0:
             continue
