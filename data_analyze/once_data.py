@@ -7,10 +7,9 @@ from mpi4py import MPI
 import sekitoba_library as lib
 import sekitoba_data_manage as dm
 
+from sekitoba_data_create.stride_ablity import StrideAblity
 from sekitoba_data_create.time_index_get import TimeIndexGet
-#from sekitoba_data_create.up_score import UpScore
 from sekitoba_data_create.train_index_get import TrainIndexGet
-#from sekitoba_data_create.pace_time_score import PaceTimeScore
 from sekitoba_data_create.jockey_data_get import JockeyData
 from sekitoba_data_create.trainer_data_get import TrainerData
 from sekitoba_data_create.high_level_data_get import RaceHighLevel
@@ -70,7 +69,8 @@ class OnceData:
         self.predict_up3 = dm.dl.data_get( "predict_up3.pickle" )
         self.popular_kind_win_rate_data = dm.dl.data_get( "popular_kind_win_rate_data.pickle" )
         self.flame_evaluation_data = dm.dl.data_get( "flame_evaluation_data.pickle" )
-        
+
+        self.stride_ablity = StrideAblity()
         self.race_high_level = RaceHighLevel()
         self.race_type = RaceType()
         self.time_index = TimeIndexGet()
@@ -199,26 +199,13 @@ class OnceData:
         horce_id_list = []
         race_limb = {}
         current_race_data = {}
-        current_race_data[data_name.horce_true_skill] = []
-        current_race_data[data_name.jockey_true_skill] = []
-        current_race_data[data_name.trainer_true_skill] = []
-        current_race_data[data_name.up3_horce_true_skill] = []
-        current_race_data[data_name.corner_diff_rank_ave] = []
-        current_race_data[data_name.corner_true_skill] = []
-        current_race_data[data_name.match_rank] = []
-        current_race_data[data_name.speed_index] = []
-        current_race_data[data_name.up_rate] = []
         current_race_data[data_name.my_limb_count] = { "-1": -1 }
-        current_race_data[data_name.burden_weight] = []
-        current_race_data[data_name.age] = []
-        current_race_data[data_name.level_score] = []
-        current_race_data[data_name.predict_train_score] = []
-        current_race_data[data_name.foot_used] = []
-        current_race_data[data_name.before_diff] = []
-        current_race_data[data_name.before_race_score] = []
-        current_race_data[data_name.before_rank] = []
-        current_race_data[data_name.before_speed] = []
-        current_race_data[data_name.max_time_point] = []
+
+        for name in self.data_name_list:
+            if name in current_race_data:
+                continue
+
+            current_race_data[name] = []
         
         for horce_id in self.race_data[k].keys():
             current_data, past_data = lib.race_check( self.horce_data[horce_id],
@@ -299,6 +286,12 @@ class OnceData:
             current_time_index = self.time_index.main( horce_id, pd.past_day_list() )
             speed, up_speed, pace_speed = pd.speed_index( self.baba_index_data[horce_id] )
             corner_diff_rank_ave = pd.corner_diff_rank()
+            stride_ablity_data = self.stride_ablity.ablity_create( cd, pd )
+
+            for stride_data_key in stride_ablity_data.keys():
+                for math_key in stride_ablity_data[stride_data_key].keys():
+                    current_race_data[stride_data_key+"_"+math_key].append( stride_ablity_data[stride_data_key][math_key] )
+
             current_race_data[data_name.horce_true_skill].append( horce_true_skill )
             current_race_data[data_name.jockey_true_skill].append( jockey_true_skill )
             current_race_data[data_name.trainer_true_skill].append( trainer_true_skill )
@@ -323,44 +316,21 @@ class OnceData:
         if len( horce_id_list ) < 2:
             return
 
-        sort_race_data: dict[ str, list ] = {}
-        ave_burden_weight = sum( current_race_data[data_name.burden_weight] ) / len( current_race_data[data_name.burden_weight] )
-        #ave_age = sum( current_race_data[data_name.age] ) / len( current_race_data[data_name.age] )
-        current_race_data[data_name.speed_index_index] = sorted( current_race_data[data_name.speed_index], reverse = True )
-        current_race_data[data_name.horce_true_skill_index] = sorted( current_race_data[data_name.horce_true_skill], reverse = True )
-        current_race_data[data_name.jockey_true_skill_index] = sorted( current_race_data[data_name.jockey_true_skill], reverse = True )
-        current_race_data[data_name.trainer_true_skill_index] = sorted( current_race_data[data_name.trainer_true_skill], reverse = True )
-        current_race_data[data_name.corner_true_skill_index] = sorted( current_race_data[data_name.corner_true_skill], reverse = True )
-        current_race_data[data_name.up3_horce_true_skill_index] = sorted( current_race_data[data_name.up3_horce_true_skill], reverse = True )
-        current_race_data[data_name.corner_diff_rank_ave_index] = sorted( current_race_data[data_name.corner_diff_rank_ave], reverse = True )
-        current_race_data[data_name.match_rank_index] = sorted( current_race_data[data_name.match_rank], reverse = True )
-        current_race_data[data_name.up_rate_index] = sorted( current_race_data[data_name.up_rate], reverse = True )
-        current_race_data[data_name.level_score_index] = sorted( current_race_data[data_name.level_score], reverse = True )
-        current_race_data[data_name.predict_train_score_index] = sorted( current_race_data[data_name.predict_train_score], reverse = True )
-        current_race_data[data_name.foot_used_index] = sorted( current_race_data[data_name.foot_used], reverse = True )
-        current_race_data[data_name.before_speed_index] = sorted( current_race_data[data_name.before_speed], reverse = True )
-        current_race_data[data_name.before_rank_index] = sorted( current_race_data[data_name.before_rank], reverse = True )
-        current_race_data[data_name.before_diff_index] = sorted( current_race_data[data_name.before_diff], reverse = True )
-        current_race_data[data_name.before_race_score_index] = sorted( current_race_data[data_name.before_race_score], reverse = True )
-        current_race_data[data_name.max_time_point_index] = sorted( current_race_data[data_name.max_time_point], reverse = True )
+        current_key_list = []#list( current_race_data.keys() )
 
-        current_race_data[data_name.speed_index_stand] = lib.standardization( current_race_data[data_name.speed_index] )
-        current_race_data[data_name.horce_true_skill_stand] = lib.standardization( current_race_data[data_name.horce_true_skill] )
-        current_race_data[data_name.jockey_true_skill_stand] = lib.standardization( current_race_data[data_name.jockey_true_skill] )
-        current_race_data[data_name.trainer_true_skill_stand] = lib.standardization( current_race_data[data_name.trainer_true_skill] )
-        current_race_data[data_name.corner_true_skill_stand] = lib.standardization( current_race_data[data_name.corner_true_skill] )
-        current_race_data[data_name.up3_horce_true_skill_stand] = lib.standardization( current_race_data[data_name.up3_horce_true_skill] )
-        current_race_data[data_name.corner_diff_rank_ave_stand] = lib.standardization( current_race_data[data_name.corner_diff_rank_ave] )
-        current_race_data[data_name.match_rank_stand] = lib.standardization( current_race_data[data_name.match_rank] )
-        current_race_data[data_name.up_rate_stand] = lib.standardization( current_race_data[data_name.up_rate] )
-        current_race_data[data_name.level_score_stand] = lib.standardization( current_race_data[data_name.level_score] )
-        current_race_data[data_name.predict_train_score_stand] = lib.standardization( current_race_data[data_name.predict_train_score] )
-        current_race_data[data_name.foot_used_stand] = lib.standardization( current_race_data[data_name.foot_used] )
-        current_race_data[data_name.before_speed_stand] = lib.standardization( current_race_data[data_name.before_speed] )
-        current_race_data[data_name.before_diff_stand] = lib.standardization( current_race_data[data_name.before_diff] )
-        current_race_data[data_name.before_rank_stand] = lib.standardization( current_race_data[data_name.before_rank] )
-        current_race_data[data_name.before_race_score_stand] = lib.standardization( current_race_data[data_name.before_race_score] )
-        current_race_data[data_name.max_time_point_stand] = lib.standardization( current_race_data[data_name.max_time_point] )
+        for data_key in current_race_data.keys():
+            if not type( current_race_data[data_key] ) is list or \
+              len( current_race_data[data_key] ) == 0:
+                continue
+
+            current_key_list.append( data_key )
+
+        for data_key in current_key_list:
+            current_race_data[data_key+"_index"] = sorted( current_race_data[data_key], reverse = True )
+            current_race_data[data_key+"_stand"] = lib.standardization( current_race_data[data_key] )
+            current_race_data[data_key+"_devi"] = lib.deviation_value( current_race_data[data_key] )            
+
+        ave_burden_weight = sum( current_race_data[data_name.burden_weight] ) / len( current_race_data[data_name.burden_weight] )
 
         for count, horce_id in enumerate( horce_id_list ):
             current_data, past_data = lib.race_check( self.horce_data[horce_id],
@@ -492,85 +462,31 @@ class OnceData:
             t_instance[data_name.ave_burden_weight_diff] = ave_burden_weight_diff
             t_instance[data_name.baba] = cd.baba_status()
             t_instance[data_name.before_continue_not_three_rank] = before_continue_not_three_rank
-            t_instance[data_name.before_diff] = current_race_data[data_name.before_diff][count]
-            t_instance[data_name.before_diff_index] = \
-              current_race_data[data_name.before_diff_index].index( current_race_data[data_name.before_diff][count] )
-            t_instance[data_name.before_diff_stand] = current_race_data[data_name.before_diff_stand][count]
             t_instance[data_name.before_first_passing_rank] = before_first_passing_rank
             t_instance[data_name.before_id_weight] = before_id_weight_score
             t_instance[data_name.before_last_passing_rank] = before_last_passing_rank
             t_instance[data_name.before_popular] = before_popular
-            t_instance[data_name.before_rank] = current_race_data[data_name.before_rank][count]
-            t_instance[data_name.before_rank_index] = \
-              current_race_data[data_name.before_rank_index].index( current_race_data[data_name.before_rank][count] )
-            t_instance[data_name.before_rank_stand] = current_race_data[data_name.before_rank_stand][count]
-            t_instance[data_name.before_race_score] = current_race_data[data_name.before_race_score][count]
-            t_instance[data_name.before_race_score_index] = \
-              current_race_data[data_name.before_race_score_index].index( current_race_data[data_name.before_race_score][count] )
-            t_instance[data_name.before_race_score_stand] = current_race_data[data_name.before_race_score_stand][count]
-            t_instance[data_name.before_speed] = current_race_data[data_name.before_speed][count]
-            t_instance[data_name.before_speed_index] = \
-              current_race_data[data_name.before_speed_index].index( current_race_data[data_name.before_speed][count] )
-            t_instance[data_name.before_speed_stand] = current_race_data[data_name.before_speed_stand][count]
             t_instance[data_name.burden_weight] = burden_weight_score
-            t_instance[data_name.corner_diff_rank_ave] = current_race_data[data_name.corner_diff_rank_ave][count]
-            t_instance[data_name.corner_diff_rank_ave_index] = \
-              current_race_data[data_name.corner_diff_rank_ave_index].index(
-                  current_race_data[data_name.corner_diff_rank_ave][count] )
-            t_instance[data_name.corner_diff_rank_ave_stand] = current_race_data[data_name.corner_diff_rank_ave_stand][count]
-            t_instance[data_name.corner_true_skill] = current_race_data[data_name.corner_true_skill][count]
-            t_instance[data_name.corner_true_skill_index] = \
-              current_race_data[data_name.corner_true_skill_index].index( current_race_data[data_name.corner_true_skill][count] )
-            t_instance[data_name.corner_true_skill_stand] = current_race_data[data_name.corner_true_skill_stand][count]
             t_instance[data_name.dist_kind] = cd.dist_kind()
             t_instance[data_name.dist_kind_count] = dist_kind_count
             t_instance[data_name.father_rank] = father_match_rank
             t_instance[data_name.flame_evaluation_one] = flame_evaluation_one
             t_instance[data_name.flame_evaluation_two] = flame_evaluation_two
             t_instance[data_name.flame_evaluation_three] = flame_evaluation_three
-            t_instance[data_name.foot_used] = current_race_data[data_name.foot_used][count]
-            t_instance[data_name.foot_used_index] = \
-              current_race_data[data_name.foot_used_index].index( current_race_data[data_name.foot_used][count] )
-            t_instance[data_name.foot_used_stand] = current_race_data[data_name.foot_used_stand][count]
             t_instance[data_name.foot_used_best] = self.race_type.best_foot_used( cd, pd )
             t_instance[data_name.predict_first_passing_rank] = predict_first_passing_rank
             t_instance[data_name.predict_first_passing_rank_index] = predict_first_passing_rank_index
             t_instance[data_name.predict_first_passing_rank_stand] = predict_first_passing_rank_stand
             t_instance[data_name.horce_num] = cd.horce_number()
             t_instance[data_name.horce_sex] = horce_sex
-            t_instance[data_name.horce_true_skill] = current_race_data[data_name.horce_true_skill][count]
-            t_instance[data_name.horce_true_skill_index] = \
-              current_race_data[data_name.horce_true_skill_index].index( current_race_data[data_name.horce_true_skill][count] )
-            t_instance[data_name.horce_true_skill_stand] = current_race_data[data_name.horce_true_skill_stand][count]
             t_instance[data_name.jockey_rank] = jockey_rank_score
-            t_instance[data_name.jockey_true_skill] = current_race_data[data_name.jockey_true_skill][count]
-            t_instance[data_name.jockey_true_skill_index] = \
-              current_race_data[data_name.jockey_true_skill_index].index( current_race_data[data_name.jockey_true_skill][count] )
-            t_instance[data_name.jockey_true_skill_stand] = current_race_data[data_name.jockey_true_skill_stand][count]
-            t_instance[data_name.jockey_year_rank] = jockey_year_rank_score
-            t_instance[data_name.trainer_true_skill] = current_race_data[data_name.trainer_true_skill][count]
-            t_instance[data_name.trainer_true_skill_index] = \
-              current_race_data[data_name.trainer_true_skill_index].index( current_race_data[data_name.trainer_true_skill][count] )
-            t_instance[data_name.trainer_true_skill_stand] = current_race_data[data_name.trainer_true_skill_stand][count]
-            t_instance[data_name.level_score] = current_race_data[data_name.level_score][count]
-            t_instance[data_name.level_score_index] = \
-              current_race_data[data_name.level_score_index].index( current_race_data[data_name.level_score][count] )
-            t_instance[data_name.level_score_stand] = current_race_data[data_name.level_score_stand][count]
             t_instance[data_name.predict_last_passing_rank] = predict_last_passing_rank
             t_instance[data_name.predict_last_passing_rank_index] = predict_last_passing_rank_index
             t_instance[data_name.predict_last_passing_rank_stand] = predict_last_passing_rank_stand
             t_instance[data_name.limb] = limb_math
-            t_instance[data_name.match_rank] = current_race_data[data_name.match_rank][count]
-            t_instance[data_name.match_rank_index] = \
-              current_race_data[data_name.match_rank_index].index( current_race_data[data_name.match_rank][count] )
-            t_instance[data_name.match_rank_stand] = current_race_data[data_name.match_rank_stand][count]
-            t_instance[data_name.max_time_point] = current_race_data[data_name.max_time_point][count]
-            t_instance[data_name.max_time_point_index] = \
-              current_race_data[data_name.max_time_point_index].index( current_race_data[data_name.max_time_point][count] )
-            t_instance[data_name.max_time_point_stand] = current_race_data[data_name.max_time_point_stand][count]
+            t_instance[data_name.my_limb_count] = current_race_data[data_name.my_limb_count][key_limb]
             t_instance[data_name.money] = money_score
             t_instance[data_name.mother_rank] = mother_match_rank
-            t_instance[data_name.my_limb_count] = current_race_data[data_name.my_limb_count][key_limb]
             t_instance[data_name.place] = place_num
             t_instance[data_name.race_interval] = race_interval_score
             t_instance[data_name.high_level_score] = high_level_score
@@ -578,27 +494,27 @@ class OnceData:
             t_instance[data_name.speed_index_index] = \
               current_race_data[data_name.speed_index_index].index( current_race_data[data_name.speed_index][count] )
             t_instance[data_name.speed_index_stand] = current_race_data[data_name.speed_index_stand][count]
-            t_instance[data_name.predict_train_score] = current_race_data[data_name.predict_train_score][count]
-            t_instance[data_name.predict_train_score_index] = \
-              current_race_data[data_name.predict_train_score_index].index(
-                  current_race_data[data_name.predict_train_score][count] )
-            t_instance[data_name.predict_train_score_stand] = current_race_data[data_name.predict_train_score_stand][count]
-            t_instance[data_name.up3_horce_true_skill] = current_race_data[data_name.up3_horce_true_skill][count]
-            t_instance[data_name.up3_horce_true_skill_index] = \
-              current_race_data[data_name.up3_horce_true_skill_index].index(
-                  current_race_data[data_name.up3_horce_true_skill][count] )
-            t_instance[data_name.up3_horce_true_skill_stand] = current_race_data[data_name.up3_horce_true_skill_stand][count]
-            t_instance[data_name.up_rate] = current_race_data[data_name.up_rate][count]
-            t_instance[data_name.up_rate_index] = \
-              current_race_data[data_name.up_rate].index( current_race_data[data_name.up_rate][count] )
-            t_instance[data_name.up_rate_stand] = current_race_data[data_name.up_rate_stand][count]
             t_instance[data_name.weight] = weight_score
             t_instance[data_name.waku_three_rate] = waku_three_rate
             t_instance[data_name.weather] = cd.weather()
             t_instance[data_name.diff_load_weight] = diff_load_weight
             t_instance[data_name.predict_up3] = predict_up3
-            t_instance[data_name.predict_up3_index] = predict_up3_index
+            #t_instance[data_name.predict_up3_index] = predict_up3_index
             t_instance[data_name.predict_up3_stand] = predict_up3_stand
+
+            str_index = "_index"
+            for data_key in current_race_data.keys():
+                if len( current_race_data[data_key] ) == 0 or \
+                  data_key in t_instance:
+                    continue
+
+                if str_index in data_key:
+                    name = data_key.replace( str_index, "" )
+
+                    if name in current_race_data:
+                        t_instance[data_key] = current_race_data[data_key].index( current_race_data[name][count] )
+                else:
+                    t_instance[data_key] = current_race_data[data_key][count]
 
             t_list = self.data_list_create( t_instance )
 
