@@ -66,6 +66,7 @@ def main( models, data, show = True ):
     t = 1
 
     odds_data = dm.pickle_load( "odds_data.pickle" )
+    predict_rough_race_data = dm.pickle_load( "predict_rough_race_data.pickle" )
     #users_score_data = dm.pickle_load( "users_score_data.pickle")
     
     for race_id in tqdm( data.keys() ):
@@ -76,10 +77,14 @@ def main( models, data, show = True ):
         if not year in lib.test_years:
             continue
 
+        if not race_id in predict_rough_race_data:
+            continue
+
         horce_list = []
         score_data = {}
         current_odds = odds_data[race_id]
-
+        rough_race_rate = predict_rough_race_data[race_id]
+        
         #if not race_id in users_score_data:
         #    continue
         skip = False
@@ -149,8 +154,11 @@ def main( models, data, show = True ):
             score = bet_horce["score"]
             popular = bet_horce["popular"]
             ex_value = score * odds
+            line_ex = 1 + i / 0.9
 
-            #if ex_value < 1 or 3 < ex_value:
+            #if ( odds < 5 or rough_race_rate < 0.5 ) and ex_value < 1.1:
+            #    continue
+            #if ex_value < line_ex:
             #    continue
 
             #lib.dic_append( recovery_check, ex_value, { "recovery": 0, "count": 0 } )
@@ -161,7 +169,7 @@ def main( models, data, show = True ):
             #    continue
             
             bc = 1
-            #bc = min( 1, int( ( score * odds - 1.2 ) * 10 ) )
+            #bc = int( 1 + min( ( ex_value - 1 ) * 10, 4 ) )
             test_result["bet_count"] += bc
             test_result["count"] += 1
             #recovery_check[ex_value]["count"] += 1
@@ -170,6 +178,7 @@ def main( models, data, show = True ):
                 test_result["one_win"] += 1
                 test_result["one_money"] += odds * bc
                 #recovery_check[ex_value]["recovery"] += odds
+                #print( odds )
 
             if rank <= min( 3, len( current_odds["複勝"] ) ):
                 rank_index = int( bet_horce["rank"] - 1 )

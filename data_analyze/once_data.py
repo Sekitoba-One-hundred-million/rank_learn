@@ -44,6 +44,10 @@ dm.dl.file_set( "predict_train_score.pickle" )
 dm.dl.file_set( "predict_up3.pickle" )
 dm.dl.file_set( "popular_kind_win_rate_data.pickle" )
 dm.dl.file_set( "flame_evaluation_data.pickle" )
+dm.dl.file_set( 'predict_rough_race_data.pickle' )
+dm.dl.file_set( "condition_devi_data.pickle" )
+dm.dl.file_set( 'predict_netkeiba_pace_data.pickle' )
+dm.dl.file_set( 'predict_netkeiba_deployment_data.pickle' )
 
 class OnceData:
     def __init__( self ):
@@ -69,6 +73,10 @@ class OnceData:
         self.predict_up3 = dm.dl.data_get( "predict_up3.pickle" )
         self.popular_kind_win_rate_data = dm.dl.data_get( "popular_kind_win_rate_data.pickle" )
         self.flame_evaluation_data = dm.dl.data_get( "flame_evaluation_data.pickle" )
+        self.predict_rough_race_data = dm.dl.data_get( "predict_rough_race_data.pickle" )
+        self.condition_devi_data = dm.dl.data_get( "condition_devi_data.pickle" )
+        self.predict_netkeiba_pace_data = dm.dl.data_get( 'predict_netkeiba_pace_data.pickle' )
+        self.predict_netkeiba_deployment_data = dm.dl.data_get( 'predict_netkeiba_deployment_data.pickle' )
 
         self.stride_ablity = StrideAblity()
         self.race_high_level = RaceHighLevel()
@@ -189,7 +197,16 @@ class OnceData:
 
         if not race_id in self.first_corner_rank:
             return
-            
+
+        predict_rough_rate = -1
+        predict_netkeiba_pace = -1
+
+        if race_id in self.predict_rough_race_data:
+            predict_rough_rate = self.predict_rough_race_data[race_id]
+
+        if race_id in self.predict_netkeiba_pace_data:
+            predict_netkeiba_pace = lib.netkeiba_pace( self.predict_netkeiba_pace_data[race_id] )
+
         key_race_money_class = str( int( lib.money_class_get( self.race_money_data[race_id] ) ) )
         current_high_level = self.race_high_level.current_high_level( race_id )
         teacher_data = []
@@ -249,6 +266,12 @@ class OnceData:
                 pass
 
             race_limb[horce_id] = limb_math
+
+            condition_devi = -1000
+            if race_id in self.condition_devi_data and \
+              horce_id in self.condition_devi_data[race_id]:
+                condition_devi = self.condition_devi_data[race_id][horce_id]
+
             horce_true_skill = 25
             jockey_true_skill = 25
             trainer_true_skill = 25
@@ -311,12 +334,13 @@ class OnceData:
             current_race_data[data_name.before_speed].append( before_speed )
             current_race_data[data_name.before_race_score].append( before_race_score )
             current_race_data[data_name.max_time_point].append( pd.max_time_point() )
+            current_race_data[data_name.condition_devi].append( condition_devi )
             horce_id_list.append( horce_id )
 
         if len( horce_id_list ) < 2:
             return
 
-        current_key_list = []#list( current_race_data.keys() )
+        current_key_list = []
 
         for data_key in current_race_data.keys():
             if not type( current_race_data[data_key] ) is list or \
@@ -456,6 +480,14 @@ class OnceData:
             except:
                 pass                
 
+            predict_netkeiba_deployment = -1
+
+            if race_id in self.predict_netkeiba_deployment_data:
+                for t in range( 0, len( self.predict_netkeiba_deployment_data[race_id] ) ):
+                    if int( horce_num ) in self.predict_netkeiba_deployment_data[race_id][t]:
+                        predict_netkeiba_deployment = t
+                        break
+
             t_instance = {}
             #t_instance[data_name.pace] = pace
             t_instance[data_name.all_horce_num] = cd.all_horce_num()
@@ -501,7 +533,10 @@ class OnceData:
             t_instance[data_name.predict_up3] = predict_up3
             #t_instance[data_name.predict_up3_index] = predict_up3_index
             t_instance[data_name.predict_up3_stand] = predict_up3_stand
-
+            t_instance[data_name.predict_rough_rate] = predict_rough_rate
+            t_instance[data_name.predict_netkeiba_pace] = predict_netkeiba_pace
+            t_instance[data_name.predict_netkeiba_deployment] = predict_netkeiba_deployment
+            
             str_index = "_index"
             for data_key in current_race_data.keys():
                 if len( current_race_data[data_key] ) == 0 or \

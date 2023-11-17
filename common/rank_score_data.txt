@@ -20,6 +20,10 @@ before_speed
 before_speed_index
 before_speed_stand
 burden_weight
+condition_devi
+condition_devi_devi
+condition_devi_index
+condition_devi_stand
 corner_diff_rank_ave
 corner_diff_rank_ave_index
 corner_diff_rank_ave_stand
@@ -82,6 +86,9 @@ predict_first_passing_rank_stand
 predict_last_passing_rank
 predict_last_passing_rank_index
 predict_last_passing_rank_stand
+predict_netkeiba_deployment
+predict_netkeiba_pace
+predict_rough_rate
 predict_train_score
 predict_train_score_index
 predict_train_score_stand
