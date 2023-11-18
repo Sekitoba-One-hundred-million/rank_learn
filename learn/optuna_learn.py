@@ -51,7 +51,10 @@ def objective( trial ):
 
     models = { "rank": model }
     one_win_rate, three_win_rate, mdcd_score = buy_simulation.main( models, use_simu_data, show = True )
-    score = ( one_win_rate + three_win_rate ) - mdcd_score
+    score = 0
+    score += one_win_rate * 2
+    score += three_win_rate / 2
+    score -= mdcd_score
     score *= -1
 
     return score
