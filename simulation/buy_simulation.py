@@ -55,7 +55,8 @@ def main( models, data, show = True ):
     recovery_rate = 0
     test = {}
     test_result = { "count": 0, "bet_count": 0, "one_money": 0, "three_money": 0, "one_win": 0, "three_win": 0, "three_money": 0 }
-    money = 50000
+    money = 5000
+    bet_money = int( money / 200 )
     money_list = []
     ave_score = 0
     win_score = 0
@@ -68,8 +69,10 @@ def main( models, data, show = True ):
     odds_data = dm.pickle_load( "odds_data.pickle" )
     predict_rough_race_data = dm.pickle_load( "predict_rough_race_data.pickle" )
     #users_score_data = dm.pickle_load( "users_score_data.pickle")
+    race_id_list = list( data.keys() )
+    random.shuffle( race_id_list )
     
-    for race_id in tqdm( data.keys() ):
+    for race_id in tqdm( race_id_list ):
         year = race_id[0:4]
         number = race_id[-2:]
 
@@ -156,35 +159,29 @@ def main( models, data, show = True ):
             ex_value = score * odds
             line_ex = 1 + i / 0.9
 
-            #if ( odds < 5 or rough_race_rate < 0.5 ) and ex_value < 1.1:
-            #    continue
-            #if ex_value < line_ex:
+            #if ex_value < 1.1:
             #    continue
 
-            #lib.dic_append( recovery_check, ex_value, { "recovery": 0, "count": 0 } )
-            #if score * odds < 1.2:
-            #    continue
-
-            #if score < 0.2:
-            #    continue
-            
             bc = 1
             #bc = int( 1 + min( ( ex_value - 1 ) * 10, 4 ) )
             test_result["bet_count"] += bc
             test_result["count"] += 1
-            #recovery_check[ex_value]["count"] += 1
+            money -= int( bc * bet_money )
             
             if rank == 1:
                 test_result["one_win"] += 1
                 test_result["one_money"] += odds * bc
-                #recovery_check[ex_value]["recovery"] += odds
-                #print( odds )
+                money += odds * bc# * bet_money
 
             if rank <= min( 3, len( current_odds["複勝"] ) ):
                 rank_index = int( bet_horce["rank"] - 1 )
                 three_odds = current_odds["複勝"][rank_index] / 100
                 test_result["three_win"] += 1
-                test_result["three_money"] += three_odds * bc
+                test_result["three_money"] += three_odds# * bet_money
+
+        #bet_money = max( bet_money, int( int( money / 1000 ) * 10 ) )
+        #print( bet_money )
+        money_list.append( money )
     
     one_recovery_rate = ( test_result["one_money"] / test_result["bet_count"] ) * 100 
     three_recovery_rate = ( test_result["three_money"] / test_result["bet_count"] ) * 100
@@ -202,10 +199,9 @@ def main( models, data, show = True ):
         print( "賭けた金額{}".format( test_result["bet_count"] ) )
         print( "mdcd:{}".format( round( mdcd_score / mdcd_count, 4 ) ) )
 
-    #ex_value_list = sorted( list( recovery_check.keys() ) )
-
-    #for ex_value in ex_value_list:
-    #    recovery = recovery_check[ex_value]["recovery"] / recovery_check[ex_value]["count"]
-    #    print( ex_value, recovery_check[ex_value]["count"], recovery )
-        
+    #print( "金額:{}".format( money ) )
+    #print( "最低金額:{}".format( min( money_list ) ) )
+    #plt.plot( list( range( 0, len( money_list ) ) ), money_list )
+    #plt.show()
+    
     return one_win_rate, three_win_rate, round( mdcd_score / mdcd_count, 4 )

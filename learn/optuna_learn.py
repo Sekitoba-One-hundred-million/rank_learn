@@ -102,6 +102,8 @@ def data_check( data, prod = False ):
     result["test_answer"] = []
     result["query"] = []
     result["test_query"] = []
+    result["simulation"] = []
+    result["simulation_answer"] = []
 
     count = 0
 
@@ -145,7 +147,7 @@ def data_check( data, prod = False ):
                 answer_rank += current_level[0]
                 answer_rank += int( current_diff[r] )
 
-            if year in lib.test_years:
+            if year == "2022":
                 result["test_teacher"].append( current_data[r] )
                 result["test_answer"].append( float( answer_rank ) )
             else:
@@ -157,7 +159,13 @@ def data_check( data, prod = False ):
 def main( data, simu_data ):
     global use_data
     global use_simu_data
-    use_simu_data = simu_data
+
+    for race_id in simu_data.keys():
+        year = race_id[0:4]
+
+        if year == "2022":
+            use_simu_data[race_id] = simu_data[race_id]
+        
     use_data = data_check( data )
 
     study = optuna.create_study()
