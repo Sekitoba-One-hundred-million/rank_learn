@@ -51,7 +51,7 @@ def score_add( score_data ):
     return result
     #return softmax( result )
 
-def main( models, data, show = True ):
+def main( model, data, test_years = lib.test_years, show = True ):
     recovery_rate = 0
     test = {}
     test_result = { "count": 0, "bet_count": 0, "one_money": 0, "three_money": 0, "one_win": 0, "three_win": 0, "three_money": 0 }
@@ -77,14 +77,15 @@ def main( models, data, show = True ):
         number = race_id[-2:]
 
         #if not year in lib.test_years or int( race_place_num ) == 8:
-        if not year in lib.test_years:
+        if not year in test_years:
             continue
 
         if not race_id in predict_rough_race_data:
             continue
 
         horce_list = []
-        score_data = {}
+        score_list = []
+        instance_list = []
         current_odds = odds_data[race_id]
         rough_race_rate = predict_rough_race_data[race_id]
         
@@ -99,13 +100,10 @@ def main( models, data, show = True ):
             #if not data[race_id][horce_id]["answer"]["race_kind"] == 1:
             #    skip = True
             
-            for model_key in models.keys():
-                p_data = models[model_key].predict( np.array( [ data[race_id][horce_id]["data"] ] ) )
-                scores[model_key] = p_data[0]
-                lib.dic_append( score_data, model_key, [] )
-                score_data[model_key].append( p_data[0] )
-                
-            ex_value["score"] = -1
+            p_data = model.predict( np.array( [ data[race_id][horce_id]["data"] ] ) )
+            #print( p_data, data[race_id][horce_id]["answer"] )
+            score_list.append( p_data[0] )
+            ex_value["score"] = p_data[0]
             ex_value["rank"] = data[race_id][horce_id]["answer"]["rank"]
             ex_value["odds"] = data[race_id][horce_id]["answer"]["odds"]
             ex_value["popular"] = data[race_id][horce_id]["answer"]["popular"]
@@ -122,12 +120,12 @@ def main( models, data, show = True ):
 
         all_score = 0
         min_score = 1000000
-        score_list = score_add( score_data )
+        score_list = softmax( score_list )
         
         for i in range( 0, len( score_list ) ):
-            horce_list[i]["score"] = score_list[i]
             min_score = min( min_score, score_list[i] )
             all_score += score_list[i]
+            horce_list[i]["score"] = score_list[i]
 
         all_score += min_score * len( score_list )
         sum_score = 0
@@ -198,10 +196,9 @@ def main( models, data, show = True ):
         print( "賭けたレース数{}回".format( test_result["count"] ) )
         print( "賭けた金額{}".format( test_result["bet_count"] ) )
         print( "mdcd:{}".format( round( mdcd_score / mdcd_count, 4 ) ) )
-
-    #print( "金額:{}".format( money ) )
-    #print( "最低金額:{}".format( min( money_list ) ) )
-    #plt.plot( list( range( 0, len( money_list ) ) ), money_list )
-    #plt.show()
+        print( "金額:{}".format( money ) )
+        print( "最低金額:{}".format( min( money_list ) ) )
+        plt.plot( list( range( 0, len( money_list ) ) ), money_list )
+        plt.show()
     
     return one_win_rate, three_win_rate, round( mdcd_score / mdcd_count, 4 )

@@ -29,8 +29,7 @@ def main():
     import sekitoba_data_manage as dm
     import sekitoba_library as lib
     from data_analyze import data_create
-    from learn import learn
-    from learn import optuna_learn
+    import learn
     #from learn import rate_learn
     from simulation import buy_simulation
     from simulation import recovery_simulation
@@ -42,13 +41,16 @@ def main():
     parser.add_argument( "-u", type=bool, default = False, help = "optional" )
     parser.add_argument( "-s", type=bool, default = False, help = "optional" )
     parser.add_argument( "-l", type=bool, default = False, help = "optional" )
-    parser.add_argument( "-p", type=bool, default = False, help = "optional" )
+    parser.add_argument( "-o", type=bool, default = False, help = "optional" )
+    parser.add_argument( "-t", type=bool, default = False, help = "optional" )
 
     u_check = parser.parse_args().u
     s_check = parser.parse_args().s
     l_check = parser.parse_args().l
-    p_check = parser.parse_args().p
-    
+    t_check  =parser.parse_args().t
+    o_check  =parser.parse_args().o
+
+    test_years = lib.test_years
     data = data_create.main( update = u_check )
 
     if not data  == None:
@@ -64,12 +66,14 @@ def main():
             for r in range( 0, len( learn_data["teacher"][i] ) ):
                 learn_data["teacher"][i][r] = data_remove( learn_data["teacher"][i][r], remove_list )
 
+        if t_check:
+            test_years = [ "2022" ]
+            
         if l_check:
-            models = {}
-            models.update( learn.main( data["data"] ) )            
-            buy_simulation.main( models, simu_data )
-        elif p_check:
-            optuna_learn.main( learn_data, simu_data )
+            model = learn.main( data["data"], test_years = test_years )
+            buy_simulation.main( model, simu_data, test_years = [ "2023" ] )
+        elif o_check:
+            learn.optuna_main( learn_data, simu_data, test_years )
         
     MPI.Finalize()        
     
