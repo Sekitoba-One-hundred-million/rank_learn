@@ -4,7 +4,7 @@ import numpy as np
 import sekitoba_library as lib
 import sekitoba_data_manage as dm
 
-def data_check( data, test_years = lib.test_years ):
+def data_check( data ):
     result = {}
     result["teacher"] = []
     result["test_teacher"] = []
@@ -31,10 +31,9 @@ def data_check( data, test_years = lib.test_years ):
         if 1 not in current_answer and year in lib.test_years:
             continue
         
-        if year in lib.test_years:
-            if year in test_years:
-                result["test_query"].append( q )
-        else:
+        if lib.test_year_check( year ):
+            result["test_query"].append( q )
+        elif not year in lib.test_years:
             result["query"].append( q )
         
         for r in range( 0, len( current_data ) ):
@@ -53,11 +52,10 @@ def data_check( data, test_years = lib.test_years ):
                 answer_rank += current_level[0]
                 answer_rank += int( current_diff[r] )
 
-            if year in lib.test_years:
-                if year in test_years:
-                    result["test_teacher"].append( current_data[r] )
-                    result["test_answer"].append( float( answer_rank ) )
-            else:
+            if lib.test_year_check( year ):
+                result["test_teacher"].append( current_data[r] )
+                result["test_answer"].append( float( answer_rank ) )
+            elif not year in lib.test_years:
                 result["teacher"].append( current_data[r] )
                 result["answer"].append( float( answer_rank ) )
 

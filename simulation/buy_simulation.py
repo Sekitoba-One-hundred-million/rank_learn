@@ -176,10 +176,6 @@ def main( model, data, test_years = lib.test_years, show = True ):
                 three_odds = current_odds["複勝"][rank_index] / 100
                 test_result["three_win"] += 1
                 test_result["three_money"] += three_odds# * bet_money
-
-        #bet_money = max( bet_money, int( int( money / 1000 ) * 10 ) )
-        #print( bet_money )
-        money_list.append( money )
     
     one_recovery_rate = ( test_result["one_money"] / test_result["bet_count"] ) * 100 
     three_recovery_rate = ( test_result["three_money"] / test_result["bet_count"] ) * 100
@@ -196,9 +192,5 @@ def main( model, data, test_years = lib.test_years, show = True ):
         print( "賭けたレース数{}回".format( test_result["count"] ) )
         print( "賭けた金額{}".format( test_result["bet_count"] ) )
         print( "mdcd:{}".format( round( mdcd_score / mdcd_count, 4 ) ) )
-        print( "金額:{}".format( money ) )
-        print( "最低金額:{}".format( min( money_list ) ) )
-        plt.plot( list( range( 0, len( money_list ) ) ), money_list )
-        plt.show()
     
     return one_win_rate, three_win_rate, round( mdcd_score / mdcd_count, 4 )

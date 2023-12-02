@@ -33,24 +33,25 @@ def main():
     #from learn import rate_learn
     from simulation import buy_simulation
     from simulation import recovery_simulation
+    from simulation import simulation_test
 
     lib.name.set_name( "rank" )
 
     lib.log.set_write( False )
     parser = ArgumentParser()
     parser.add_argument( "-u", type=bool, default = False, help = "optional" )
-    parser.add_argument( "-s", type=bool, default = False, help = "optional" )
     parser.add_argument( "-l", type=bool, default = False, help = "optional" )
+    parser.add_argument( "-s", type=str, default = 'test', help = "optional" )
     parser.add_argument( "-o", type=bool, default = False, help = "optional" )
-    parser.add_argument( "-t", type=bool, default = False, help = "optional" )
 
     u_check = parser.parse_args().u
-    s_check = parser.parse_args().s
     l_check = parser.parse_args().l
-    t_check  =parser.parse_args().t
-    o_check  =parser.parse_args().o
+    s_check = parser.parse_args().s
+    o_check = parser.parse_args().o
 
-    test_years = lib.test_years
+    if s_check == 'prod':
+        lib.prod_check = True
+
     data = data_create.main( update = u_check )
 
     if not data  == None:
@@ -66,14 +67,11 @@ def main():
             for r in range( 0, len( learn_data["teacher"][i] ) ):
                 learn_data["teacher"][i][r] = data_remove( learn_data["teacher"][i][r], remove_list )
 
-        if t_check:
-            test_years = [ "2022" ]
-            
         if l_check:
-            model = learn.main( data["data"], test_years = test_years )
-            buy_simulation.main( model, simu_data, test_years = [ "2023" ] )
+            model = learn.main( data["data"] )
+            buy_simulation.main( model, simu_data, test_years = lib.simu_years )
         elif o_check:
-            learn.optuna_main( learn_data, simu_data, test_years )
+            learn.optuna_main( learn_data, simu_data )
         
     MPI.Finalize()        
     

@@ -51,7 +51,8 @@ def objective( trial ):
                      verbose_eval = 10,
                      num_boost_round = 5000 )
 
-    one_win_rate, three_win_rate, mdcd_score = buy_simulation.main( model, use_simu_data, test_years = optuna_test_years, show = True )
+    one_win_rate, three_win_rate, mdcd_score = \
+        buy_simulation.main( model, use_simu_data, test_years = lib.score_years, show = True )
     score = 0
     score += one_win_rate * 2
     score += three_win_rate / 2
@@ -60,14 +61,13 @@ def objective( trial ):
 
     return score
 
-def optuna_main( data, simu_data, test_years = lib.test_years ):
+def optuna_main( data, simu_data ):
     global use_data
     global use_simu_data
     global optuna_test_years
 
-    optuna_test_years = test_years
     use_simu_data = simu_data        
-    use_data = data_adjustment.data_check( data, test_years = test_years )
+    use_data = data_adjustment.data_check( data )
 
     study = optuna.create_study()
     study.optimize(objective, n_trials=1000)
@@ -76,5 +76,3 @@ def optuna_main( data, simu_data, test_years = lib.test_years ):
     f = open( "best_params.json", "w" )
     json.dump( study.best_params, f )
     f.close()
-    
-    #best_model_create( study.best_params )

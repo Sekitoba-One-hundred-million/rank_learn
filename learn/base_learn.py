@@ -83,8 +83,8 @@ def importance_check( model ):
 
     f.close()
 
-def main( data, test_years = lib.test_years ):
-    learn_data = data_adjustment.data_check( data, test_years = test_years )
+def main( data ):
+    learn_data = data_adjustment.data_check( data )
     model = lg_main( learn_data )
     importance_check( model )
 
