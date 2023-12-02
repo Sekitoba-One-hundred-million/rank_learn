@@ -62,7 +62,7 @@ if [ $tag = "4" ]; then
 fi
 
 if [ $tag = "5" ]; then
-    python main.py
+    python main.py -b True
 fi
 
 rm -rf storage

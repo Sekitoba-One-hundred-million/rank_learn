@@ -43,11 +43,13 @@ def main():
     parser.add_argument( "-l", type=bool, default = False, help = "optional" )
     parser.add_argument( "-s", type=str, default = 'test', help = "optional" )
     parser.add_argument( "-o", type=bool, default = False, help = "optional" )
+    parser.add_argument( "-b", type=bool, default = False, help = "optional" )
 
     u_check = parser.parse_args().u
     l_check = parser.parse_args().l
     s_check = parser.parse_args().s
     o_check = parser.parse_args().o
+    b_check = parser.parse_args().b
 
     if s_check == 'prod':
         lib.prod_check = True
@@ -72,6 +74,9 @@ def main():
             buy_simulation.main( model, simu_data, test_years = lib.simu_years )
         elif o_check:
             learn.optuna_main( learn_data, simu_data )
+        elif b_check:
+            model = dm.pickle_load( lib.name.model_name() )
+            simulation_test.main( model, simu_data, test_years = lib.simu_years )
         
     MPI.Finalize()        
     
