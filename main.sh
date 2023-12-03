@@ -50,7 +50,7 @@ cp -r $dir data_analyze/
 cp -r $dir learn/
 
 if [ $tag = "2" ]; then
-    mpiexec -n 3 python main.py -u True
+    mpiexec -n 3 python main.py -u True -l True
 fi
 
 if [ $tag = "3" ]; then
