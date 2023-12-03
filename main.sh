@@ -3,6 +3,7 @@ file_list=`cat $dir/list.txt`
 write_file_name="${dir}/name.py"
 tag=''
 prod_check='test'
+core='6'
 
 while getopts ts-: opt; do
     optarg="${!OPTIND}"
@@ -15,6 +16,10 @@ while getopts ts-: opt; do
             ;;
         t|-tag)
             tag="${optarg}"
+            shift
+            ;;
+        c|-core)
+            core="${optarg}"
             shift
             ;;
     esac
@@ -50,7 +55,7 @@ cp -r $dir data_analyze/
 cp -r $dir learn/
 
 if [ $tag = "2" ]; then
-    mpiexec -n 3 python main.py -u True -l True
+    mpiexec -n "${core}" python main.py -u True -l True
 fi
 
 if [ $tag = "3" ]; then
