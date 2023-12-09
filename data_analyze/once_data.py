@@ -243,7 +243,7 @@ class OnceData:
 
             if not before_cd == None:
                 before_speed = before_cd.speed()
-                before_diff = max( before_cd.diff(), 0 ) * 10
+                before_diff = before_cd.diff()
                 before_rank = before_cd.rank()
                 before_race_score = self.before_race_score.score_get( before_cd, limb_math, horce_id )
 
