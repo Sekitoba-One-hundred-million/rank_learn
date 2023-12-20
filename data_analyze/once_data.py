@@ -376,7 +376,7 @@ class OnceData:
             before_pace_up_diff = -1000
 
             if not before_cd == None:
-                before_id_weight_score = self.division( min( max( before_cd.id_weight(), -10 ), 10 ), 2 )
+                before_id_weight_score = before_cd.id_weight()
                 before_popular = before_cd.popular()
                 before_passing_list = before_cd.passing_rank().split( "-" )
                 up3 = before_cd.up_time()
