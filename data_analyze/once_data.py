@@ -354,7 +354,7 @@ class OnceData:
             current_race_data[data_key+"_stand"] = lib.standardization( current_race_data[data_key] )
             current_race_data[data_key+"_devi"] = lib.deviation_value( current_race_data[data_key] )            
 
-        ave_burden_weight = sum( current_race_data[data_name.burden_weight] ) / len( current_race_data[data_name.burden_weight] )
+        ave_burden_weight = lib.average( current_race_data[data_name.burden_weight] )
 
         for count, horce_id in enumerate( horce_id_list ):
             current_data, past_data = lib.race_check( self.horce_data[horce_id],
@@ -445,7 +445,7 @@ class OnceData:
             base_key[data_name.limb_score] = key_limb
             waku_three_rate = lib.kind_score_get( self.waku_three_rate_data, self.kind_score_key_list[data_name.waku_three_rate], kind_key_data, base_key[data_name.waku_three_rate] )
 
-            ave_burden_weight_diff = ave_burden_weight - cd.burden_weight()
+            ave_burden_weight_diff = lib.minus( ave_burden_weight, cd.burden_weight() )
             #ave_age_diff = ave_age - age
             money_score = pd.get_money()
                 
