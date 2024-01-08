@@ -55,8 +55,8 @@ def main( model, data, test_years = lib.test_years, show = True ):
     recovery_rate = 0
     test = {}
     test_result = { "count": 0, "bet_count": 0, "one_money": 0, "three_money": 0, "one_win": 0, "three_win": 0, "three_money": 0 }
-    money = 5000
-    bet_money = int( money / 200 )
+    money = 3000
+    bet_money = int( money / 150 )
     money_list = []
     ave_score = 0
     win_score = 0
@@ -154,25 +154,25 @@ def main( model, data, test_years = lib.test_years, show = True ):
             score = bet_horce["score"]
             popular = bet_horce["popular"]
             ex_value = score * odds
+            line_ex_value = 1.1
 
-            if odds < 5 and ex_value < 1.1:
+            if odds < 5 and ex_value < line_ex_value:
                 continue
 
             bc = 1
-            bc = int( 1 + max( min( ( ex_value - 1 ) * 10, 4 ), 0 ) )
-
-            if 5 < odds:
-                bc += 1
+            bc = int( 1 + max( min( ( ex_value - line_ex_value ) * 10, 9 ), 0 ) )
+            #if 5 < odds:
+            #    bc += 1
 
             test_result["bet_count"] += bc
             test_result["count"] += 1
             money -= int( bc * bet_money )
-            
+
             if rank == 1:
                 test_result["one_win"] += 1
                 test_result["one_money"] += odds * bc
                 money += odds * bc * bet_money
-                #print( odds )
+                #print( odds, bc )
 
             if rank <= min( 3, len( current_odds["複勝"] ) ):
                 rank_index = int( bet_horce["rank"] - 1 )
