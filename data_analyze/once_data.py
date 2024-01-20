@@ -45,7 +45,6 @@ dm.dl.file_set( "predict_up3.pickle" )
 dm.dl.file_set( "popular_kind_win_rate_data.pickle" )
 dm.dl.file_set( "flame_evaluation_data.pickle" )
 dm.dl.file_set( 'predict_rough_race_data.pickle' )
-dm.dl.file_set( "condition_devi_data.pickle" )
 dm.dl.file_set( 'predict_netkeiba_pace_data.pickle' )
 dm.dl.file_set( 'predict_netkeiba_deployment_data.pickle' )
 
@@ -74,7 +73,6 @@ class OnceData:
         self.popular_kind_win_rate_data = dm.dl.data_get( "popular_kind_win_rate_data.pickle" )
         self.flame_evaluation_data = dm.dl.data_get( "flame_evaluation_data.pickle" )
         self.predict_rough_race_data = dm.dl.data_get( "predict_rough_race_data.pickle" )
-        self.condition_devi_data = dm.dl.data_get( "condition_devi_data.pickle" )
         self.predict_netkeiba_pace_data = dm.dl.data_get( 'predict_netkeiba_pace_data.pickle' )
         self.predict_netkeiba_deployment_data = dm.dl.data_get( 'predict_netkeiba_deployment_data.pickle' )
 
@@ -266,11 +264,6 @@ class OnceData:
 
             race_limb[horce_id] = limb_math
 
-            condition_devi = -1000
-            if race_id in self.condition_devi_data and \
-              horce_id in self.condition_devi_data[race_id]:
-                condition_devi = self.condition_devi_data[race_id][horce_id]
-
             horce_true_skill = 25
             jockey_true_skill = 25
             trainer_true_skill = 25
@@ -333,7 +326,6 @@ class OnceData:
             current_race_data[data_name.before_speed].append( before_speed )
             current_race_data[data_name.before_race_score].append( before_race_score )
             current_race_data[data_name.max_time_point].append( pd.max_time_point() )
-            current_race_data[data_name.condition_devi].append( condition_devi )
             horce_id_list.append( horce_id )
 
         if len( horce_id_list ) < 2:

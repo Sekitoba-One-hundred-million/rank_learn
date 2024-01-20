@@ -20,10 +20,6 @@ before_speed
 before_speed_index
 before_speed_stand
 burden_weight
-condition_devi
-condition_devi_devi
-condition_devi_index
-condition_devi_stand
 corner_diff_rank_ave
 corner_diff_rank_ave_index
 corner_diff_rank_ave_stand
