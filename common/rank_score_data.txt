@@ -84,7 +84,6 @@ predict_last_passing_rank_index
 predict_last_passing_rank_stand
 predict_netkeiba_deployment
 predict_netkeiba_pace
-predict_rough_rate
 predict_train_score
 predict_train_score_index
 predict_train_score_stand
