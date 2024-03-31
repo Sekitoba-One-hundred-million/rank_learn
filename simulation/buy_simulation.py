@@ -67,7 +67,6 @@ def main( model, data, test_years = lib.test_years, show = True ):
     t = 1
 
     odds_data = dm.pickle_load( "odds_data.pickle" )
-    predict_rough_race_data = dm.pickle_load( "predict_rough_race_data.pickle" )
     #users_score_data = dm.pickle_load( "users_score_data.pickle")
     race_id_list = list( data.keys() )
     random.shuffle( race_id_list )
@@ -80,14 +79,10 @@ def main( model, data, test_years = lib.test_years, show = True ):
         if not year in test_years:
             continue
 
-        if not race_id in predict_rough_race_data:
-            continue
-
         horce_list = []
         score_list = []
         instance_list = []
         current_odds = odds_data[race_id]
-        rough_race_rate = predict_rough_race_data[race_id]
         
         #if not race_id in users_score_data:
         #    continue
@@ -159,7 +154,7 @@ def main( model, data, test_years = lib.test_years, show = True ):
 
             #if ex_value < 1.1:
             #    continue
-
+            
             bc = 1
             #bc = int( 1 + min( ( ex_value - 1 ) * 10, 4 ) )
             test_result["bet_count"] += bc
@@ -170,6 +165,7 @@ def main( model, data, test_years = lib.test_years, show = True ):
                 test_result["one_win"] += 1
                 test_result["one_money"] += odds * bc
                 money += odds * bc# * bet_money
+                #print( odds, score )
 
             if rank <= min( 3, len( current_odds["複勝"] ) ):
                 rank_index = int( bet_horce["rank"] - 1 )

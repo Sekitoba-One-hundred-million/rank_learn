@@ -65,9 +65,7 @@ def main( model, data, test_years = lib.test_years, show = True ):
     mdcd_count = 0
     recovery_check = {}
     t = 1
-
     odds_data = dm.pickle_load( "odds_data.pickle" )
-    predict_rough_race_data = dm.pickle_load( "predict_rough_race_data.pickle" )
     #users_score_data = dm.pickle_load( "users_score_data.pickle")
     race_id_list = list( data.keys() )
     random.shuffle( race_id_list )
@@ -80,14 +78,10 @@ def main( model, data, test_years = lib.test_years, show = True ):
         if not year in test_years:
             continue
 
-        if not race_id in predict_rough_race_data:
-            continue
-
         horce_list = []
         score_list = []
         instance_list = []
         current_odds = odds_data[race_id]
-        rough_race_rate = predict_rough_race_data[race_id]
         
         #if not race_id in users_score_data:
         #    continue
@@ -154,16 +148,20 @@ def main( model, data, test_years = lib.test_years, show = True ):
             score = bet_horce["score"]
             popular = bet_horce["popular"]
             ex_value = score * odds
-            line_ex_value = 1.1
+            line_ex_value = 1.05
 
-            if odds < 5 and ex_value < line_ex_value:
-                continue
+            #if ex_value < line_ex_value:
+            #    continue
 
             bc = 1
-            bc = int( 1 + max( min( ( ex_value - line_ex_value ) * 10, 9 ), 0 ) )
-            #if 5 < odds:
-            #    bc += 1
+            #bc = int( 1 + max( min( ( ex_value - line_ex_value ) * 10, 4 ), 0 ) )
+            
+            if odds < 4:
+                continue
 
+            #if score < 0.4:
+            #    continue
+            
             test_result["bet_count"] += bc
             test_result["count"] += 1
             money -= int( bc * bet_money )
