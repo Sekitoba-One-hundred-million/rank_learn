@@ -75,7 +75,6 @@ def main( model, data, test_years = lib.test_years, show = True ):
         year = race_id[0:4]
         number = race_id[-2:]
 
-        #if not year in lib.test_years or int( race_place_num ) == 8:
         if not year in test_years:
             continue
 
@@ -84,19 +83,10 @@ def main( model, data, test_years = lib.test_years, show = True ):
         instance_list = []
         current_odds = odds_data[race_id]
         
-        #if not race_id in users_score_data:
-        #    continue
-        skip = False
-        
         for horce_id in data[race_id].keys():
             scores = {}
             ex_value = {}
-
-            #if not data[race_id][horce_id]["answer"]["race_kind"] == 1:
-            #    skip = True
-            
             p_data = model.predict( np.array( [ data[race_id][horce_id]["data"] ] ) )
-            #print( p_data, data[race_id][horce_id]["answer"] )
             score_list.append( p_data[0] )
             ex_value["score"] = p_data[0]
             ex_value["rank"] = data[race_id][horce_id]["answer"]["rank"]
@@ -105,13 +95,8 @@ def main( model, data, test_years = lib.test_years, show = True ):
             ex_value["horce_id"] = horce_id
             horce_list.append( ex_value )
 
-        if len( horce_list ) < 5 or skip:
+        if len( horce_list ) < 5:
             continue
-
-        #if not ( 8 <= len( horce_list ) and len( horce_list ) <= 10 ):
-        #    continue
-        #if len( current_odds["複勝"] ) == 3:
-        #    continue
 
         all_score = 0
         min_score = 1000000
@@ -130,7 +115,6 @@ def main( model, data, test_years = lib.test_years, show = True ):
             horce_list[i]["score"] /= all_score
             sum_score += horce_list[i]["score"]
 
-        #softmax_score_list = sorted( softmax_score_list, reverse = True )
         sort_result = sorted( horce_list, key=lambda x:x["score"], reverse = True )
 
         for i in range( 0, len( sort_result ) ):
@@ -141,8 +125,8 @@ def main( model, data, test_years = lib.test_years, show = True ):
             mdcd_count += 1
 
         t = 1
+        
         for i in range( 0, min( len( sort_result ), t ) ):
-        #for i in range( 0, len( sort_result ) ):
             bet_horce = sort_result[i]
             odds = bet_horce["odds"]
             horce_id = bet_horce["horce_id"]

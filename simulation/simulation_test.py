@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 
 import sekitoba_library as lib
 import sekitoba_data_manage as dm
+from simulation.select_horce import SelectHorce
 
 def standardization( data ):
     result = []
@@ -56,7 +57,6 @@ def main( model, data, test_years = lib.test_years, show = True ):
     test = {}
     test_result = { "count": 0, "bet_count": 0, "one_money": 0, "three_money": 0, "one_win": 0, "three_win": 0, "three_money": 0 }
     money = 3000
-    bet_money = int( money / 150 )
     money_list = []
     ave_score = 0
     win_score = 0
@@ -66,6 +66,7 @@ def main( model, data, test_years = lib.test_years, show = True ):
     recovery_check = {}
     t = 1
     odds_data = dm.pickle_load( "odds_data.pickle" )
+    wide_odds_data = dm.pickle_load( "wide_odds_data.pickle" )
     #users_score_data = dm.pickle_load( "users_score_data.pickle")
     race_id_list = list( data.keys() )
     random.shuffle( race_id_list )
@@ -81,7 +82,6 @@ def main( model, data, test_years = lib.test_years, show = True ):
         horce_list = []
         score_list = []
         instance_list = []
-        current_odds = odds_data[race_id]
         
         #if not race_id in users_score_data:
         #    continue
@@ -101,6 +101,7 @@ def main( model, data, test_years = lib.test_years, show = True ):
             ex_value["rank"] = data[race_id][horce_id]["answer"]["rank"]
             ex_value["odds"] = data[race_id][horce_id]["answer"]["odds"]
             ex_value["popular"] = data[race_id][horce_id]["answer"]["popular"]
+            ex_value["horce_num"] = data[race_id][horce_id]["answer"]["horce_num"]
             ex_value["horce_id"] = horce_id
             horce_list.append( ex_value )
 
@@ -140,67 +141,49 @@ def main( model, data, test_years = lib.test_years, show = True ):
             mdcd_count += 1
 
         t = 1
-        for i in range( 0, min( len( sort_result ), t ) ):
-            bet_horce = sort_result[i]
-            odds = bet_horce["odds"]
-            horce_id = bet_horce["horce_id"]
-            rank = bet_horce["rank"]
-            score = bet_horce["score"]
-            popular = bet_horce["popular"]
-            ex_value = score * odds
-            line_ex_value = 1.05
+        select_horce = SelectHorce( wide_odds_data[race_id], sort_result )
+        select_horce.create_bet_rate( money )
+        select_horce_data, wide_rate = select_horce.select_horce()
 
-            #if ex_value < line_ex_value:
-            #    continue
+        if select_horce.bet_rate <= 0:
+            break
+        
+        if wide_rate < 0.55:
+            continue
+        
+        wide_money = select_horce.wide_check( select_horce_data, odds_data[race_id] )
+        test_result["count"] += 1
+        test_result["bet_count"] += select_horce.use_count * select_horce.bet_rate
+        test_result["one_money"] += wide_money * select_horce.bet_rate
+        money -= select_horce.use_count * select_horce.bet_rate
+        money += wide_money * select_horce.bet_rate
 
-            bc = 1
-            #bc = int( 1 + max( min( ( ex_value - line_ex_value ) * 10, 4 ), 0 ) )
-            
-            if odds < 4:
-                continue
-
-            #if score < 0.4:
-            #    continue
-            
-            test_result["bet_count"] += bc
-            test_result["count"] += 1
-            money -= int( bc * bet_money )
-
-            if rank == 1:
-                test_result["one_win"] += 1
-                test_result["one_money"] += odds * bc
-                money += odds * bc * bet_money
-                #print( odds, bc )
-
-            if rank <= min( 3, len( current_odds["複勝"] ) ):
-                rank_index = int( bet_horce["rank"] - 1 )
-                three_odds = current_odds["複勝"][rank_index] / 100
-                test_result["three_win"] += 1
-                test_result["three_money"] += three_odds * bc
+        if not wide_money == 0:
+            test_result["one_win"] += 1            
 
         #bet_money = max( bet_money, int( int( money / 1000 ) * 10 ) )
         #bet_money = int( money / 200 )
         #print( bet_money )
         money_list.append( money )
-    
+
     one_recovery_rate = ( test_result["one_money"] / test_result["bet_count"] ) * 100 
-    three_recovery_rate = ( test_result["three_money"] / test_result["bet_count"] ) * 100
+    #three_recovery_rate = ( test_result["three_money"] / test_result["bet_count"] ) * 100
     one_win_rate = ( test_result["one_win"] / test_result["count"] ) * 100 * t
-    three_win_rate = ( test_result["three_win"] / test_result["count"] ) * 100 * t
+    #three_win_rate = ( test_result["three_win"] / test_result["count"] ) * 100 * t
 
     if show:
         print( "" )
         print( "選択数:{}".format( t ) )
         print( "単勝 回収率{}%".format( one_recovery_rate ) )
-        print( "複勝 回収率{}%".format( three_recovery_rate ) )
+        #print( "複勝 回収率{}%".format( three_recovery_rate ) )
         print( "単勝 勝率{}%".format( one_win_rate ) )
-        print( "複勝 勝率{}%".format( three_win_rate ) )
+        #print( "複勝 勝率{}%".format( three_win_rate ) )
         print( "賭けたレース数{}回".format( test_result["count"] ) )
         print( "賭けた金額{}".format( test_result["bet_count"] ) )
-        print( "mdcd:{}".format( round( mdcd_score / mdcd_count, 4 ) ) )
+        #print( "mdcd:{}".format( round( mdcd_score / mdcd_count, 4 ) ) )
         print( "金額:{}".format( money ) )
         print( "最低金額:{}".format( min( money_list ) ) )
         plt.plot( list( range( 0, len( money_list ) ) ), money_list )
         plt.savefig( '/Volumes/Gilgamesh/sekitoba-data/money.png' )
     
-    return one_win_rate, three_win_rate, round( mdcd_score / mdcd_count, 4 )
+    #return one_win_rate, three_win_rate, round( mdcd_score / mdcd_count, 4 )
