@@ -7,8 +7,8 @@ import sekitoba_data_manage as dm
 class SelectHorce:
     def __init__( self, wide_odds_data, horce_data ):
         self.use_count = 10
-        self.bet_rate = 10
-        self.goal_rate = 1.4
+        self.bet_rate = 1
+        self.goal_rate = 1.3
         self.bet_result_count = 0
         self.wide_odds_data = wide_odds_data
         self.horce_data = horce_data

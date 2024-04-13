@@ -142,14 +142,14 @@ def main( model, data, test_years = lib.test_years, show = True ):
 
         t = 1
         select_horce = SelectHorce( wide_odds_data[race_id], sort_result )
-        select_horce.create_bet_rate( money )
+        #select_horce.create_bet_rate( money )
         select_horce_data, wide_rate = select_horce.select_horce()
 
         if select_horce.bet_rate <= 0:
             break
         
-        if wide_rate < 0.55:
-            continue
+        #if wide_rate < 0.575:
+        #    continue
         
         wide_money = select_horce.wide_check( select_horce_data, odds_data[race_id] )
         test_result["count"] += 1
