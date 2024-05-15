@@ -122,6 +122,11 @@ leading_power_min
 leading_power_max
 leading_power_ave_index
 leading_power_ave_stand
+leading_power_rate_ave
+leading_power_rate_min
+leading_power_rate_max
+leading_power_rate_ave_index
+leading_power_rate_ave_stand
 pursuing_power_ave
 pursuing_power_min
 pursuing_power_max

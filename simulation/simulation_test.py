@@ -148,17 +148,17 @@ def main( model, data, test_years = lib.test_years, show = True ):
         if select_horce.bet_rate <= 0:
             break
         
-        #if wide_rate < 0.575:
-        #    continue
-        
-        wide_money = select_horce.wide_check( select_horce_data, odds_data[race_id] )
+        if wide_rate < 0.53:
+            continue
+
+        get_money = select_horce.bet_check( select_horce_data, odds_data[race_id] )
         test_result["count"] += 1
         test_result["bet_count"] += select_horce.use_count * select_horce.bet_rate
-        test_result["one_money"] += wide_money * select_horce.bet_rate
+        test_result["one_money"] += get_money * select_horce.bet_rate
         money -= select_horce.use_count * select_horce.bet_rate
-        money += wide_money * select_horce.bet_rate
+        money += get_money * select_horce.bet_rate
 
-        if not wide_money == 0:
+        if not get_money == 0:
             test_result["one_win"] += 1            
 
         #bet_money = max( bet_money, int( int( money / 1000 ) * 10 ) )

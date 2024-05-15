@@ -62,6 +62,11 @@ leading_power_ave_index
 leading_power_ave_stand
 leading_power_max
 leading_power_min
+leading_power_rate_ave
+leading_power_rate_ave_index
+leading_power_rate_ave_stand
+leading_power_rate_max
+leading_power_rate_min
 level_score
 level_score_index
 level_score_stand
