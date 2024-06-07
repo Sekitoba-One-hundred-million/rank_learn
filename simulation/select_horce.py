@@ -11,14 +11,12 @@ class SelectHorce:
     def __init__( self, wide_odds_data, horce_data ):
         self.use_count = 10
         self.bet_rate = 1
-        self.goal_rate = 1.4
+        self.goal_rate = 1.3
         self.bet_result_count = 0
         self.wide_odds_data = wide_odds_data
         self.horce_data = horce_data
         self.rate_data = []
-
-    def create_bet_rate( self, money ):
-        self.bet_rate = min( int( money / 400 ), 30 )
+        self.select_horce_list = []
 
     def create_rate( self ):
         all_rate = 0
@@ -192,4 +190,81 @@ class SelectHorce:
             candiate_list = self.create_candidate()
 
         #print( bet_list )
+        self.select_horce_list = bet_list
         return bet_list, all_rate
+
+    def create_ex_value( self ):
+        if len( self.select_horce_list ) == 0 or len( self.rate_data ) == 0:
+            return False
+
+        sum_ex_value = 0
+        wide_data = {}
+        wide_horce_num = {}
+        use_rate_data = []
+
+        for i in range( 0, len( self.select_horce_list ) ):
+            min_horce_num = min( self.select_horce_list[i]["horce_num_list"] )
+            max_horce_num = max( self.select_horce_list[i]["horce_num_list"] )
+            lib.dic_append( wide_data, min_horce_num, {} )
+            lib.dic_append( wide_data, max_horce_num, {} )
+            lib.dic_append( wide_horce_num, min_horce_num, [] )
+            lib.dic_append( wide_horce_num, max_horce_num, [] )
+            wide_data[min_horce_num][max_horce_num] = self.select_horce_list[i]
+            wide_horce_num[min_horce_num].append( max_horce_num )
+            wide_horce_num[max_horce_num].append( min_horce_num )
+
+        horce_num_list = list( wide_horce_num.keys() )
+
+        for rate in self.rate_data:
+            if rate["use"]:
+                use_rate_data.append( rate )
+                continue
+
+            c = 0
+            for hm in horce_num_list:
+                if hm in rate["horce_num_list"]:
+                    c += 1
+
+            if 2 <= c:
+                use_rate_data.append( rate )
+
+        for i in range( 0, len( self.select_horce_list ) ):
+            ex_value = 0
+            min_horce_num = min( self.select_horce_list[i]["horce_num_list"] )
+            max_horce_num = max( self.select_horce_list[i]["horce_num_list"] )
+
+            for rate in use_rate_data:
+                if not min_horce_num in rate["horce_num_list"] or not max_horce_num in rate["horce_num_list"]:
+                    continue
+
+                for hm in wide_horce_num[min_horce_num]:
+                    if hm == max_horce_num:
+                        continue
+
+                    if hm in rate["horce_num_list"]:
+                        ex_value += rate["rate"] * wide_data[min(min_horce_num,hm)][max(min_horce_num,hm)]["count"] * wide_data[min(min_horce_num,hm)][max(min_horce_num,hm)]["odds"]
+
+                for hm in wide_horce_num[max_horce_num]:
+                    if hm == min_horce_num:
+                        continue
+
+                    if hm in rate["horce_num_list"]:
+                        ex_value += rate["rate"] * wide_data[min(max_horce_num,hm)][max(max_horce_num,hm)]["count"] * wide_data[min(max_horce_num,hm)][max(max_horce_num,hm)]["odds"]
+
+                ex_value += rate["rate"] * self.select_horce_list[i]["odds"] * self.select_horce_list[i]["count"]
+
+            self.select_horce_list[i]["ex_value"] = ex_value
+            sum_ex_value += ex_value
+
+        return sum_ex_value
+
+    def create_bet_rate( self, money, ex_value ):
+        r = 0.01
+
+        if ex_value > 21:
+            r = 0.03
+        elif ex_value > 18:
+            r = 0.02
+        
+        use_money = money * r
+        self.bet_rate = int( use_money / self.use_count )

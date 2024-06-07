@@ -73,6 +73,7 @@ def main( model, data, test_years = lib.test_years, show = True ):
     
     for race_id in tqdm( race_id_list ):
         year = race_id[0:4]
+        race_place_num = race_id[4:6]
         number = race_id[-2:]
 
         if not year in test_years:
