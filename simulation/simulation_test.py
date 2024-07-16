@@ -52,7 +52,7 @@ def score_add( score_data ):
     return result
     #return softmax( result )
 
-def main( model, data, test_years = lib.test_years, show = True ):
+def main( model_list, data, test_years = lib.test_years, show = True ):
     test_result = { "count": 0, "bet_count": 0, "one_money": 0, "three_money": 0, "one_win": 0, "three_win": 0, "three_money": 0 }
     money = 3000
     money_list = []
@@ -76,10 +76,14 @@ def main( model, data, test_years = lib.test_years, show = True ):
         for horce_id in data[race_id].keys():
             scores = {}
             ex_value = {}
+            p_score = 0
 
-            p_data = model.predict( np.array( [ data[race_id][horce_id]["data"] ] ) )
-            score_list.append( p_data[0] )
-            ex_value["score"] = p_data[0]
+            for model in model_list:
+                p_score += model.predict( np.array( [ data[race_id][horce_id]["data"] ] ) )[0]
+
+            p_score /= len( model_list )
+            score_list.append( p_score )
+            ex_value["score"] = p_score
             ex_value["rank"] = data[race_id][horce_id]["answer"]["rank"]
             ex_value["odds"] = data[race_id][horce_id]["answer"]["odds"]
             ex_value["popular"] = data[race_id][horce_id]["answer"]["popular"]
@@ -90,12 +94,11 @@ def main( model, data, test_years = lib.test_years, show = True ):
         if len( horce_list ) < 5:
             continue
 
-        all_score = 0
-        min_score = 1000000
+        all_score = 0        
         score_list = softmax( score_list )
+        min_score = min( score_list )
         
         for i in range( 0, len( score_list ) ):
-            min_score = min( min_score, score_list[i] )
             all_score += score_list[i]
             horce_list[i]["score"] = score_list[i]
 
@@ -117,20 +120,27 @@ def main( model, data, test_years = lib.test_years, show = True ):
 
         select_horce = SelectHorce( wide_odds_data[race_id], sort_result )
         #select_horce.create_bet_rate( money )
-        select_horce_data, wide_rate = select_horce.select_horce()
+        select_horce_data, select_score_list, wide_rate = select_horce.select_horce()
+        #print( select_score_list, sum( select_score_list ) )
 
         if select_horce.bet_rate <= 0:
             break
 
-        ex_value = int( select_horce.create_ex_value() )
+        #if sum( select_score_list ) < 0.06:
+        #    continue
+        
+        ex_value = int( sum( select_score_list ) * 40 )
+        #if ex_value < 16:
+        #    continue
 
-        if ex_value < 15:
-            continue
+        #select_horce.create_bet_rate( money, ex_value )
 
-        select_horce.create_bet_rate( money, ex_value )
+        #if select_horce.bet_rate <= 0:
+        #    break
+        #ex_value = int( ( wide_rate * 100 ) / 5 )
 
-        if select_horce.bet_rate <= 0:
-            break
+        #if ex_value < 11:
+        #    continue
         
         lib.dic_append( test_check, ex_value, { "money": 0, "count": 0 } )
         get_money = select_horce.bet_check( select_horce_data, odds_data[race_id] )
@@ -139,8 +149,8 @@ def main( model, data, test_years = lib.test_years, show = True ):
         test_result["one_money"] += get_money * select_horce.bet_rate
         money -= select_horce.use_count * select_horce.bet_rate
         money += get_money * select_horce.bet_rate
-        #test_check[ex_value]["count"] += select_horce.use_count
-        #test_check[ex_value]["money"] += get_money
+        test_check[ex_value]["count"] += select_horce.use_count
+        test_check[ex_value]["money"] += get_money
 
         if not get_money == 0:
             test_result["one_win"] += 1            
@@ -150,10 +160,10 @@ def main( model, data, test_years = lib.test_years, show = True ):
     one_recovery_rate = ( test_result["one_money"] / test_result["bet_count"] ) * 100 
     one_win_rate = ( test_result["one_win"] / test_result["count"] ) * 100
 
-    #sort_data = sorted( list( test_check.keys() ) )
+    sort_data = sorted( list( test_check.keys() ) )
     
-    #for key in sort_data:
-    #    print( key, test_check[key]["money"] / test_check[key]["count"], int( test_check[key]["count"] / 10 ) )
+    for key in sort_data:
+        print( key, test_check[key]["money"] / test_check[key]["count"], int( test_check[key]["count"] / 10 ) )
 
     if show:
         print( "" )

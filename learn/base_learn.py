@@ -7,12 +7,12 @@ import sekitoba_library as lib
 import sekitoba_data_manage as dm
 from learn import data_adjustment
 
-def lg_main( data, prod = False ):
+def lg_main( data, index = None ):
     params = {}
     
-    if os.path.isfile( "best_params.json" ):
+    if os.path.isfile( "best_params.json" ) and not index == None:
         f = open( "best_params.json", "r" )
-        params = json.load( f )
+        params = json.load( f )[index]
         f.close()
     else:
         params["learning_rate"] = 0.03
@@ -50,11 +50,6 @@ def lg_main( data, prod = False ):
                      valid_sets = [lgb_train, lgb_vaild ],
                      verbose_eval = 10,
                      num_boost_round = 5000 )
-    
-    if prod:
-        dm.pickle_upload( lib.name.model_name() + ".prod", bst )
-    else:
-        dm.pickle_upload( lib.name.model_name(), bst )
         
     return bst
 
@@ -83,9 +78,14 @@ def importance_check( model ):
 
     f.close()
 
-def main( data ):
-    learn_data = data_adjustment.data_check( data )
-    model = lg_main( learn_data )
-    importance_check( model )
+def main( data, state = "test" ):
+    model_list = []
+    learn_data = data_adjustment.data_check( data, state = state )
 
-    return model
+    for i in range( 0, 5 ):
+        model = lg_main( learn_data, index = i )
+        importance_check( model )
+        model_list.append( model )
+
+    dm.pickle_upload( lib.name.model_name(), model_list )
+    return model_list

@@ -1,4 +1,5 @@
 import copy
+import math
 from tqdm import tqdm
 
 import sekitoba_library as lib
@@ -11,7 +12,7 @@ class SelectHorce:
     def __init__( self, wide_odds_data, horce_data ):
         self.use_count = 10
         self.bet_rate = 1
-        self.goal_rate = 1.3
+        self.goal_rate = 0.9
         self.bet_result_count = 0
         self.wide_odds_data = wide_odds_data
         self.horce_data = horce_data
@@ -25,22 +26,14 @@ class SelectHorce:
             score_1 = self.horce_data[i]["score"]
             horce_num_1 = self.horce_data[i]["horce_num"]
             
-            for r in range( 0, len( self.horce_data ) ):
+            for r in range( i + 1, len( self.horce_data ) ):
                 score_2 = self.horce_data[r]["score"]
                 horce_num_2 = self.horce_data[r]["horce_num"]
 
-                if horce_num_1 == horce_num_2:
-                    continue
-                
                 for t in range( r + 1, len( self.horce_data ) ):
                     score_3 = self.horce_data[t]["score"]
                     horce_num_3 = self.horce_data[t]["horce_num"]
-
-                    if horce_num_1 == horce_num_3 or \
-                      horce_num_2 == horce_num_3:
-                        continue
-                    
-                    rate = score_1 * ( score_2 / 2 ) * ( score_3 / 3 )
+                    rate = score_1 * score_2 * score_3
 
                     self.rate_data.append( { "rate": rate, \
                                             "horce_num_list": [ horce_num_1, horce_num_2, horce_num_3 ], \
@@ -154,6 +147,7 @@ class SelectHorce:
 
     def select_horce( self ):
         bet_list = []
+        score_list = []
         self.create_rate()
         bet_count = self.use_count
         candiate_list = self.create_candidate()
@@ -167,17 +161,26 @@ class SelectHorce:
             select_horce = None
 
             for candiate in candiate_list:
-                need_count = max( int( ( self.use_count * self.goal_rate ) / candiate["odds"] + 1 ), 1 )
+                #need_count = max( int( ( self.use_count * self.goal_rate ) / candiate["odds"] + 1 ), 1 )
 
-                if bet_count < need_count:
-                    continue
-                
-                score = candiate["rate"] / need_count
+                for need_count in range( 1, bet_count + 1 ):
 
-                if max_score < score:
-                    select_horce = copy.deepcopy( candiate )
-                    select_horce["count"] = need_count
-                    max_score = score
+                    if bet_count < need_count:
+                        continue
+
+                    if candiate["odds"] * need_count / self.use_count < 1:
+                        continue
+                    
+                    score = math.pow( candiate["rate"], 1.5 )
+                    score *= max( math.pow( candiate["odds"] * need_count, 0.3 ), 1 )
+                    score /= need_count
+                    #score /= ( need_count * 1 )
+                    #score = candiate["rate"] / bet_count
+
+                    if max_score < score:
+                        select_horce = copy.deepcopy( candiate )
+                        select_horce["count"] = need_count
+                        max_score = score
 
             if select_horce == None or max_score == 0:
                 break
@@ -186,12 +189,13 @@ class SelectHorce:
             self.bet_result_count += select_horce["count"]
             all_rate += select_horce["rate"]
             bet_list.append( copy.deepcopy( select_horce ) )
+            score_list.append( max_score )
             self.move_rate( select_horce )
             candiate_list = self.create_candidate()
 
         #print( bet_list )
         self.select_horce_list = bet_list
-        return bet_list, all_rate
+        return bet_list, score_list, all_rate
 
     def create_ex_value( self ):
         if len( self.select_horce_list ) == 0 or len( self.rate_data ) == 0:
@@ -265,6 +269,6 @@ class SelectHorce:
             r = 0.03
         elif ex_value > 18:
             r = 0.02
-        
+
         use_money = money * r
         self.bet_rate = int( use_money / self.use_count )

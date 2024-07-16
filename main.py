@@ -70,13 +70,13 @@ def main():
                 learn_data["teacher"][i][r] = data_remove( learn_data["teacher"][i][r], remove_list )
 
         if l_check:
-            model = learn.main( data["data"] )
-            buy_simulation.main( model, simu_data, test_years = lib.simu_years )
+            model_list = learn.main( data["data"], state = s_check )
+            buy_simulation.main( model_list, simu_data, test_years = lib.simu_years )
         elif o_check:
             learn.optuna_main( learn_data, simu_data )
         elif b_check:
-            model = dm.pickle_load( lib.name.model_name() )
-            simulation_test.main( model, simu_data, test_years = lib.simu_years )
+            model_list = dm.pickle_load( lib.name.model_name() )
+            simulation_test.main( model_list, simu_data, test_years = lib.simu_years )
         
     MPI.Finalize()        
     

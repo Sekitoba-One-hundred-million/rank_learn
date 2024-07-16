@@ -51,7 +51,7 @@ def score_add( score_data ):
     return result
     #return softmax( result )
 
-def main( model, data, test_years = lib.test_years, show = True ):
+def main( model_list, data, test_years = lib.test_years, show = True ):
     recovery_rate = 0
     test = {}
     test_result = { "count": 0, "bet_count": 0, "one_money": 0, "three_money": 0, "one_win": 0, "three_win": 0, "three_money": 0 }
@@ -87,9 +87,13 @@ def main( model, data, test_years = lib.test_years, show = True ):
         for horce_id in data[race_id].keys():
             scores = {}
             ex_value = {}
-            p_data = model.predict( np.array( [ data[race_id][horce_id]["data"] ] ) )
-            score_list.append( p_data[0] )
-            ex_value["score"] = p_data[0]
+            p_score = 0
+
+            for model in model_list:
+                p_score += model.predict( np.array( [ data[race_id][horce_id]["data"] ] ) )[0]
+                
+            score_list.append( p_score )
+            ex_value["score"] = p_score
             ex_value["rank"] = data[race_id][horce_id]["answer"]["rank"]
             ex_value["odds"] = data[race_id][horce_id]["answer"]["odds"]
             ex_value["popular"] = data[race_id][horce_id]["answer"]["popular"]
