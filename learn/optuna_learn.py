@@ -33,7 +33,7 @@ def objective( trial ):
         'metric': 'ndcg',   # for lambdarank
         'ndcg_eval_at': [1,2,3],  # for lambdarank
         'label_gain': list(range(0, np.max( np.array( use_data["answer"], dtype = np.int32 ) ) + 1)),
-        'max_position': int( max_pos ),  # for lambdarank
+        #'max_position': int( max_pos ),  # for lambdarank
         'early_stopping_rounds': 30,
         'learning_rate': learning_rate,
         'num_iteration': num_iteration,
@@ -48,7 +48,7 @@ def objective( trial ):
     model = lgb.train( params = lgbm_params,
                      train_set = lgb_train,     
                      valid_sets = [lgb_train, lgb_vaild ],
-                     verbose_eval = 10,
+                     #verbose_eval = 10,
                      num_boost_round = 5000 )
 
     one_win_rate, three_win_rate, mdcd_score = \

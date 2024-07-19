@@ -33,7 +33,7 @@ def lg_main( data, index = None ):
         'metric': 'ndcg',   # for lambdarank
         'ndcg_eval_at': [1,2,3],  # for lambdarank
         'label_gain': list(range(0, np.max( np.array( data["answer"], dtype = np.int32 ) ) + 1)),
-        'max_position': int( max_pos ),  # for lambdarank
+        #'max_position': int( max_pos ),  # for lambdarank
         'early_stopping_rounds': 30,
         'learning_rate': params["learning_rate"],
         'num_iteration': params["num_iteration"],
@@ -48,7 +48,7 @@ def lg_main( data, index = None ):
     bst = lgb.train( params = lgbm_params,
                      train_set = lgb_train,
                      valid_sets = [lgb_train, lgb_vaild ],
-                     verbose_eval = 10,
+                     #verbose_eval = 10,
                      num_boost_round = 5000 )
         
     return bst
