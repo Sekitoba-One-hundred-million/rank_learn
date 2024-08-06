@@ -185,6 +185,7 @@ class OnceData:
                 continue
 
             limb_math = lib.limb_search( pd )
+            key_limb = str( int( limb_math ) )
             before_cd = pd.before_cd()
 
             before_speed = -1000
@@ -199,7 +200,6 @@ class OnceData:
                 before_race_score = self.before_race_score.score_get( before_cd, limb_math, horce_id )
 
             if not limb_math == -1:
-                key_limb = str( int( limb_math ) )
                 lib.dic_append( current_race_data[data_name.my_limb_count], key_limb, 0 )
                 current_race_data[data_name.my_limb_count][key_limb] += 1
 
@@ -249,6 +249,7 @@ class OnceData:
             current_race_data[data_name.before_speed].append( before_speed )
             current_race_data[data_name.before_race_score].append( before_race_score )
             current_race_data[data_name.max_time_point].append( pd.max_time_point( self.race_data.data["race_time_analyze"] ) )
+            current_race_data[data_name.stamina].append( pd.stamina_create( key_limb ) )
             horce_id_list.append( horce_id )
 
         if len( horce_id_list ) < 2:

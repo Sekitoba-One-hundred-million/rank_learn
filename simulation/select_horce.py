@@ -12,7 +12,7 @@ class SelectHorce:
     def __init__( self, wide_odds_data, horce_data ):
         self.use_count = 10
         self.bet_rate = 1
-        self.goal_rate = 0.9
+        self.goal_rate = 2
         self.bet_result_count = 0
         self.wide_odds_data = wide_odds_data
         self.horce_data = horce_data
@@ -161,26 +161,26 @@ class SelectHorce:
             select_horce = None
 
             for candiate in candiate_list:
-                #need_count = max( int( ( self.use_count * self.goal_rate ) / candiate["odds"] + 1 ), 1 )
+                need_count = max( int( ( self.use_count * self.goal_rate ) / candiate["odds"] + 1 ), 1 )
 
-                for need_count in range( 1, bet_count + 1 ):
+                #for need_count in range( 1, bet_count + 1 ):
 
-                    if bet_count < need_count:
-                        continue
+                if bet_count < need_count:
+                    continue
 
-                    if candiate["odds"] * need_count / self.use_count < 1:
-                        continue
+                #if candiate["odds"] * need_count / self.use_count < 1.3:
+                #    continue
                     
-                    score = math.pow( candiate["rate"], 1.5 )
-                    score *= max( math.pow( candiate["odds"] * need_count, 0.3 ), 1 )
-                    score /= need_count
-                    #score /= ( need_count * 1 )
-                    #score = candiate["rate"] / bet_count
+                score = math.pow( candiate["rate"], 1 )
+                #score *= max( math.pow( candiate["odds"] * need_count, 0.3 ), 1 )
+                #score /= need_count
+                #score /= ( need_count * 1 )
+                #score = candiate["rate"] / bet_count
 
-                    if max_score < score:
-                        select_horce = copy.deepcopy( candiate )
-                        select_horce["count"] = need_count
-                        max_score = score
+                if max_score < score:
+                    select_horce = copy.deepcopy( candiate )
+                    select_horce["count"] = need_count
+                    max_score = score
 
             if select_horce == None or max_score == 0:
                 break

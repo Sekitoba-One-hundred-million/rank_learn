@@ -35,7 +35,7 @@
               version = "3.10.1";
               venv = {
                 enable = true;
-                requirements = "${./requirements.txt}";
+                # requirements = "${./requirements.txt}";
               };
             };
           };

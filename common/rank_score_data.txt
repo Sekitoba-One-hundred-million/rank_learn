@@ -103,6 +103,9 @@ race_interval
 speed_index
 speed_index_index
 speed_index_stand
+stamina
+stamina_index
+stamina_stand
 sustain_power_ave
 sustain_power_ave_index
 sustain_power_ave_stand

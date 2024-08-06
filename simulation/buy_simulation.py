@@ -103,29 +103,27 @@ def main( model_list, data, test_years = lib.test_years, show = True ):
         if len( horce_list ) < 5:
             continue
 
-        all_score = 0
-        min_score = 1000000
-        score_list = softmax( score_list )
+        min_score = min( score_list )
         
-        for i in range( 0, len( score_list ) ):
-            min_score = min( min_score, score_list[i] )
-            all_score += score_list[i]
-            horce_list[i]["score"] = score_list[i]
+        #for i in range( 0, len( score_list ) ):
+        #    score_list[i] -= min_score
+        #    score_list[i] = math.pow( score_list[i], 2 ) / ( 1 + i * 0.2 )
 
-        all_score += min_score * len( score_list )
-        sum_score = 0
-        
-        for i in range( 0, len( score_list ) ):
-            horce_list[i]["score"] += min_score
-            horce_list[i]["score"] /= all_score
-            sum_score += horce_list[i]["score"]
+        #all_score = sum( score_list )
+
+        #for i in range( 0, len( score_list ) ):
+        #    score_list[i] /= all_score
+
+        #score_list = softmax( score_list )
+
+        #for i in range( 0, len( score_list ) ):
+        #    horce_list[i]["score"] = score_list[i]
 
         sort_result = sorted( horce_list, key=lambda x:x["score"], reverse = True )
 
         for i in range( 0, len( sort_result ) ):
             rank = sort_result[i]["rank"]
             score = sort_result[i]["score"]
-            key_score = int( min( score * 100, 40 ) )
             mdcd_score += math.pow( rank - ( i + 1 ), 2 )
             mdcd_count += 1
 
@@ -141,7 +139,7 @@ def main( model_list, data, test_years = lib.test_years, show = True ):
             ex_value = score * odds
             line_ex = 1 + i / 0.9
 
-            #if ex_value < 1.1:
+            #if ex_value < 1.3:
             #    continue
             
             bc = 1

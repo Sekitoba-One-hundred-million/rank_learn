@@ -94,30 +94,19 @@ def main( model_list, data, test_years = lib.test_years, show = True ):
         if len( horce_list ) < 5:
             continue
 
-        all_score = 0        
-        score_list = softmax( score_list )
+        all_score = 0
         min_score = min( score_list )
         
+        #for i in range( 0, len( score_list ) ):
+        #    score_list[i] -= min_score
+
+        score_list = softmax( score_list )
+
         for i in range( 0, len( score_list ) ):
-            all_score += score_list[i]
             horce_list[i]["score"] = score_list[i]
-
-        all_score += min_score * len( score_list )
-        sum_score = 0
         
-        for i in range( 0, len( score_list ) ):
-            horce_list[i]["score"] += min_score
-            horce_list[i]["score"] /= all_score
-            sum_score += horce_list[i]["score"]
-
-        #softmax_score_list = sorted( softmax_score_list, reverse = True )
         sort_result = sorted( horce_list, key=lambda x:x["score"], reverse = True )
-
-        for i in range( 0, len( sort_result ) ):
-            rank = sort_result[i]["rank"]
-            score = sort_result[i]["score"]
-            key_score = int( min( score * 100, 40 ) )
-
+        
         select_horce = SelectHorce( wide_odds_data[race_id], sort_result )
         #select_horce.create_bet_rate( money )
         select_horce_data, select_score_list, wide_rate = select_horce.select_horce()
