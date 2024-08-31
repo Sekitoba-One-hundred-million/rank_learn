@@ -79,27 +79,20 @@ class SelectHorce:
     def create_candidate( self ):
         candidate = []
 
-        #for horce in self.horce_data:
-        #    horce_num_list = [ horce["horce_num"] ]
-        #    candidate.append( { "rate": self.one_select_rate( horce_num_list ),
-        #                       "horce_num_list": horce_num_list,
-        #                       "odds": horce["odds"],
-        #                       "kind": "one" } )
-
         for horce_num_1 in self.wide_odds_data.keys():
             for horce_num_2 in self.wide_odds_data[horce_num_1].keys():
                 horce_num_list = [ horce_num_1, horce_num_2 ]
-                candidate.append( { "rate": self.wide_select_rate( horce_num_list ), \
-                                   "horce_num_list": horce_num_list, \
-                                   "odds": self.wide_odds_data[horce_num_1][horce_num_2]["min"],
-                                   "kind": "wide" } )
+                candidate.append( { "horce_num_list": horce_num_list, \
+                                   "odds": self.wide_odds_data[horce_num_1][horce_num_2]["min"], \
+                                   "kind": "wide",
+                                   "use": False } )
 
         return candidate
 
     def move_rate( self, select_horce ):
         for i in range( 0, len( self.rate_data ) ):
             check = True
-            
+
             for horce_num in select_horce["horce_num_list"]:
                 if select_horce["kind"] == WIDE and \
                   not horce_num in self.rate_data[i]["horce_num_list"]:
@@ -115,7 +108,7 @@ class SelectHorce:
 
     def bet_check( self, bet_list, current_odds ):
         get_money = 0
-        
+
         for bet in bet_list:
             rank = 0
             check = True
@@ -147,55 +140,65 @@ class SelectHorce:
 
     def select_horce( self ):
         bet_list = []
+        use_index_list = []
         score_list = []
         self.create_rate()
-        bet_count = self.use_count
         candiate_list = self.create_candidate()
         all_rate = 0
-
+        bet_count = 0
+        
         while 1:
-            if bet_count <= 0:
+            if bet_count >= self.use_count:
                 break
 
-            max_score = 0
-            select_horce = None
+            index = -1
+            best_bc = 0
+            max_score = -1
 
-            for candiate in candiate_list:
-                need_count = max( int( ( self.use_count * self.goal_rate ) / candiate["odds"] + 1 ), 1 )
-
-                #for need_count in range( 1, bet_count + 1 ):
-
-                if bet_count < need_count:
+            for i in range( 0, len( candiate_list ) ):
+                if candiate_list[i]["use"]:
                     continue
 
-                #if candiate["odds"] * need_count / self.use_count < 1.3:
-                #    continue
-                    
-                score = math.pow( candiate["rate"], 1 )
-                #score *= max( math.pow( candiate["odds"] * need_count, 0.3 ), 1 )
-                #score /= need_count
-                #score /= ( need_count * 1 )
-                #score = candiate["rate"] / bet_count
+                odds = candiate_list[i]["odds"]
+                bc = int( max( ( self.use_count * self.bet_rate ) / odds, 1 ) )
+                #print( odds, self.use_count * self.bet_rate, ( self.use_count * self.bet_rate ) / odds )
+
+                if bet_count + bc > self.use_count:
+                    continue
+
+                instance_bet_list = copy.deepcopy( bet_list )
+                instance_bet_list.append( candiate_list[i] )
+                score = self.create_score( instance_bet_list )
 
                 if max_score < score:
-                    select_horce = copy.deepcopy( candiate )
-                    select_horce["count"] = need_count
+                    index = i
                     max_score = score
+                    best_bc = bc
 
-            if select_horce == None or max_score == 0:
+            if index == -1:
                 break
 
-            bet_count -= select_horce["count"]
-            self.bet_result_count += select_horce["count"]
-            all_rate += select_horce["rate"]
-            bet_list.append( copy.deepcopy( select_horce ) )
-            score_list.append( max_score )
-            self.move_rate( select_horce )
-            candiate_list = self.create_candidate()
+            if max_score < 0.03:
+                break
+            
+            candiate_list[index]["use"] = True
+            bet_list.append( candiate_list[index] )
+            bet_list[-1]["count"] = best_bc
+            bet_count += best_bc
 
-        #print( bet_list )
         self.select_horce_list = bet_list
-        return bet_list, score_list, all_rate
+        return bet_list, self.create_score( bet_list ), bet_count
+
+    def create_score( self, bet_list ):
+        score = 0
+
+        for rd in self.rate_data:
+            for bet in bet_list:
+                if bet["horce_num_list"][0] in rd["horce_num_list"] \
+                  and bet["horce_num_list"][1] in rd["horce_num_list"]:
+                    score += math.pow( rd["rate"], 2.2 ) * math.pow( bet["odds"], 0.6 )
+
+        return score
 
     def create_ex_value( self ):
         if len( self.select_horce_list ) == 0 or len( self.rate_data ) == 0:

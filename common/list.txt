@@ -157,3 +157,9 @@ predict_netkeiba_deployment
 stamina
 stamina_index
 stamina_stand
+best_dist
+best_dist_index
+best_dist_stand
+predict_popular
+predict_popular_index
+predict_popular_stand

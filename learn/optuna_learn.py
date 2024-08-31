@@ -54,9 +54,9 @@ def objective( trial ):
     one_win_rate, three_win_rate, mdcd_score = \
         buy_simulation.main( [ model ], use_simu_data, test_years = lib.score_years, show = True )
     score = 0
-    score += one_win_rate / 2
-    score += three_win_rate * 2
-    score -= mdcd_score * 2
+    score += one_win_rate
+    score += three_win_rate
+    score -= mdcd_score
     score *= -1
 
     return score

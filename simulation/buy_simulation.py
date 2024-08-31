@@ -40,7 +40,7 @@ def score_add( score_data ):
     score_keys = list( score_data.keys() )
     result = [ 0 ] * len( score_data[score_keys[0]] )
     rate_data = { "rank": 1, "one": 0, "two": 0, "three": 1 }
-    
+
     for k in score_keys:
         score_data[k] = softmax( score_data[k] )
 
@@ -53,10 +53,11 @@ def score_add( score_data ):
 
 def main( model_list, data, test_years = lib.test_years, show = True ):
     recovery_rate = 0
+    index_data = [ 3, 100, 6, 8, 10, 10 ]
     test = {}
     test_result = { "count": 0, "bet_count": 0, "one_money": 0, "three_money": 0, "one_win": 0, "three_win": 0, "three_money": 0 }
-    money = 5000
-    bet_money = int( money / 200 )
+    money = 3000
+    bet_money = 60#int( money / 200 )
     money_list = []
     ave_score = 0
     win_score = 0
@@ -70,7 +71,7 @@ def main( model_list, data, test_years = lib.test_years, show = True ):
     #users_score_data = dm.pickle_load( "users_score_data.pickle")
     race_id_list = list( data.keys() )
     random.shuffle( race_id_list )
-    
+
     for race_id in tqdm( race_id_list ):
         year = race_id[0:4]
         race_place_num = race_id[4:6]
@@ -83,11 +84,14 @@ def main( model_list, data, test_years = lib.test_years, show = True ):
         score_list = []
         instance_list = []
         current_odds = odds_data[race_id]
-        
+
         for horce_id in data[race_id].keys():
             scores = {}
             ex_value = {}
             p_score = 0
+
+            if data[race_id][horce_id]["answer"]["new"]:
+                break
 
             for model in model_list:
                 p_score += model.predict( np.array( [ data[race_id][horce_id]["data"] ] ) )[0]
@@ -127,7 +131,7 @@ def main( model_list, data, test_years = lib.test_years, show = True ):
             mdcd_score += math.pow( rank - ( i + 1 ), 2 )
             mdcd_count += 1
 
-        t = 1
+        t = len( index_data )
         
         for i in range( 0, min( len( sort_result ), t ) ):
             bet_horce = sort_result[i]
@@ -139,19 +143,28 @@ def main( model_list, data, test_years = lib.test_years, show = True ):
             ex_value = score * odds
             line_ex = 1 + i / 0.9
 
+            if popular < index_data[i]:
+                continue
+
+            if odds > 60:
+                continue
             #if ex_value < 1.3:
             #    continue
-            
+
+            lib.dic_append( test, i, {} )
+            lib.dic_append( test[i], popular, { "data": 0, "count": 0 } )
+            test[i][popular]["count"] += 1
             bc = 1
             #bc = int( 1 + min( ( ex_value - 1 ) * 10, 4 ) )
             test_result["bet_count"] += bc
             test_result["count"] += 1
             money -= int( bc * bet_money )
-            
+
             if rank == 1:
                 test_result["one_win"] += 1
                 test_result["one_money"] += odds * bc
-                money += odds * bc# * bet_money
+                test[i][popular]["data"] += odds
+                money += odds * bc * bet_money
                 #print( odds, score )
 
             if rank <= min( 3, len( current_odds["複勝"] ) ):
@@ -159,11 +172,21 @@ def main( model_list, data, test_years = lib.test_years, show = True ):
                 three_odds = current_odds["複勝"][rank_index] / 100
                 test_result["three_win"] += 1
                 test_result["three_money"] += three_odds# * bet_money
+
+        money_list.append( money )
     
     one_recovery_rate = ( test_result["one_money"] / test_result["bet_count"] ) * 100 
     three_recovery_rate = ( test_result["three_money"] / test_result["bet_count"] ) * 100
-    one_win_rate = ( test_result["one_win"] / test_result["count"] ) * 100 * t
-    three_win_rate = ( test_result["three_win"] / test_result["count"] ) * 100 * t
+    one_win_rate = ( test_result["one_win"] / test_result["count"] ) * 100
+    three_win_rate = ( test_result["three_win"] / test_result["count"] ) * 100
+    
+    for i in test.keys():
+        for p in test[i].keys():
+            test[i][p]["data"] /= test[i][p]["count"]
+            #if test[i][p]["data"] < 1:
+            #    continue
+
+            print( "index:{} popular:{} recovery:{} count:{}".format( i, p, test[i][p]["data"] * 100, test[i][p]["count"] ) )
 
     if show:
         print( "" )
@@ -174,6 +197,8 @@ def main( model_list, data, test_years = lib.test_years, show = True ):
         print( "複勝 勝率{}%".format( three_win_rate ) )
         print( "賭けたレース数{}回".format( test_result["count"] ) )
         print( "賭けた金額{}".format( test_result["bet_count"] ) )
+        print( "金額:{}".format( money ) )
+        print( "最低金額:{}".format( min( money_list ) ) )
         print( "mdcd:{}".format( round( mdcd_score / mdcd_count, 4 ) ) )
     
     return one_win_rate, three_win_rate, round( mdcd_score / mdcd_count, 4 )

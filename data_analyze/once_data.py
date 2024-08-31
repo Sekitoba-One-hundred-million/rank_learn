@@ -7,6 +7,7 @@ import sekitoba_library as lib
 import sekitoba_data_manage as dm
 import sekitoba_psql as ps
 
+from sekitoba_data_create.win_rate import WinRate
 from sekitoba_data_create.stride_ablity import StrideAblity
 from sekitoba_data_create.time_index_get import TimeIndexGet
 from sekitoba_data_create.jockey_data_get import JockeyAnalyze
@@ -30,6 +31,7 @@ class OnceData:
         self.predict_last_passing_rank = dm.dl.data_get( "predict_last_passing_rank.pickle" )
         self.predict_train_score = dm.dl.data_get( "predict_train_score.pickle" )
         self.predict_up3 = dm.dl.data_get( "predict_up3.pickle" )
+        #self.predict_popular = dm.dl.data_get( "predict_popular.pickle" )
 
         self.race_data = ps.RaceData()
         self.race_horce_data = ps.RaceHorceData()
@@ -37,6 +39,7 @@ class OnceData:
         self.trainer_data = ps.TrainerData()
         self.jockey_data = ps.JockeyData()
 
+        self.win_rate = WinRate( self.race_data )
         self.stride_ablity = StrideAblity( self.race_data )
         self.race_high_level = RaceHighLevel()
         self.time_index = TimeIndexGet( self.horce_data )
@@ -73,17 +76,14 @@ class OnceData:
 
     def data_list_create( self, data_dict ):
         result = []
+        name_list = sorted( list( data_dict.keys() ) )
         write_instance = []
         
-        for data_name in self.data_name_list:
-            try:
-                result.append( data_dict[data_name] )
-                write_instance.append( data_name )
-            except:
-                continue
+        for data_name in name_list:
+            result.append( data_dict[data_name] )
 
         if len( self.write_data_list ) == 0:
-            self.write_data_list = copy.deepcopy( write_instance )
+            self.write_data_list = copy.deepcopy( name_list )
 
         return result
 
@@ -168,6 +168,7 @@ class OnceData:
         horce_id_list = []
         race_limb = {}
         current_race_data = {}
+        new_check = False
         current_race_data[data_name.my_limb_count] = { "-1": -1 }
 
         for name in self.data_name_list:
@@ -184,6 +185,7 @@ class OnceData:
             if not cd.race_check():
                 continue
 
+            new_check = cd.new_check()
             limb_math = lib.limb_search( pd )
             key_limb = str( int( limb_math ) )
             before_cd = pd.before_cd()
@@ -250,6 +252,7 @@ class OnceData:
             current_race_data[data_name.before_race_score].append( before_race_score )
             current_race_data[data_name.max_time_point].append( pd.max_time_point( self.race_data.data["race_time_analyze"] ) )
             current_race_data[data_name.stamina].append( pd.stamina_create( key_limb ) )
+            current_race_data[data_name.best_dist].append( pd.best_dist() )
             horce_id_list.append( horce_id )
 
         if len( horce_id_list ) < 2:
@@ -306,6 +309,9 @@ class OnceData:
             predict_up3 = -1
             predict_up3_index = -1
             predict_up3_stand = 0
+            predict_popular = -1
+            predict_popular_index = -1
+            predict_popular_stand = 0
 
             if race_id in self.predict_first_passing_rank and horce_id in self.predict_first_passing_rank[race_id]:
                 predict_first_passing_rank = self.predict_first_passing_rank[race_id][horce_id]["score"]
@@ -322,6 +328,11 @@ class OnceData:
                 predict_up3_index = self.predict_up3[race_id][horce_id]["index"]
                 predict_up3_stand = self.predict_up3[race_id][horce_id]["stand"]
 
+            #if race_id in self.predict_popular and horce_id in self.predict_popular[race_id]:
+            #    predict_popular = self.predict_popular[race_id][horce_id]["score"]
+            #    predict_popular_index = self.predict_popular[race_id][horce_id]["index"]
+            #    predict_popular_stand = self.predict_popular[race_id][horce_id]["stand"]            
+
             before_year = int( year ) - 1
             key_before_year = str( int( before_year ) )
             father_id = self.horce_data.data[horce_id]["parent_id"]["father"]
@@ -336,7 +347,7 @@ class OnceData:
             weight_score = cd.weight() / 10
             trainer_rank_score = self.trainer_analyze.rank( race_id, horce_id )
             jockey_rank_score = self.jockey_analyze.rank( race_id, horce_id )
-            
+            win_rate_data = self.win_rate.data_get( limb_math, cd )
             base_key = {}
             kind_key_data = {}
             kind_key_data["place"] = key_place
@@ -355,7 +366,6 @@ class OnceData:
             base_key[data_name.waku_three_rate] = str( int( waku ) )
             base_key[data_name.limb_score] = key_limb
             waku_three_rate = lib.kind_score_get( self.race_data.data["waku_three_rate"], self.kind_score_key_list[data_name.waku_three_rate], kind_key_data, base_key[data_name.waku_three_rate] )
-
             ave_burden_weight_diff = lib.minus( ave_burden_weight, cd.burden_weight() )
             money_score = pd.get_money()
                 
@@ -448,6 +458,12 @@ class OnceData:
             t_instance[data_name.predict_up3_stand] = predict_up3_stand
             t_instance[data_name.predict_netkeiba_pace] = predict_netkeiba_pace
             t_instance[data_name.predict_netkeiba_deployment] = predict_netkeiba_deployment
+            #t_instance[data_name.predict_popular] = predict_popular
+            #t_instance[data_name.predict_popular_index] = predict_popular_index
+            #t_instance[data_name.predict_popular_stand] = predict_popular_stand
+
+            for rk in win_rate_data.keys():
+                t_instance[rk] = win_rate_data[rk]
             
             str_index = "_index"
             for data_key in current_race_data.keys():
@@ -483,7 +499,8 @@ class OnceData:
                                                                "popular": cd.popular(),
                                                                "horce_num": cd.horce_number(),
                                                                "race_kind": cd.race_kind(),
-                                                               "popular_win_rate": popular_win_rate }
+                                                               "popular_win_rate": popular_win_rate,
+                                                               "new": new_check }
 
             rank = cd.rank()
             answer_data.append( rank )
