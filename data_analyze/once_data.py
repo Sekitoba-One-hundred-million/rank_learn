@@ -22,14 +22,12 @@ data_name = Name()
 
 dm.dl.file_set( "predict_first_passing_rank.pickle" )
 dm.dl.file_set( "predict_last_passing_rank.pickle" )
-dm.dl.file_set( "predict_train_score.pickle" )
 dm.dl.file_set( "predict_up3.pickle" )
 
 class OnceData:
     def __init__( self ):
         self.predict_first_passing_rank = dm.dl.data_get( "predict_first_passing_rank.pickle" )
         self.predict_last_passing_rank = dm.dl.data_get( "predict_last_passing_rank.pickle" )
-        self.predict_train_score = dm.dl.data_get( "predict_train_score.pickle" )
         self.predict_up3 = dm.dl.data_get( "predict_up3.pickle" )
         #self.predict_popular = dm.dl.data_get( "predict_popular.pickle" )
 
@@ -215,11 +213,6 @@ class OnceData:
             up3_horce_true_skill = self.race_horce_data.data[horce_id]["horce_up3_true_skill"]
             corner_true_skill = self.race_horce_data.data[horce_id]["horce_corner_true_skill"]
 
-            train_score = -10000
-
-            if race_id in self.predict_train_score and horce_id in self.predict_train_score[race_id]:
-                train_score = self.predict_train_score[race_id][horce_id]
-
             current_year = cd.year()
             horce_birth_day = int( horce_id[0:4] )
             age = current_year - horce_birth_day
@@ -244,7 +237,6 @@ class OnceData:
             current_race_data[data_name.burden_weight].append( cd.burden_weight() )
             current_race_data[data_name.age].append( age )
             current_race_data[data_name.level_score].append( pd.level_score( self.race_data.data["money_class_true_skill"] ) )
-            current_race_data[data_name.predict_train_score].append( train_score )
             current_race_data[data_name.foot_used].append( self.race_type.foot_used_score_get( cd, pd ) )
             current_race_data[data_name.before_diff].append( before_diff )
             current_race_data[data_name.before_rank].append( before_rank )
