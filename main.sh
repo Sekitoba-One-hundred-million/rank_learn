@@ -40,6 +40,8 @@ if [ !$tag = '1' ] && [ !$tag = '2' ] && [ !$tag = '3' ] && [ !$tag = '4' ] && [
     exit 1
 fi
 
+pip install --extra-index-url http://100.88.209.66 --trusted-host 100.88.209.66 -U SekitobaLibrary
+
 rm -rf $write_file_name
 echo 'class Name:' >> $write_file_name
 echo '    def __init__( self ):' >> $write_file_name
