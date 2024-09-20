@@ -71,13 +71,13 @@ def main( update = False ):
             for k in instance["data"].keys():
                 result["data"][k].extend( instance["data"][k] )
 
-        dm.pickle_upload( lib.name.data_name(), result["data"] )
-        dm.pickle_upload( lib.name.simu_name(), result["simu"] )
+        #dm.pickle_upload( lib.name.data_name(), result["data"] )
+        #dm.pickle_upload( lib.name.simu_name(), result["simu"] )
     else:
         ok = comm.recv( source = 0, tag = 1 )
         od = OnceData()
         print( "start rank:{}".format( rank ) )
-        key_list = key_list_search( rank, size, list( od.race_data.get_all_race_id() ) )
+        key_list = key_list_search( rank, size, sorted( list( od.race_data.get_all_race_id() ) ) )
 
         if rank == 1:
             for k in tqdm( key_list ):
