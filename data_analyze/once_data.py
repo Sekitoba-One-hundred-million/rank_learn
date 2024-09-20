@@ -37,7 +37,6 @@ class OnceData:
         self.trainer_data = ps.TrainerData()
         self.jockey_data = ps.JockeyData()
 
-        self.win_rate = WinRate( self.race_data )
         self.stride_ablity = StrideAblity( self.race_data )
         self.race_high_level = RaceHighLevel()
         self.time_index = TimeIndexGet( self.horce_data )
@@ -339,7 +338,7 @@ class OnceData:
             weight_score = cd.weight() / 10
             trainer_rank_score = self.trainer_analyze.rank( race_id, horce_id )
             jockey_rank_score = self.jockey_analyze.rank( race_id, horce_id )
-            win_rate_data = self.win_rate.data_get( limb_math, cd )
+            #win_rate_data = self.win_rate.data_get( limb_math, cd )
             base_key = {}
             kind_key_data = {}
             kind_key_data["place"] = key_place
@@ -454,8 +453,8 @@ class OnceData:
             #t_instance[data_name.predict_popular_index] = predict_popular_index
             #t_instance[data_name.predict_popular_stand] = predict_popular_stand
 
-            for rk in win_rate_data.keys():
-                t_instance[rk] = win_rate_data[rk]
+            #for rk in win_rate_data.keys():
+            #    t_instance[rk] = win_rate_data[rk]
             
             str_index = "_index"
             for data_key in current_race_data.keys():
