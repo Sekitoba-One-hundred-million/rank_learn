@@ -71,8 +71,8 @@ def main( update = False ):
             for k in instance["data"].keys():
                 result["data"][k].extend( instance["data"][k] )
 
-        #dm.pickle_upload( lib.name.data_name(), result["data"] )
-        #dm.pickle_upload( lib.name.simu_name(), result["simu"] )
+        dm.pickle_upload( lib.name.data_name(), result["data"] )
+        dm.pickle_upload( lib.name.simu_name(), result["simu"] )
     else:
         ok = comm.recv( source = 0, tag = 1 )
         od = OnceData()
