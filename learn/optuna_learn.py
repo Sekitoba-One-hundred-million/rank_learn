@@ -5,8 +5,8 @@ import lightgbm as lgb
 
 from simulation import buy_simulation
 
-import sekitoba_library as lib
-import sekitoba_data_manage as dm
+import SekitobaLibrary as lib
+import SekitobaDataManage as dm
 from learn import data_adjustment
 
 use_data = {}

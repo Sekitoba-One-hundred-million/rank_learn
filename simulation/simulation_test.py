@@ -5,8 +5,8 @@ import numpy as np
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 
-import sekitoba_library as lib
-import sekitoba_data_manage as dm
+import SekitobaLibrary as lib
+import SekitobaDataManage as dm
 from simulation.select_horce import SelectHorce
 
 def standardization( data ):

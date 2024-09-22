@@ -3,8 +3,8 @@ import copy
 import torch
 import numpy as np
 
-import sekitoba_library as lib
-import sekitoba_data_manage as dm
+import SekitobaLibrary as lib
+import SekitobaDataManage as dm
 
 
 def softmax( data ):

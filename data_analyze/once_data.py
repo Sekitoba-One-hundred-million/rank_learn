@@ -3,18 +3,18 @@ import copy
 from tqdm import tqdm
 from mpi4py import MPI
 
-import sekitoba_library as lib
-import sekitoba_data_manage as dm
-import sekitoba_psql as ps
+import SekitobaLibrary as lib
+import SekitobaDataManage as dm
+import SekitobaPsql as ps
 
-from sekitoba_data_create.win_rate import WinRate
-from sekitoba_data_create.stride_ablity import StrideAblity
-from sekitoba_data_create.time_index_get import TimeIndexGet
-from sekitoba_data_create.jockey_data_get import JockeyAnalyze
-from sekitoba_data_create.trainer_data_get import TrainerAnalyze
-from sekitoba_data_create.high_level_data_get import RaceHighLevel
-from sekitoba_data_create.race_type import RaceType
-from sekitoba_data_create.before_race_score_get import BeforeRaceScore
+from SekitobaDataCreate.win_rate import WinRate
+from SekitobaDataCreate.stride_ablity import StrideAblity
+from SekitobaDataCreate.time_index_get import TimeIndexGet
+from SekitobaDataCreate.jockey_data_get import JockeyAnalyze
+from SekitobaDataCreate.trainer_data_get import TrainerAnalyze
+from SekitobaDataCreate.high_level_data_get import RaceHighLevel
+from SekitobaDataCreate.race_type import RaceType
+from SekitobaDataCreate.before_race_score_get import BeforeRaceScore
 
 from common.name import Name
 

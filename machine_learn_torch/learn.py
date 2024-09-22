@@ -3,8 +3,8 @@ import random
 import numpy as np
 from tqdm import tqdm
 
-import sekitoba_library as lib
-import sekitoba_data_manage as dm
+import SekitobaLibrary as lib
+import SekitobaDataManage as dm
 from machine_learn_torch import nn
 
 def data_check( data, models ):

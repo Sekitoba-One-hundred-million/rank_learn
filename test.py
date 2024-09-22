@@ -1,8 +1,8 @@
-import sekitoba_data_manage as dm
-import sekitoba_library as lib
-import sekitoba_psql as ps
+import SekitobaDataManage as dm
+import SekitobaLibrary as lib
+import SekitobaPsql as ps
 
-from sekitoba_data_create.last_wrap import LastWrap
+from SekitobaDataCreate.last_wrap import LastWrap
 
 race_id = "202406030111"
 race_data = ps.RaceData()

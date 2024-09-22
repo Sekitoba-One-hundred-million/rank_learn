@@ -7,8 +7,8 @@ import torch
 
 from tqdm import tqdm
 
-import sekitoba_data_manage as dm
-import sekitoba_library as lib
+import SekitobaDataManage as dm
+import SekitobaLibrary as lib
 
 class LastStrightNN( nn.Module ):
 
