@@ -212,10 +212,10 @@ class SelectHorce:
         for i in range( 0, len( self.select_horce_list ) ):
             min_horce_num = min( self.select_horce_list[i]["horce_num_list"] )
             max_horce_num = max( self.select_horce_list[i]["horce_num_list"] )
-            lib.dic_append( wide_data, min_horce_num, {} )
-            lib.dic_append( wide_data, max_horce_num, {} )
-            lib.dic_append( wide_horce_num, min_horce_num, [] )
-            lib.dic_append( wide_horce_num, max_horce_num, [] )
+            lib.dicAppend( wide_data, min_horce_num, {} )
+            lib.dicAppend( wide_data, max_horce_num, {} )
+            lib.dicAppend( wide_horce_num, min_horce_num, [] )
+            lib.dicAppend( wide_horce_num, max_horce_num, [] )
             wide_data[min_horce_num][max_horce_num] = self.select_horce_list[i]
             wide_horce_num[min_horce_num].append( max_horce_num )
             wide_horce_num[max_horce_num].append( min_horce_num )

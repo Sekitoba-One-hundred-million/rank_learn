@@ -27,7 +27,7 @@ def data_check( data, state = "test" ):
         current_level = list( data["level"][i] )
         current_diff = list( data["diff"][i] )
         current_popular = list( data["popular"][i] )
-        data_check = lib.test_year_check( data["year"][i], state )
+        data_check = lib.testYearCheck( data["year"][i], state )
 
         #if 1 not in current_answer and year in lib.test_years:
         #    continue

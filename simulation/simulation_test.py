@@ -123,7 +123,7 @@ def main( model_list, data, test_years = lib.test_years, show = True ):
         #if ex_value < 3:
         #    continue
 
-        lib.dic_append( test_check, ex_value, { "money": 0, "count": 0 } )
+        lib.dicAppend( test_check, ex_value, { "money": 0, "count": 0 } )
         get_money = select_horce.bet_check( select_horce_data, odds_data[race_id] )
         test_result["count"] += 1
         test_result["bet_count"] += bet_count * select_horce.bet_rate

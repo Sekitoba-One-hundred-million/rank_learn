@@ -92,7 +92,7 @@ def main( models, data ):
             for model_key in models.keys():
                 p_data = models[model_key].predict( np.array( [ data[race_id][horce_id]["data"] ] ) )
                 scores[model_key] = p_data[0]
-                lib.dic_append( score_data, model_key, [] )
+                lib.dicAppend( score_data, model_key, [] )
                 score_data[model_key].append( p_data[0] )
                 
             ex_value["score"] = -1

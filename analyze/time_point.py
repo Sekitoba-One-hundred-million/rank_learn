@@ -22,7 +22,7 @@ def main():
     split_horce_num = 5
     
     for k in tqdm( race_data.keys() ):
-        race_id = lib.id_get( k )
+        race_id = lib.idGet( k )
         year = race_id[0:4]
         race_place_num = race_id[4:6]
         day = race_id[9]
@@ -47,16 +47,16 @@ def main():
 
         for kk in race_data[k].keys():
             horce_id = kk
-            current_data, past_data = lib.race_check( horce_data[horce_id],
+            current_data, past_data = lib.raceCheck( horce_data[horce_id],
                                                      year, day, num, race_place_num )#今回と過去のデータに分ける
-            cd = lib.current_data( current_data )
-            pd = lib.past_data( past_data, current_data )
+            cd = lib.CurrentData( current_data )
+            pd = lib.PastData( past_data, current_data )
 
-            if not cd.race_check():
+            if not cd.raceCheck():
                 continue
 
-            position_key = min( int( cd.horce_number() / split_horce_num ), 2 )
-            max_time_point = pd.max_time_point()
+            position_key = min( int( cd.horceNumber() / split_horce_num ), 2 )
+            max_time_point = pd.maxTimePoint()
             max_time_point += track_bias_data[race_id][position_key]["one"] + track_bias_data[race_id][position_key]["two"] + track_bias_data[race_id][position_key]["three"]
             max_time_point += track_bias_data[race_id][position_key]["popular_rank"]
             data_list.append( { "max_time_point": max_time_point, "rank": cd.rank() } )

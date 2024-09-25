@@ -94,26 +94,26 @@ class OnceData:
 
         return int( score )
 
-    def match_rank_score( self, cd: lib.current_data, target_id ):
+    def matchRankScore( self, cd: lib.CurrentData, target_id ):
         try:
             target_data = self.horce_data[target_id]
         except:
             target_data = []
                 
-        target_pd = lib.past_data( target_data, [], self.race_data )
+        target_pd = lib.PastData( target_data, [], self.race_data )
         count = 0
         score = 0
             
-        for target_cd in target_pd.past_cd_list():
+        for target_cd in target_pd.pastCdList():
             c = 0
                 
             if target_cd.place() == cd.place():
                 c += 1
                 
-            if target_cd.baba_status() == cd.baba_status():
+            if target_cd.babaStatus() == cd.babaStatus():
                 c += 1
 
-            if lib.dist_check( target_cd.dist() * 1000 ) == lib.dist_check( cd.dist() * 1000 ):
+            if lib.distCheck( target_cd.dist() * 1000 ) == lib.distCheck( cd.dist() * 1000 ):
                 c += 1
 
             count += c
@@ -155,8 +155,8 @@ class OnceData:
         if key_kind == "0" or key_kind == "3":
             return
 
-        predict_netkeiba_pace = lib.netkeiba_pace( self.race_data.data["predict_netkeiba_pace"] )
-        key_race_money_class = str( int( lib.money_class_get( self.race_data.data["money"] ) ) )
+        predict_netkeiba_pace = lib.netkeibaPace( self.race_data.data["predict_netkeiba_pace"] )
+        key_race_money_class = str( int( lib.moneyClassGet( self.race_data.data["money"] ) ) )
         current_high_level = self.race_high_level.current_high_level( race_id )
         teacher_data = []
         answer_data = []
@@ -175,17 +175,17 @@ class OnceData:
             current_race_data[name] = []
         
         for horce_id in self.race_horce_data.horce_id_list:
-            current_data, past_data = lib.race_check( self.horce_data.data[horce_id]["past_data"], ymd )
-            cd = lib.current_data( current_data )
-            pd = lib.past_data( past_data, current_data, self.race_data )
+            current_data, past_data = lib.raceCheck( self.horce_data.data[horce_id]["past_data"], ymd )
+            cd = lib.CurrentData( current_data )
+            pd = lib.PastData( past_data, current_data, self.race_data )
 
-            if not cd.race_check():
+            if not cd.raceCheck():
                 continue
 
-            new_check = cd.new_check()
-            limb_math = lib.limb_search( pd )
+            new_check = cd.newCheck()
+            limb_math = lib.limbSearch( pd )
             key_limb = str( int( limb_math ) )
-            before_cd = pd.before_cd()
+            before_cd = pd.beforeCd()
 
             before_speed = -1000
             before_diff = -1000
@@ -199,7 +199,7 @@ class OnceData:
                 before_race_score = self.before_race_score.score_get( before_cd, limb_math, horce_id )
 
             if not limb_math == -1:
-                lib.dic_append( current_race_data[data_name.my_limb_count], key_limb, 0 )
+                lib.dicAppend( current_race_data[data_name.my_limb_count], key_limb, 0 )
                 current_race_data[data_name.my_limb_count][key_limb] += 1
 
             jockey_id = self.race_horce_data.data[horce_id]["jockey_id"]
@@ -215,8 +215,8 @@ class OnceData:
             current_year = cd.year()
             horce_birth_day = int( horce_id[0:4] )
             age = current_year - horce_birth_day
-            current_time_index = self.time_index.main( horce_id, pd.past_day_list() )
-            speed, up_speed, pace_speed = pd.speed_index( self.horce_data.data[horce_id]["baba_index"] )
+            current_time_index = self.time_index.main( horce_id, pd.pastDayList() )
+            speed, up_speed, pace_speed = pd.speedIndex( self.horce_data.data[horce_id]["baba_index"] )
             corner_diff_rank_ave = pd.corner_diff_rank()
             stride_ablity_data = self.stride_ablity.ablity_create( cd, pd )
 
@@ -230,10 +230,10 @@ class OnceData:
             current_race_data[data_name.corner_true_skill].append( corner_true_skill )
             current_race_data[data_name.up3_horce_true_skill].append( up3_horce_true_skill )            
             current_race_data[data_name.corner_diff_rank_ave].append( corner_diff_rank_ave )
-            current_race_data[data_name.speed_index].append( lib.max_check( speed ) + current_time_index["max"] )
-            current_race_data[data_name.match_rank].append( pd.match_rank() )
+            current_race_data[data_name.speed_index].append( lib.maxCheck( speed ) + current_time_index["max"] )
+            current_race_data[data_name.match_rank].append( pd.matchRank() )
             current_race_data[data_name.up_rate].append( pd.up_rate( key_race_money_class, self.race_data.data["up_kind_ave"] ) )
-            current_race_data[data_name.burden_weight].append( cd.burden_weight() )
+            current_race_data[data_name.burden_weight].append( cd.burdenWeight() )
             current_race_data[data_name.age].append( age )
             current_race_data[data_name.level_score].append( pd.level_score( self.race_data.data["money_class_true_skill"] ) )
             current_race_data[data_name.foot_used].append( self.race_type.foot_used_score_get( cd, pd ) )
@@ -241,7 +241,7 @@ class OnceData:
             current_race_data[data_name.before_rank].append( before_rank )
             current_race_data[data_name.before_speed].append( before_speed )
             current_race_data[data_name.before_race_score].append( before_race_score )
-            current_race_data[data_name.max_time_point].append( pd.max_time_point( self.race_data.data["race_time_analyze"] ) )
+            current_race_data[data_name.max_time_point].append( pd.maxTimePoint( self.race_data.data["race_time_analyze"] ) )
             current_race_data[data_name.stamina].append( pd.stamina_create( key_limb ) )
             current_race_data[data_name.best_dist].append( pd.best_dist() )
             horce_id_list.append( horce_id )
@@ -261,21 +261,21 @@ class OnceData:
         for data_key in current_key_list:
             current_race_data[data_key+"_index"] = sorted( current_race_data[data_key], reverse = True )
             current_race_data[data_key+"_stand"] = lib.standardization( current_race_data[data_key] )
-            current_race_data[data_key+"_devi"] = lib.deviation_value( current_race_data[data_key] )            
+            current_race_data[data_key+"_devi"] = lib.deviationValue( current_race_data[data_key] )            
 
         ave_burden_weight = lib.average( current_race_data[data_name.burden_weight] )
 
         for count, horce_id in enumerate( horce_id_list ):
-            current_data, past_data = lib.race_check( self.horce_data.data[horce_id]["past_data"], ymd )
-            cd = lib.current_data( current_data )
-            pd = lib.past_data( past_data, current_data, self.race_data )
+            current_data, past_data = lib.raceCheck( self.horce_data.data[horce_id]["past_data"], ymd )
+            cd = lib.CurrentData( current_data )
+            pd = lib.PastData( past_data, current_data, self.race_data )
 
-            if not cd.race_check():
+            if not cd.raceCheck():
                 continue
             
-            before_cd = pd.before_cd()
+            before_cd = pd.beforeCd()
             place_num = int( race_place_num )
-            horce_num = int( cd.horce_number() )
+            horce_num = int( cd.horceNumber() )
 
             before_id_weight_score = -1000
             before_popular = -1000
@@ -284,12 +284,12 @@ class OnceData:
             before_pace_up_diff = -1000
 
             if not before_cd == None:
-                before_id_weight_score = before_cd.id_weight()
+                before_id_weight_score = before_cd.idWeight()
                 before_popular = before_cd.popular()
-                before_passing_list = before_cd.passing_rank().split( "-" )
-                up3 = before_cd.up_time()
+                before_passing_list = before_cd.passingRank().split( "-" )
+                up3 = before_cd.upTime()
                 p1, p2 = before_cd.pace()
-                diff_load_weight = cd.burden_weight() - before_cd.burden_weight()
+                diff_load_weight = cd.burdenWeight() - before_cd.burdenWeight()
 
             predict_first_passing_rank = -1
             predict_first_passing_rank_index = -1
@@ -326,11 +326,6 @@ class OnceData:
 
             before_year = int( year ) - 1
             key_before_year = str( int( before_year ) )
-            father_id = self.horce_data.data[horce_id]["parent_id"]["father"]
-            mother_id = self.horce_data.data[horce_id]["parent_id"]["mother"]
-
-            father_match_rank = self.match_rank_score( cd, father_id )
-            mother_match_rank = self.match_rank_score( cd, mother_id )
             high_level_score = self.race_high_level.data_get( cd, pd, ymd )
             limb_math = race_limb[horce_id]
             key_limb = str( int( limb_math ) )            
@@ -349,21 +344,21 @@ class OnceData:
 
             waku = -1
 
-            if cd.horce_number() < cd.all_horce_num() / 2:
+            if cd.horceNumber() < cd.allHorceNum() / 2:
                 waku = 1
             else:
                 waku = 2
 
             base_key[data_name.waku_three_rate] = str( int( waku ) )
             base_key[data_name.limb_score] = key_limb
-            waku_three_rate = lib.kind_score_get( self.race_data.data["waku_three_rate"], self.kind_score_key_list[data_name.waku_three_rate], kind_key_data, base_key[data_name.waku_three_rate] )
-            ave_burden_weight_diff = lib.minus( ave_burden_weight, cd.burden_weight() )
-            money_score = pd.get_money()
+            waku_three_rate = lib.kindScoreGet( self.race_data.data["waku_three_rate"], self.kind_score_key_list[data_name.waku_three_rate], kind_key_data, base_key[data_name.waku_three_rate] )
+            ave_burden_weight_diff = lib.minus( ave_burden_weight, cd.burdenWeight() )
+            money_score = pd.getMoney()
                 
-            burden_weight_score = cd.burden_weight()
+            burden_weight_score = cd.burdenWeight()
             before_continue_not_three_rank = pd.before_continue_not_three_rank()
             horce_sex = self.horce_data.data[horce_id]["sex"]
-            dist_kind_count = pd.dist_kind_count()
+            dist_kind_count = pd.distKindCount()
             
             try:
                 before_last_passing_rank = int( before_passing_list[-1] )
@@ -376,7 +371,7 @@ class OnceData:
                 before_first_passing_rank = 0
 
             jockey_year_rank_score = self.jockey_analyze.year_rank( horce_id, key_before_year )
-            baba = cd.baba_status()
+            baba = cd.babaStatus()
             three_rate_score = -1
             three_rate_score_index = -1
             three_rate_score_stand = -1
@@ -386,7 +381,7 @@ class OnceData:
 
             key_race_pace_num = str( int( race_place_num ) )
             key_day = str( int( day ) )
-            key_flame_number = str( int( cd.flame_number() ) )
+            key_flame_number = str( int( cd.flameNumber() ) )
 
             try:
                 flame_evaluation_one = self.race_data.data["flame_evaluation"][key_race_pace_num][key_day][key_flame_number]["one"]
@@ -404,18 +399,17 @@ class OnceData:
 
             t_instance = {}
             #t_instance[data_name.pace] = pace
-            t_instance[data_name.all_horce_num] = cd.all_horce_num()
+            t_instance[data_name.all_horce_num] = cd.allHorceNum()
             t_instance[data_name.ave_burden_weight_diff] = ave_burden_weight_diff
-            t_instance[data_name.baba] = cd.baba_status()
+            t_instance[data_name.baba] = cd.babaStatus()
             t_instance[data_name.before_continue_not_three_rank] = before_continue_not_three_rank
             t_instance[data_name.before_first_passing_rank] = before_first_passing_rank
             t_instance[data_name.before_id_weight] = before_id_weight_score
             t_instance[data_name.before_last_passing_rank] = before_last_passing_rank
             t_instance[data_name.before_popular] = before_popular
             t_instance[data_name.burden_weight] = burden_weight_score
-            t_instance[data_name.dist_kind] = cd.dist_kind()
+            t_instance[data_name.dist_kind] = cd.distKind()
             t_instance[data_name.dist_kind_count] = dist_kind_count
-            t_instance[data_name.father_rank] = father_match_rank
             t_instance[data_name.flame_evaluation_one] = flame_evaluation_one
             t_instance[data_name.flame_evaluation_two] = flame_evaluation_two
             t_instance[data_name.flame_evaluation_three] = flame_evaluation_three
@@ -423,7 +417,7 @@ class OnceData:
             t_instance[data_name.predict_first_passing_rank] = predict_first_passing_rank
             t_instance[data_name.predict_first_passing_rank_index] = predict_first_passing_rank_index
             t_instance[data_name.predict_first_passing_rank_stand] = predict_first_passing_rank_stand
-            t_instance[data_name.horce_num] = cd.horce_number()
+            t_instance[data_name.horce_num] = cd.horceNumber()
             t_instance[data_name.horce_sex] = horce_sex
             t_instance[data_name.jockey_rank] = jockey_rank_score
             t_instance[data_name.predict_last_passing_rank] = predict_last_passing_rank
@@ -432,7 +426,6 @@ class OnceData:
             t_instance[data_name.limb] = limb_math
             t_instance[data_name.my_limb_count] = current_race_data[data_name.my_limb_count][key_limb]
             t_instance[data_name.money] = money_score
-            t_instance[data_name.mother_rank] = mother_match_rank
             t_instance[data_name.place] = place_num
             t_instance[data_name.race_interval] = race_interval_score
             t_instance[data_name.high_level_score] = high_level_score
@@ -473,7 +466,7 @@ class OnceData:
             t_list = self.data_list_create( t_instance )
 
             if year in lib.test_years:
-                key_dist_kind = str( int( cd.dist_kind() ) )
+                key_dist_kind = str( int( cd.distKind() ) )
                 key_popular = str( int( cd.popular() ) )
                 popular_win_rate = { "one": 0, "two": 0, "three": 0 }
                 
@@ -482,14 +475,14 @@ class OnceData:
                 except:
                     pass
 
-                lib.dic_append( self.simu_data, race_id, {} )
+                lib.dicAppend( self.simu_data, race_id, {} )
                 self.simu_data[race_id][horce_id] = {}
                 self.simu_data[race_id][horce_id]["data"] = t_list
                 self.simu_data[race_id][horce_id]["answer"] = { "rank": cd.rank(),
                                                                "odds": cd.odds(),
                                                                "popular": cd.popular(),
-                                                               "horce_num": cd.horce_number(),
-                                                               "race_kind": cd.race_kind(),
+                                                               "horce_num": cd.horceNumber(),
+                                                               "race_kind": cd.raceKind(),
                                                                "popular_win_rate": popular_win_rate,
                                                                "new": new_check }
 
