@@ -38,7 +38,6 @@
                 enable = true;
                 # requirements = "${./requirements.txt}";
               };
-              directory = "/Users/kansei/nix-python";
             };
           };
         };
