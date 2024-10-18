@@ -131,7 +131,7 @@ def main( model_list, data, test_years = lib.test_years, show = True ):
             mdcd_score += math.pow( rank - ( i + 1 ), 2 )
             mdcd_count += 1
 
-        t = len( index_data )
+        t = 1#len( index_data )
         
         for i in range( 0, min( len( sort_result ), t ) ):
             bet_horce = sort_result[i]
@@ -143,11 +143,11 @@ def main( model_list, data, test_years = lib.test_years, show = True ):
             ex_value = score * odds
             line_ex = 1 + i / 0.9
 
-            if popular < index_data[i]:
-                continue
+            #if popular < index_data[i]:
+            #    continue
 
-            if odds > 60:
-                continue
+            #if odds > 60:
+            #    continue
             #if ex_value < 1.3:
             #    continue
 
@@ -180,13 +180,13 @@ def main( model_list, data, test_years = lib.test_years, show = True ):
     one_win_rate = ( test_result["one_win"] / test_result["count"] ) * 100
     three_win_rate = ( test_result["three_win"] / test_result["count"] ) * 100
     
-    for i in test.keys():
-        for p in test[i].keys():
-            test[i][p]["data"] /= test[i][p]["count"]
+    #for i in test.keys():
+    #    for p in test[i].keys():
+    #        test[i][p]["data"] /= test[i][p]["count"]
             #if test[i][p]["data"] < 1:
             #    continue
 
-            print( "index:{} popular:{} recovery:{} count:{}".format( i, p, test[i][p]["data"] * 100, test[i][p]["count"] ) )
+    #        print( "index:{} popular:{} recovery:{} count:{}".format( i, p, test[i][p]["data"] * 100, test[i][p]["count"] ) )
 
     if show:
         print( "" )
