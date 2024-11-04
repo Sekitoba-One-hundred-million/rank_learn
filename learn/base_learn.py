@@ -42,7 +42,8 @@ def lg_main( data, index = None ):
         'num_leaves': params["num_leaves"],
         'min_data_in_leaf': params["min_data_in_leaf"],
         'lambda_l1': params["lambda_l1"],
-        'lambda_l2': params["lambda_l2"]
+        'lambda_l2': params["lambda_l2"],
+        'seed': 103
     }
 
     bst = lgb.train( params = lgbm_params,
