@@ -53,11 +53,11 @@ def score_add( score_data ):
 
 def main( model_list, data, test_years = lib.test_years, show = True ):
     recovery_rate = 0
-    index_data = [ 3, 100, 6, 8, 10, 10 ]
+    index_data = [ [ 3, 5 ], [ 6, 7, 8 ], [ 7, 8 ] ]
     test = {}
     test_result = { "count": 0, "bet_count": 0, "one_money": 0, "three_money": 0, "one_win": 0, "three_win": 0, "three_money": 0 }
     money = 3000
-    bet_money = 60#int( money / 200 )
+    bet_money = 150#int( money / 200 )
     money_list = []
     ave_score = 0
     win_score = 0
@@ -108,21 +108,6 @@ def main( model_list, data, test_years = lib.test_years, show = True ):
             continue
 
         min_score = min( score_list )
-        
-        #for i in range( 0, len( score_list ) ):
-        #    score_list[i] -= min_score
-        #    score_list[i] = math.pow( score_list[i], 2 ) / ( 1 + i * 0.2 )
-
-        #all_score = sum( score_list )
-
-        #for i in range( 0, len( score_list ) ):
-        #    score_list[i] /= all_score
-
-        #score_list = softmax( score_list )
-
-        #for i in range( 0, len( score_list ) ):
-        #    horce_list[i]["score"] = score_list[i]
-
         sort_result = sorted( horce_list, key=lambda x:x["score"], reverse = True )
 
         for i in range( 0, len( sort_result ) ):
@@ -143,7 +128,7 @@ def main( model_list, data, test_years = lib.test_years, show = True ):
             ex_value = score * odds
             line_ex = 1 + i / 0.9
 
-            #if popular < index_data[i]:
+            #if not popular in index_data[i]:
             #    continue
 
             #if odds > 60:
@@ -165,7 +150,6 @@ def main( model_list, data, test_years = lib.test_years, show = True ):
                 test_result["one_money"] += odds * bc
                 test[i][popular]["data"] += odds
                 money += odds * bc * bet_money
-                #print( odds, score )
 
             if rank <= min( 3, len( current_odds["複勝"] ) ):
                 rank_index = int( bet_horce["rank"] - 1 )
@@ -181,12 +165,12 @@ def main( model_list, data, test_years = lib.test_years, show = True ):
     three_win_rate = ( test_result["three_win"] / test_result["count"] ) * 100
     
     #for i in test.keys():
-    #    for p in test[i].keys():
-    #        test[i][p]["data"] /= test[i][p]["count"]
+        #for p in sorted( test[i].keys() ):
+            #test[i][p]["data"] /= test[i][p]["count"]
             #if test[i][p]["data"] < 1:
             #    continue
 
-    #        print( "index:{} popular:{} recovery:{} count:{}".format( i, p, test[i][p]["data"] * 100, test[i][p]["count"] ) )
+            #print( "index:{} popular:{} recovery:{} count:{}".format( i, p, test[i][p]["data"] * 100, test[i][p]["count"] ) )
 
     if show:
         print( "" )

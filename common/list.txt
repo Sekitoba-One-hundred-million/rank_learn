@@ -163,3 +163,6 @@ best_dist_stand
 predict_popular
 predict_popular_index
 predict_popular_stand
+kinetic_energy
+kinetic_energy_index
+kinetic_energy_stand

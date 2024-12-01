@@ -43,7 +43,7 @@ def lg_main( data, index = None ):
         'min_data_in_leaf': params["min_data_in_leaf"],
         'lambda_l1': params["lambda_l1"],
         'lambda_l2': params["lambda_l2"],
-        'seed': 103
+        'seed': 200
     }
 
     bst = lgb.train( params = lgbm_params,
@@ -83,7 +83,7 @@ def main( data, state = "test" ):
     model_list = []
     learn_data = data_adjustment.data_check( data, state = state )
 
-    for i in range( 0, 5 ):
+    for i in range( 0, 10 ):
         model = lg_main( learn_data, index = i )
         importance_check( model )
         model_list.append( model )

@@ -16,6 +16,7 @@ from SekitobaDataCreate.high_level_data_get import RaceHighLevel
 from SekitobaDataCreate.race_type import RaceType
 from SekitobaDataCreate.before_race_score_get import BeforeRaceScore
 from SekitobaDataCreate.get_horce_data import GetHorceData
+from SekitobaDataCreate.kinetic_energy import KineticEnergy
 
 from common.name import Name
 
@@ -37,6 +38,7 @@ class OnceData:
         self.trainer_data = ps.TrainerData()
         self.jockey_data = ps.JockeyData()
 
+        self.kinetic_energy = KineticEnergy( self.race_data )
         self.stride_ablity = StrideAblity( self.race_data )
         self.race_high_level = RaceHighLevel()
         self.time_index = TimeIndexGet( self.horce_data )
@@ -166,7 +168,7 @@ class OnceData:
         current_race_data = {}
         getHorceDataDict: dict[ str, GetHorceData ] = {}
         new_check = False
-        current_race_data[data_name.my_limb_count] = { "-1": lib.escapeValue }
+        current_race_data[data_name.my_limb_count] = { str(lib.escapeValue): lib.escapeValue }
 
         for name in self.data_name_list:
             if name in current_race_data:
@@ -236,6 +238,7 @@ class OnceData:
             current_race_data[data_name.max_time_point].append( pd.maxTimePoint( self.race_data.data["race_time_analyze"] ) )
             current_race_data[data_name.stamina].append( pd.stamina_create( getHorceData.key_limb ) )
             current_race_data[data_name.best_dist].append( pd.best_dist() )
+            current_race_data[data_name.kinetic_energy].append( self.kinetic_energy.create( cd, pd ) )
             horce_id_list.append( horce_id )
 
         if len( horce_id_list ) < 2:

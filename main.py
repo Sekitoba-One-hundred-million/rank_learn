@@ -32,8 +32,6 @@ def main():
     import learn
     #from learn import rate_learn
     from simulation import buy_simulation
-    from simulation import recovery_simulation
-    from simulation import simulation_test
 
     lib.name.set_name( "rank" )
 
@@ -69,15 +67,18 @@ def main():
             for r in range( 0, len( learn_data["teacher"][i] ) ):
                 learn_data["teacher"][i][r] = data_remove( learn_data["teacher"][i][r], remove_list )
 
-        if l_check:
-            model_list = learn.main( data["data"], state = s_check )
-            buy_simulation.main( model_list, simu_data, test_years = lib.simu_years )
-        elif o_check:
+        if o_check:
             learn.optuna_main( learn_data, simu_data )
-        elif b_check:
-            model_list = dm.pickle_load( lib.name.model_name() )
-            simulation_test.main( model_list, simu_data, test_years = lib.simu_years )
-        
+        else:
+            model_list = []
+            
+            if l_check:
+                model_list = learn.main( data["data"], state = s_check )
+            elif b_check:
+                model_list = dm.pickle_load( lib.name.model_name() )
+
+            buy_simulation.main( model_list, simu_data, test_years = lib.simu_years )
+            
     MPI.Finalize()        
     
 if __name__ == "__main__":

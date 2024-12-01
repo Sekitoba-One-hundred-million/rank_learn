@@ -165,3 +165,6 @@ class Name:
         self.predict_popular = "predict_popular"
         self.predict_popular_index = "predict_popular_index"
         self.predict_popular_stand = "predict_popular_stand"
+        self.kinetic_energy = "kinetic_energy"
+        self.kinetic_energy_index = "kinetic_energy_index"
+        self.kinetic_energy_stand = "kinetic_energy_stand"
