@@ -378,7 +378,7 @@ class OnceData:
             t_instance[data_name.predict_up3_stand] = predict_up3_stand
             t_instance[data_name.predict_netkeiba_pace] = predict_netkeiba_pace
             t_instance[data_name.predict_netkeiba_deployment] = predict_netkeiba_deployment
-            t_instance.update( lib.HorceTeacherAnalyze( current_race_data, t_instance, count ) )
+            t_instance.update( lib.horceTeacherAnalyze( current_race_data, t_instance, count ) )
             
             t_list = self.data_list_create( t_instance )
 
