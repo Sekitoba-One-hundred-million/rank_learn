@@ -136,8 +136,8 @@ def main( model_list, data, test_years = lib.test_years, show = True ):
             #if ex_value < 1.3:
             #    continue
 
-            lib.dicAppend( test, i, {} )
-            lib.dicAppend( test[i], popular, { "data": 0, "count": 0 } )
+            lib.dic_append( test, i, {} )
+            lib.dic_append( test[i], popular, { "data": 0, "count": 0 } )
             test[i][popular]["count"] += 1
             bc = 1
             #bc = int( 1 + min( ( ex_value - 1 ) * 10, 4 ) )

@@ -71,18 +71,18 @@ horce_last_wrap = {}
 race_up3 = sum( last_three_wrap )
 
 for horce_id in race_horce_data.horce_id_list:
-    current_data, past_data = lib.raceCheck( horce_data.data[horce_id]["past_data"], ymd )
+    current_data, past_data = lib.race_check( horce_data.data[horce_id]["past_data"], ymd )
     cd = lib.CurrentData( current_data )
-    race_time = min( race_time, cd.raceTime() )
+    race_time = min( race_time, cd.race_time() )
     horce_last_wrap[horce_id] = []
 
     for i in range( 0, len( last_three_wrap ) ):
-        horce_last_wrap[horce_id].append( last_three_wrap[i] * ( cd.upTime() / race_up3 ) )
+        horce_last_wrap[horce_id].append( last_three_wrap[i] * ( cd.up_time() / race_up3 ) )
 
 horce_four_corner_to_goal_time = {}
 
 for horce_id in race_horce_data.horce_id_list:
-    current_data, past_data = lib.raceCheck( horce_data.data[horce_id]["past_data"], ymd )
+    current_data, past_data = lib.race_check( horce_data.data[horce_id]["past_data"], ymd )
     cd = lib.CurrentData( current_data )
-    key_horce_num = str( int( cd.horceNumber() ) )
-    horce_four_corner_to_goal_time[horce_id] = four_corner_to_goal_time + ( cd.raceTime() - race_time )
+    key_horce_num = str( int( cd.horce_number() ) )
+    horce_four_corner_to_goal_time[horce_id] = four_corner_to_goal_time + ( cd.race_time() - race_time )
