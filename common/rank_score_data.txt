@@ -155,6 +155,10 @@ pursuing_power_min_devi
 pursuing_power_min_index
 pursuing_power_min_stand
 race_interval
+run_circle_speed
+run_circle_speed_devi
+run_circle_speed_index
+run_circle_speed_stand
 speed_index
 speed_index_index
 speed_index_stand

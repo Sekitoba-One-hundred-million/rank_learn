@@ -166,3 +166,6 @@ predict_popular_stand
 kinetic_energy
 kinetic_energy_index
 kinetic_energy_stand
+run_circle_speed
+run_circle_speed_index
+run_circle_speed_stand

@@ -239,6 +239,7 @@ class OnceData:
             current_race_data[data_name.stamina].append( pd.stamina_create( getHorceData.key_limb ) )
             current_race_data[data_name.best_dist].append( pd.best_dist() )
             current_race_data[data_name.kinetic_energy].append( self.kinetic_energy.create( cd, pd ) )
+            current_race_data[data_name.run_circle_speed].append( pd.run_circle_speed() )
             horce_id_list.append( horce_id )
 
         if len( horce_id_list ) < 2:

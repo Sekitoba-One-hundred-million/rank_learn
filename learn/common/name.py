@@ -168,3 +168,6 @@ class Name:
         self.kinetic_energy = "kinetic_energy"
         self.kinetic_energy_index = "kinetic_energy_index"
         self.kinetic_energy_stand = "kinetic_energy_stand"
+        self.run_circle_speed = "run_circle_speed"
+        self.run_circle_speed_index = "run_circle_speed_index"
+        self.run_circle_speed_stand = "run_circle_speed_stand"

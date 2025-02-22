@@ -25,7 +25,7 @@ def objective( trial ):
     min_data_in_leaf = trial.suggest_int( "min_data_in_leaf", 10, 100 )
     lambda_l1 = trial.suggest_float( "lambda_l1", 0, 1 )
     lambda_l2 = trial.suggest_float( "lambda_l2", 0, 1 )
-    
+
     lgbm_params =  {
         #'task': 'train',
         'boosting_type': 'gbdt',
