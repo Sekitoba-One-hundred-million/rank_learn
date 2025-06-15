@@ -2,9 +2,7 @@ age
 age_devi
 age_index
 age_stand
-all_horce_num
 ave_burden_weight_diff
-baba
 before_continue_not_three_rank
 before_diff
 before_diff_devi
@@ -30,6 +28,10 @@ best_dist
 best_dist_devi
 best_dist_index
 best_dist_stand
+blood_type_score
+blood_type_score_devi
+blood_type_score_index
+blood_type_score_stand
 burden_weight
 burden_weight_devi
 burden_weight_index
@@ -43,7 +45,6 @@ corner_true_skill_devi
 corner_true_skill_index
 corner_true_skill_stand
 diff_load_weight
-dist_kind
 dist_kind_count
 endurance_power_ave
 endurance_power_ave_devi
@@ -78,7 +79,6 @@ foot_used_devi
 foot_used_index
 foot_used_stand
 high_level_score
-horce_num
 horce_sex
 horce_true_skill
 horce_true_skill_devi
@@ -130,8 +130,6 @@ max_time_point
 max_time_point_devi
 max_time_point_index
 max_time_point_stand
-my_limb_count
-place
 predict_first_passing_rank
 predict_first_passing_rank_index
 predict_first_passing_rank_stand
@@ -139,7 +137,6 @@ predict_last_passing_rank
 predict_last_passing_rank_index
 predict_last_passing_rank_stand
 predict_netkeiba_deployment
-predict_netkeiba_pace
 predict_up3
 predict_up3_stand
 pursuing_power_ave
@@ -191,5 +188,4 @@ up_rate_devi
 up_rate_index
 up_rate_stand
 waku_three_rate
-weather
 weight

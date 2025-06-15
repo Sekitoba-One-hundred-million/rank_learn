@@ -70,13 +70,10 @@ def main():
         if o_check:
             learn.optuna_main( learn_data, simu_data )
         else:
-            model_list = []
-            
             if l_check:
-                model_list = learn.main( data["data"], state = s_check )
-            elif b_check:
-                model_list = dm.pickle_load( lib.name.model_name() )
+                learn.main( data["data"], state = s_check )
 
+            model_list = dm.pickle_load( lib.name.model_name() )
             buy_simulation.main( model_list, simu_data, test_years = lib.simu_years )
             
     MPI.Finalize()        

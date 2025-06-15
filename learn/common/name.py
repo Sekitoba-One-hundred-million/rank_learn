@@ -171,3 +171,4 @@ class Name:
         self.run_circle_speed = "run_circle_speed"
         self.run_circle_speed_index = "run_circle_speed_index"
         self.run_circle_speed_stand = "run_circle_speed_stand"
+        self.blood_type_score = "blood_type_score"
