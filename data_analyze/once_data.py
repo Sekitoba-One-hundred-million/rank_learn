@@ -80,7 +80,7 @@ class OnceData:
         name_list = sorted( list( data_dict.keys() ) )
         
         for data_name in name_list:
-            result.append( data_dict[data_name] )
+            result.append( round( data_dict[data_name], 3 ) )
 
         if len( self.write_data_list ) == 0:
             self.write_data_list = copy.deepcopy( name_list )
