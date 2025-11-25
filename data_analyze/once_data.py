@@ -140,6 +140,8 @@ class OnceData:
             if not cd.race_check():
                 continue
 
+            cd.setting_odds( self.race_data.data["dev_odds_popular"][horce_id]["odds"] )
+            cd.setting_popular( self.race_data.data["dev_odds_popular"][horce_id]["popular"] )
             getHorceData = GetHorceData( cd, pd )
             getHorceDataDict[horce_id] = getHorceData
 
@@ -226,6 +228,8 @@ class OnceData:
             if not cd.race_check():
                 continue
 
+            cd.setting_odds( self.race_data.data["dev_odds_popular"][horce_id]["odds"] )
+            cd.setting_popular( self.race_data.data["dev_odds_popular"][horce_id]["popular"] )
             getHorceData = getHorceDataDict[horce_id]
             before_cd = pd.before_cd()
             place_num = int( key_place )

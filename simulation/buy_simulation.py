@@ -85,6 +85,9 @@ def main( model_list, data, test_years = lib.test_years, show = True ):
         instance_list = []
         current_odds = odds_data[race_id]
 
+        if len( current_odds ) == 0:
+            continue
+
         for horce_id in data[race_id].keys():
             scores = {}
             ex_value = {}
