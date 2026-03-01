@@ -2,7 +2,9 @@ age
 age_devi
 age_index
 age_stand
+all_horce_num
 ave_burden_weight_diff
+baba
 before_continue_not_three_rank
 before_diff
 before_diff_devi
@@ -45,6 +47,7 @@ corner_true_skill_devi
 corner_true_skill_index
 corner_true_skill_stand
 diff_load_weight
+dist_kind
 dist_kind_count
 endurance_power_ave
 endurance_power_ave_devi
@@ -137,6 +140,10 @@ predict_last_passing_rank
 predict_last_passing_rank_index
 predict_last_passing_rank_stand
 predict_netkeiba_deployment
+predict_netkeiba_pace
+predict_time_index
+predict_time_index_index
+predict_time_index_stand
 predict_up3
 predict_up3_stand
 pursuing_power_ave
@@ -188,4 +195,5 @@ up_rate_devi
 up_rate_index
 up_rate_stand
 waku_three_rate
+weather
 weight

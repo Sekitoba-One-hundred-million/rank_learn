@@ -93,8 +93,8 @@ def main( model_list, data, test_years = lib.test_years, show = True ):
             ex_value = {}
             p_score = 0
 
-            if data[race_id][horce_id]["answer"]["new"]:
-                break
+            #if data[race_id][horce_id]["answer"]["new"]:
+            #    break
 
             for model in model_list:
                 p_score += model.predict( np.array( [ data[race_id][horce_id]["data"] ] ) )[0]

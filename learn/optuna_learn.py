@@ -70,9 +70,9 @@ def optuna_main( data, simu_data ):
     use_data = data_adjustment.data_check( data, state = "optuna" )
     best_parames_list = []
 
-    for i in range( 0, 10 ):
+    for i in range( 0, 20 ):
         study = optuna.create_study()
-        study.optimize(objective, n_trials=500)
+        study.optimize(objective, n_trials=300)
         best_parames_list.append( study.best_params )
 
     f = open( "best_params.json", "w" )

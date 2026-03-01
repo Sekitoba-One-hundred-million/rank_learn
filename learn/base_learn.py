@@ -7,7 +7,7 @@ import SekitobaLibrary as lib
 import SekitobaDataManage as dm
 from learn import data_adjustment
 
-def lg_main( data, index = None ):
+def lg_main( data, category_index_list, index = None ):
     params = {}
     
     if os.path.isfile( "best_params.json" ) and not index == None:
@@ -24,12 +24,19 @@ def lg_main( data, index = None ):
         params["lambda_l2"] = 0
 
     max_pos = np.max( np.array( data["answer"] ) )
-    lgb_train = lgb.Dataset( np.array( data["teacher"] ), np.array( data["answer"] ), group = np.array( data["query"] ) )
-    lgb_vaild = lgb.Dataset( np.array( data["test_teacher"] ), np.array( data["test_answer"] ), group = np.array( data["test_query"] ) )
+    lgb_train = lgb.Dataset( np.array( data["teacher"] ), \
+                             np.array( data["answer"] ), \
+                             group = np.array( data["query"] ), \
+                             categorical_feature = category_index_list )
+    lgb_vaild = lgb.Dataset( np.array( data["test_teacher"] ), \
+                             np.array( data["test_answer"] ), \
+                             group = np.array( data["test_query"] ), \
+                             categorical_feature = category_index_list )
     lgbm_params =  {
         #'task': 'train',
         'boosting_type': 'gbdt',
-        'objective': 'lambdarank',
+        #'objective': 'lambdarank',
+        'objective': 'rank_xendcg',
         'metric': 'ndcg',   # for lambdarank
         'ndcg_eval_at': [1,2,3],  # for lambdarank
         'label_gain': list(range(0, np.max( np.array( data["answer"], dtype = np.int32 ) ) + 1)),
@@ -81,12 +88,13 @@ def importance_check( model ):
 
 def main( data, state = "test" ):
     model_list = []
+    category_index_list = lib.create_category_index( data["category"] )
     learn_data = data_adjustment.data_check( data, state = state )
 
     for i in range( 0, 10 ):
-        model = lg_main( learn_data, index = i )
-        importance_check( model )
+        model = lg_main( learn_data, category_index_list, index = i )
         model_list.append( model )
 
+    importance_check( model_list[0] )
     dm.pickle_upload( lib.name.model_name(), model_list )
     return model_list
