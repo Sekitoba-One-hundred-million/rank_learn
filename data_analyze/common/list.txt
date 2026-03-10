@@ -94,6 +94,9 @@ predict_parents_score_stand
 predict_up3
 predict_up3_index
 predict_up3_stand
+predict_first_up3
+predict_first_up3_index
+predict_first_up3_stand
 race_interval
 high_level_score
 rank_score_odds

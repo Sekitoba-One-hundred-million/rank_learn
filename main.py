@@ -68,7 +68,8 @@ def main():
                 learn_data["teacher"][i][r] = data_remove( learn_data["teacher"][i][r], remove_list )
 
         if o_check:
-            learn.optuna_main( learn_data, simu_data )
+            learn.lg_optuna_main( learn_data, simu_data )
+            learn.xg_optuna_main( learn_data, simu_data )
         else:
             if l_check:
                 learn.main( data["data"], state = s_check )

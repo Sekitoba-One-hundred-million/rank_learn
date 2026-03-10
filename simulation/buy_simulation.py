@@ -96,8 +96,13 @@ def main( model_list, data, test_years = lib.test_years, show = True ):
             #if data[race_id][horce_id]["answer"]["new"]:
             #    break
 
-            for model in model_list:
-                p_score += model.predict( np.array( [ data[race_id][horce_id]["data"] ] ) )[0]
+            for i, model in enumerate( model_list ):
+                model_rate = 1
+
+                #if i < 3:
+                #    model_rate = 0.1
+                    
+                p_score += model.predict( np.array( [ data[race_id][horce_id]["data"] ] ) )[0] * model_rate
                 
             score_list.append( p_score )
             ex_value["score"] = p_score
@@ -113,10 +118,10 @@ def main( model_list, data, test_years = lib.test_years, show = True ):
         min_score = min( score_list )
         sort_result = sorted( horce_list, key=lambda x:x["score"], reverse = True )
 
-        for i in range( 0, len( sort_result ) ):
+        for i in range( 0, 3 ):
             rank = sort_result[i]["rank"]
             score = sort_result[i]["score"]
-            mdcd_score += math.pow( rank - ( i + 1 ), 2 )
+            mdcd_score += abs( rank - ( i + 1 ) )
             mdcd_count += 1
 
         t = 1#len( index_data )

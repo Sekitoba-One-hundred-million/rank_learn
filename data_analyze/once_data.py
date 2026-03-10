@@ -26,6 +26,7 @@ data_name = Name()
 dm.dl.file_set( "predict_first_passing_rank.pickle" )
 dm.dl.file_set( "predict_last_passing_rank.pickle" )
 dm.dl.file_set( "predict_up3.pickle" )
+dm.dl.file_set( "predict_first_up3.pickle" )
 dm.dl.file_set( "predict_time_index.pickle" )
 
 class OnceData:
@@ -34,6 +35,7 @@ class OnceData:
         self.predict_last_passing_rank = dm.dl.data_get( "predict_last_passing_rank.pickle" )
         self.predict_up3 = dm.dl.data_get( "predict_up3.pickle" )
         self.predict_time_index = dm.dl.data_get( "predict_time_index.pickle" )
+        self.predict_first_up3_data = dm.dl.data_get( "predict_first_up3.pickle" )
 
         self.race_data = ps.RaceData()
         self.race_horce_data = ps.RaceHorceData()
@@ -312,6 +314,15 @@ class OnceData:
                     predict_netkeiba_deployment = t
                     break
 
+            predict_first_up3 = lib.escapeValue
+            predict_first_up3_stand = lib.escapeValue
+            predict_first_up3_index = lib.escapeValue
+            
+            if race_id in self.predict_first_up3_data and horce_id in self.predict_first_up3_data[race_id]:
+                predict_first_up3 = self.predict_first_up3_data[race_id][horce_id]["score"]
+                predict_first_up3_index = self.predict_first_up3_data[race_id][horce_id]["index"]
+                predict_first_up3_stand = self.predict_first_up3_data[race_id][horce_id]["stand"]
+                
             category_data = []
             t_instance = {}
             t_instance[data_name.all_horce_num] = cd.all_horce_num()
@@ -365,6 +376,9 @@ class OnceData:
             category_data.append( data_name.predict_netkeiba_pace )
             t_instance[data_name.predict_netkeiba_deployment] = predict_netkeiba_deployment
             category_data.append( data_name.predict_netkeiba_deployment )
+            t_instance[data_name.predict_first_up3] = predict_first_up3
+            t_instance[data_name.predict_first_up3_index] = predict_first_up3_index
+            t_instance[data_name.predict_first_up3_stand] = predict_first_up3_stand
             t_instance.update( lib.horce_teacher_analyze( current_race_data, t_instance, count ) )
             
             t_list = self.data_list_create( t_instance )
