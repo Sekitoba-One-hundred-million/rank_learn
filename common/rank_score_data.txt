@@ -133,6 +133,9 @@ max_time_point
 max_time_point_devi
 max_time_point_index
 max_time_point_stand
+predict_diff
+predict_diff_index
+predict_diff_stand
 predict_first_passing_rank
 predict_first_passing_rank_index
 predict_first_passing_rank_stand
@@ -148,6 +151,7 @@ predict_time_index
 predict_time_index_index
 predict_time_index_stand
 predict_up3
+predict_up3_index
 predict_up3_stand
 pursuing_power_ave
 pursuing_power_ave_devi
@@ -167,6 +171,7 @@ run_circle_speed_devi
 run_circle_speed_index
 run_circle_speed_stand
 speed_index
+speed_index_devi
 speed_index_index
 speed_index_stand
 stamina
@@ -185,6 +190,10 @@ sustain_power_min
 sustain_power_min_devi
 sustain_power_min_index
 sustain_power_min_stand
+time_index
+time_index_devi
+time_index_index
+time_index_stand
 trainer_true_skill
 trainer_true_skill_devi
 trainer_true_skill_index

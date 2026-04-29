@@ -140,14 +140,14 @@ def main( data, state = "test" ):
     category_index_list = lib.create_category_index( data["category"] )
     learn_data = data_adjustment.data_check( data, state = state )
 
-    #for i in range( 0, LG_MODEL_NUM ):
-    #    lg_model = lg_main( learn_data, category_index_list, index = i )
-    #    model_list.append( lg_model )
+    for i in range( 0, LG_MODEL_NUM ):
+        lg_model = lg_main( learn_data, category_index_list, index = i )
+        model_list.append( lg_model )
 
     for i in range( 0, XG_MODEL_NUM ):
         xg_model = xg_main( learn_data, i )
         model_list.append( xg_model )
 
-    #importance_check( model_list[0] )
+    importance_check( model_list[0] )
     dm.pickle_upload( lib.name.model_name(), model_list )
     return model_list

@@ -26,6 +26,7 @@ data_name = Name()
 dm.dl.file_set( "predict_first_passing_rank.pickle" )
 dm.dl.file_set( "predict_last_passing_rank.pickle" )
 dm.dl.file_set( "predict_up3.pickle" )
+dm.dl.file_set( "predict_diff.pickle" )
 dm.dl.file_set( "predict_first_up3.pickle" )
 dm.dl.file_set( "predict_time_index.pickle" )
 
@@ -34,6 +35,7 @@ class OnceData:
         self.predict_first_passing_rank = dm.dl.data_get( "predict_first_passing_rank.pickle" )
         self.predict_last_passing_rank = dm.dl.data_get( "predict_last_passing_rank.pickle" )
         self.predict_up3 = dm.dl.data_get( "predict_up3.pickle" )
+        self.predict_diff = dm.dl.data_get( "predict_diff.pickle" )
         self.predict_time_index = dm.dl.data_get( "predict_time_index.pickle" )
         self.predict_first_up3_data = dm.dl.data_get( "predict_first_up3.pickle" )
 
@@ -189,7 +191,8 @@ class OnceData:
             current_race_data[data_name.corner_true_skill].append( corner_true_skill )
             current_race_data[data_name.up3_horce_true_skill].append( up3_horce_true_skill )            
             current_race_data[data_name.corner_diff_rank_ave].append( corner_diff_rank_ave )
-            current_race_data[data_name.speed_index].append( lib.max_check( speed ) + current_time_index["max"] )
+            current_race_data[data_name.speed_index].append( lib.max_check( speed ) )
+            current_race_data[data_name.time_index].append( current_time_index["max"] )
             current_race_data[data_name.match_rank].append( pd.match_rank() )
             current_race_data[data_name.up_rate].append( pd.up_rate( key_race_money_class, self.race_data.data["up_kind_ave"] ) )
             current_race_data[data_name.burden_weight].append( cd.burden_weight() )
@@ -257,6 +260,9 @@ class OnceData:
             predict_up3 = lib.escapeValue
             predict_up3_index = lib.escapeValue
             predict_up3_stand = lib.escapeValue
+            predict_diff = lib.escapeValue
+            predict_diff_index = lib.escapeValue
+            predict_diff_stand = lib.escapeValue
             predict_time_index = lib.escapeValue
             predict_time_index_index = lib.escapeValue
             predict_time_index_stand = lib.escapeValue
@@ -275,6 +281,11 @@ class OnceData:
                 predict_up3 = self.predict_up3[race_id][horce_id]["score"]
                 predict_up3_index = self.predict_up3[race_id][horce_id]["index"]
                 predict_up3_stand = self.predict_up3[race_id][horce_id]["stand"]
+
+            if race_id in self.predict_diff and horce_id in self.predict_diff[race_id]:
+                predict_diff = self.predict_diff[race_id][horce_id]["score"]
+                predict_diff_index = self.predict_diff[race_id][horce_id]["index"]
+                predict_diff_stand = self.predict_diff[race_id][horce_id]["stand"]
 
             if race_id in self.predict_time_index and horce_id in self.predict_time_index[race_id]:
                 predict_time_index = self.predict_time_index[race_id][horce_id]["score"]
@@ -368,7 +379,11 @@ class OnceData:
             t_instance[data_name.waku_three_rate] = waku_three_rate
             t_instance[data_name.diff_load_weight] = diff_load_weight
             t_instance[data_name.predict_up3] = predict_up3
+            t_instance[data_name.predict_up3_index] = predict_up3_index
             t_instance[data_name.predict_up3_stand] = predict_up3_stand
+            t_instance[data_name.predict_diff] = predict_diff
+            t_instance[data_name.predict_diff_index] = predict_diff_index
+            t_instance[data_name.predict_diff_stand] = predict_diff_stand
             t_instance[data_name.predict_time_index] = predict_time_index
             t_instance[data_name.predict_time_index_index] = predict_time_index_index
             t_instance[data_name.predict_time_index_stand] = predict_time_index_stand
