@@ -45,7 +45,7 @@ def xg_main( data, index = None ):
         learning_rate=params["learning_rate"],
         min_child_weight=params["min_child_weight"],
         subsample=params["subsumple"],
-        colsample_bytree=params["colsample_bytree"]
+        colsample_bytree=0.4
     )
 
     model.fit( np.array( data["teacher"] ), \
@@ -100,7 +100,7 @@ def lg_main( data, category_index_list, index = None ):
         'min_data_in_leaf': params["min_data_in_leaf"],
         'lambda_l1': params["lambda_l1"],
         'lambda_l2': params["lambda_l2"],
-        'feature_fraction': params["feature_fraction"]
+        'feature_fraction': 0.4
     }
 
     bst = lgb.train( params = lgbm_params,

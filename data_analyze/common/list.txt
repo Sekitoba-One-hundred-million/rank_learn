@@ -83,6 +83,9 @@ popular
 time_index
 time_index_index
 time_index_stand
+predict_race_time
+predict_race_time_index
+predict_race_time_stand
 predict_time_index
 predict_time_index_index
 predict_time_index_stand
@@ -97,6 +100,9 @@ predict_last_passing_rank_index
 predict_last_passing_rank_stand
 predict_parents_score
 predict_parents_score_stand
+predict_test
+predict_test_index
+predict_test_stand
 predict_up3
 predict_up3_index
 predict_up3_stand
